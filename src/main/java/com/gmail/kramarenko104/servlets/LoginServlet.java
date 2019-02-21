@@ -4,7 +4,6 @@ import com.gmail.kramarenko104.controllers.DBWorker;
 import com.gmail.kramarenko104.controllers.UserController;
 import com.gmail.kramarenko104.models.User;
 import org.apache.log4j.Logger;
-
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,6 +18,7 @@ public class LoginServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(LoginServlet.class);
     private int attempt;
+    long startTime;
 
     public LoginServlet() {
     }
@@ -28,7 +28,7 @@ public class LoginServlet extends HttpServlet {
         StringBuilder msgText = new StringBuilder();
         DBWorker worker = null;
         boolean showLoginForm = true;
-        long startTime = 0L;
+        
         HttpSession session = request.getSession();
         String log = request.getParameter("login");
         String pass = request.getParameter("password");
@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
 
         if (session != null) {
             Object attemptFromSession = session.getAttribute("attempt");
-            attempt = (attemptFromSession == null) ? 0 : (int) attemptFromSession;
+            attempt = ( attemptFromSession == null) ? 0 : (int) attemptFromSession;
             // already logged in
             User currentUser = (User) session.getAttribute("user");
             if (currentUser != null) {
@@ -53,7 +53,6 @@ public class LoginServlet extends HttpServlet {
                     boolean exist = userContr.userExists(log);
                     if (exist) {
                         accessGranted = userContr.passIsCorrect(log, pass);
-
                         showLoginForm = ((attempt == 0) || (!accessGranted && attempt < 3));
 
                         if (accessGranted) {
