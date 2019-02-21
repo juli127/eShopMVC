@@ -51,6 +51,7 @@ public class ProductController {
         pstmt.executeUpdate();
     }
 
+
     public List<Product> getProductsByCategory(int category) {
         List<Product> productsList = new ArrayList<>();
         ResultSet rs = null;
@@ -96,6 +97,21 @@ public class ProductController {
              ResultSet rs = st.executeQuery(GET_ALL_CATEGORIES)) {
             while (rs.next()) {
                 Integer category = rs.getInt("category");
+                allCategoriesList.add(category);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return allCategoriesList;
+    }
+
+    public List<String> getCategoriesListS() {
+        List<String> allCategoriesList = new ArrayList<>();
+        try (Statement st = conn.createStatement();
+             ResultSet rs = st.executeQuery("SELECT name FROM categories;")) {
+            while (rs.next()) {
+                String category = rs.getString(1);
+                System.out.println("contr: " + category);
                 allCategoriesList.add(category);
             }
         } catch (Exception e) {

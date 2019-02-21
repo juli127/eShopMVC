@@ -8,6 +8,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.gmail.kramarenko104.controllers.UserController;
 import org.apache.log4j.Logger;
 import com.gmail.kramarenko104.controllers.ProductController;
 import com.gmail.kramarenko104.models.Product;
@@ -25,7 +27,7 @@ public class ProductServlet extends HttpServlet {
         ProductController prodContr = new ProductController();
         req.setAttribute("categories", prodContr.getCategoriesList());
 
-        String selectedCateg = req.getParameter("selectedCateg");
+        String selectedCateg = req.getParameter("selectedCategory");
 
         List<Product> products = null;
         // show all products when 'All categories' was selected or
@@ -37,6 +39,7 @@ public class ProductServlet extends HttpServlet {
         }
 
         req.setAttribute("products", products);
+        products.forEach(e -> System.out.println(e));
         RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/views/products.jsp");
         rd.forward(req, resp);
     }

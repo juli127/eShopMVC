@@ -147,13 +147,34 @@ page {
 	padding: 2px 2px 2px 2px;
 }
 
+.productsTable {
+	display: flex;
+	flex-wrap: wrap;
+	max-width: 600px; /* макс ширина */
+}
+
+.eachProduct{
+	flex:1 1 calc(33.33% - 30px); /* отнимем margin и скажем растягиваться */
+	min-width:200px; /* мин. ширина блока, чтобы переносились на другой ряд */
+	background:#b5ced8;
+
+}
+
 #price {
 	font-family: Arial, Helvetica, sans-serif;
 	font-size: 16px;
 	font-weight: bold;
 	text-align: center;
 	color:  #f59506;
-	width: 250px;
+	width: 200px;
+}
+
+#productName {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: bold;
+	text-align: center;
+	width: 200px;
 }
 
 /* content */
