@@ -1,7 +1,25 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
-<c:set var="username" value="${sessionScope.name}"/>
+<c:set var="username" value="${sessionScope.userName}"/>
+
+<br><br>
+<%--<br>jsp: attempt: ${attempt}--%>
+header: showLoginForm: ${showLoginForm}
+<br>header: message: ${message1}
+<br>header: login: ${login}
+<%--<br>jsp: password: ${password}--%>
+<%--<br>jsp: logout: ${logout}--%>
+<br>header: user: ${user}
+<br>header: userName: ${userName}
+<br>header: messagecart: ${messagecart}
+<br>header: products: ${products}
+<br>header: selectedCategIsNull: ${selectedCategIsNull}
+<br>header: sessionScope.values(): ${sessionScope.values()}
+<br>header: sessionScope.values(): ${sessionScope.values()}
+<br>header: applicationScope.values(): ${applicationScope.values()}
+<br>header: session: ${session}
+
 <c:choose>
     <c:when test="${username != null}">
         <c:set var="greeting" value="${username},"/>
@@ -10,6 +28,7 @@
         <c:set var="greeting" value=""/>
     </c:otherwise>
 </c:choose>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -34,7 +53,7 @@
                         <ul>
                             <li><a href="products">Каталог товаров</a></li>
                             <c:choose>
-                                <c:when test="${sessionScope.name != null}">
+                                <c:when test="${username != null}">
                                     <li><a href="logout">Logout</a></li>
                                 </c:when>
                                 <c:otherwise>

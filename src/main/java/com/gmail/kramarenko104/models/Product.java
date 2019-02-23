@@ -11,14 +11,6 @@ public class Product {
     private String description;
     private String image;
 
-    @Override
-    public String toString() {
-        return "[name='" + name + '\'' +
-                ", category=" + category +
-                ", price=" + price +
-                ", description='" + description + "']";
-    }
-
     public String getName() {
         return name;
     }
@@ -83,5 +75,13 @@ public class Product {
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getCategory(), getPrice(), getDescription(), getImage());
+    }
+
+    @Override
+    public String toString() {
+        return "[name='" + name + '\'' +
+                ", category=" + category +
+                ", price=" + price +
+                ", description='" + description + "']";
     }
 }

@@ -1,7 +1,7 @@
 package com.gmail.kramarenko104.servlets;
 
-import com.gmail.kramarenko104.controllers.DBWorker;
-import com.gmail.kramarenko104.controllers.UserController;
+import com.gmail.kramarenko104.dao.UserDao;
+import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.models.User;
 import org.apache.log4j.Logger;
 import javax.servlet.RequestDispatcher;
@@ -18,17 +18,18 @@ public class LoginServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(LoginServlet.class);
     private int attempt;
-    long startTime;
+    private long startTime;
+    private DaoFactory daoFactory;
 
     public LoginServlet() {
+        daoFactory = DaoFactory.getSpecificDao();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         StringBuilder msgText = new StringBuilder();
-        DBWorker worker = null;
         boolean showLoginForm = true;
-        
+    StringBuilder message = new StringBuilder();
         HttpSession session = request.getSession();
         String log = request.getParameter("login");
         String pass = request.getParameter("password");
@@ -39,32 +40,35 @@ public class LoginServlet extends HttpServlet {
             attempt = ( attemptFromSession == null) ? 0 : (int) attemptFromSession;
             // already logged in
             User currentUser = (User) session.getAttribute("user");
+            // be sure that username is correct
+
             if (currentUser != null) {
+                session.setAttribute("userName", currentUser.getName());
                 showLoginForm = false;
-                msgText.append("<br><font size=5 color='green'><center>Здравствуйте, " + currentUser.getName() + "</font>");
             } // not logged in yet
             else {
                 boolean accessGranted = false;
                 long waitTime = 0;
 
                 if (log != null) {
-                    worker = new DBWorker();
-                    UserController userContr = new UserController(worker.getConnection());
-                    boolean exist = userContr.userExists(log);
+                    UserDao userDao = daoFactory.getUserDao();
+                    boolean exist = userDao.userExists(log);
+                    message.append("exist = " + exist + "<br>");
                     if (exist) {
-                        accessGranted = userContr.passIsCorrect(log, pass);
+                        User user = userDao.getUserByLoginPass(log, pass);
+                        accessGranted = ( user != null);
+                        message.append("accessGranted = " + accessGranted + "<br>");
                         showLoginForm = ((attempt == 0) || (!accessGranted && attempt < 3));
-
+                        message.append("showLoginForm = " + showLoginForm + "<br>");
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
-                            User user = userContr.getUser(log);
                             session.setAttribute("user", user);
-                            session.setAttribute("name", user.getName());
+                            session.setAttribute("userName", user.getName());
+                            message.append("user.getName() = " + user.getName() + "<br>");
                             getServletContext().setAttribute("session", session);
                             getServletContext().setAttribute("user", user);
-                            getServletContext().setAttribute("name", user.getName());
-                            msgText.append("<br><font size=5 color='green'>Здравствуйте, " + user.getName() + "</font><br>");
+                            getServletContext().setAttribute("userName", user.getName());
                         } else {
                             attempt++;
                             if (attempt >= 3) {
@@ -89,16 +93,18 @@ public class LoginServlet extends HttpServlet {
                         msgText.append("<br><b><font size=3 color='green'><center>Пользователь с таким логином еще не был зарегистрирован.</b>");
                         msgText.append("<br><b>Вы можете <a href='registration'>зарегестрироваться по ссылке</a></b></font>");
                     }
-                    worker.close();
+                    daoFactory.closeConnection();
                 } else {
                     attempt = 0;
                 }
             }
-            session.setAttribute("showLoginForm", showLoginForm);
-            session.setAttribute("message", msgText.toString());
-            session.setAttribute("attempt", attempt);
+
         }
         msgText.append("</center>");
+        session.setAttribute("showLoginForm", showLoginForm);
+//            session.setAttribute("message", msgText.toString());
+        session.setAttribute("message1", message.toString());
+        session.setAttribute("attempt", attempt);
         RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/login.jsp");
         rd.forward(request, response);
 

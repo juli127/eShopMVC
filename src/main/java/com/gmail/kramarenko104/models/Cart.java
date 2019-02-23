@@ -1,31 +1,32 @@
 package com.gmail.kramarenko104.models;
 
-import java.util.*;
-
 public class Cart {
-    Map<Product, Integer> products;
-    int size;
 
-    public Cart() {
-        size = 0;
-        this.products = new HashMap<>();
+    private int userId;
+    private int productId;
+    private int quantity;
+
+    public int getUserId() {
+        return userId;
     }
 
-    public void addProduct(Product product){
-        Set<Product> keyProducts = products.keySet();
-        int qnt = 1;
-        if (keyProducts.contains(product)){
-            qnt = products.get(product) + 1;
-        }
-        products.put(product, qnt);
-        size++;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
-    public Map<Product, Integer> getProducts(){
-        return products;
+    public int getProductId() {
+        return productId;
     }
 
-    public int getSize(){
-        return products.size();
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

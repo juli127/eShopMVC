@@ -1,16 +1,6 @@
 <%@ include file="includes/header.jsp" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<br><br>
-<%--<br>jsp: attempt: ${attempt}--%>
-<%--jsp: showLoginForm: ${showLoginForm}--%>
-<%--<br>jsp: showLogoutForm: ${showLogoutForm}--%>
-<%--<br>jsp: message: ${message}--%>
-<%--<br>jsp: login: ${login}--%>
-<%--<br>jsp: password: ${password}--%>
-<%--<br>jsp: logout: ${logout}--%>
-<%--<br>jsp: user: ${user}--%>
-
 <c:if test="${showLoginForm}">
     <h3>Log-in</h3>
     <center>

@@ -1,24 +1,45 @@
 package com.gmail.kramarenko104;
 
-import com.gmail.kramarenko104.controllers.DBWorker;
-import com.gmail.kramarenko104.controllers.UserController;
-import java.sql.SQLException;
+import com.gmail.kramarenko104.dao.ProductDao;
+import com.gmail.kramarenko104.dao.UserDao;
+import com.gmail.kramarenko104.factoryDao.DaoFactory;
+import com.gmail.kramarenko104.models.Product;
+import com.gmail.kramarenko104.models.User;
+
+import java.util.List;
 
 public class RunApp {
 
     public static void main(String[] args) {
 
-        DBWorker dbworker = new DBWorker();
-//        ProductController prodController = new ProductController();
-        UserController userContr = new UserController(dbworker.getConnection());
-        try {
-            userContr.addUser("alex@ukr.net", "admin", "Alexander", "Odessa", "admin");
-            userContr.addUser("lex@gmail.com", "A2345678", "Alex", "Kiev", "call before delivery");
-            userContr.addUser("mash198@ukr.net", "1111111", "Maria", "Odessa", "dont call");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        DaoFactory daoFactory = DaoFactory.getSpecificDao();
+//        UserDao userDao = daoFactory.getUserDao();
+//        User user = new User();
+//        user.setLogin("alex@ukr.net");
+//        user.setPassword("admin");
+//        user.setName("Alexander");
+//        user.setAddress("Odessa");
+//        user.setComment("admin");
+//        userDao.createUser(user);
+//
+//        user = new User();
+//        user.setLogin("lex@gmail.com");
+//        user.setPassword("A2345678");
+//        user.setName("Alex");
+//        user.setAddress("Kiev");
+//        user.setComment("call before delivery");
+//        userDao.createUser(user);
+//
+//        user = new User();
+//        user.setLogin("mash198@ukr.net");
+//        user.setPassword("1111111");
+//        user.setName("Maria");
+//        user.setAddress("Lviv");
+//        user.setComment("d'ont call");
+//        userDao.createUser(user);
 
+
+        ProductDao productDao = daoFactory.getProductDao();
 //        List<Integer> categoriesList = prodController.getCategoriesList();
 //        List<String> categoriesListS = prodController.getCategoriesListS();
 ////        categoriesListS.forEach(e -> {
@@ -29,15 +50,15 @@ public class RunApp {
 //        String iselectedCategory =  "1";
 //		int selectedCategory = (iselectedCategory == null? 0: Integer.parseInt(iselectedCategory));
 //
-//        List<Product> products = null;
+        List<Product> products = null;
 //         //filter by category
 //		if (selectedCategory != 0){
 //            products = prodController.getProductsByCategory(selectedCategory);
 //        } else
 //        { // show all products
-//            products = prodController.getAllProducts();
+            products = productDao.getAllProducts();
 //        }
-//        System.out.println("products.size = " + products.size());
-//        prodController.close();
+        System.out.println("products = " + products);
+        daoFactory.closeConnection();
     }
 }

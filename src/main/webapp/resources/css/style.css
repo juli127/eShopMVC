@@ -1,4 +1,3 @@
-
 body {
 	margin: 0;
 	padding: 0;
@@ -120,19 +119,19 @@ a {
 
 /* page */
 page {
-  display: flex;
-  overflow: auto;
-  text-align: center;
+	display: flex;
+	overflow: auto;
+	text-align: center;
 }
 .page div:nth-child(1) {
-  flex: none;
-  width: 100px;
+	flex: none;
+	width: 100px;
 
 }
 .page div:nth-child(2) {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
+	display: flex;
+	flex-direction: column;
+	text-align: center;
 }
 
 /* sidebar */
@@ -169,12 +168,10 @@ page {
 	width: 200px;
 }
 
-#productName {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 13px;
-	font-weight: bold;
-	text-align: center;
-	width: 200px;
+.productName {
+	width: 600px;
+	height: 600px;
+	FLOAT:LEFT;
 }
 
 /* content */
@@ -211,12 +208,11 @@ page {
 
 
 .wrapper {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
 }
 
 .footer {
-  flex: 0 0 auto;
+	flex: 0 0 auto;
 }
-
