@@ -1,4 +1,4 @@
-package com.gmail.kramarenko104.servlets;
+package com.gmail.kramarenko104.controller;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -26,7 +26,7 @@ public class LogoutServlet extends HttpServlet {
         session.setAttribute("message", "");
         session.setAttribute("attempt", 0);
 
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/products.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/view/products.jsp");
         rd.forward(request, response);
     }
 }

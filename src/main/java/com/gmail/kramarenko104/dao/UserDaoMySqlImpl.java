@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.models.User;
+import com.gmail.kramarenko104.model.User;
+import org.apache.log4j.Logger;
 
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -17,8 +18,9 @@ public class UserDaoMySqlImpl implements UserDao {
     private final static String GET_USER_BY_LOGIN_PASS = "SELECT * FROM users WHERE login = ? AND  password = ?";
     private final static String GET_ALL_USERS = "SELECT * FROM users;";
     private final static String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
-    private final String SALT = "34Ru9k";
+    private final static String SALT = "34Ru9k";
     private Connection conn;
+    private static Logger logger = Logger.getLogger(UserDaoMySqlImpl.class);
 
     public UserDaoMySqlImpl(Connection conn) {
         this.conn = conn;
@@ -29,11 +31,11 @@ public class UserDaoMySqlImpl implements UserDao {
         try (PreparedStatement pst = conn.prepareStatement(CREATE_USER)) {
             conn.setAutoCommit(false);
             pst.setString(1, user.getLogin());
-            pst.setString(2, hashString(user.getPassword() + SALT));
-            pst.setString(2, user.getName());
-            pst.setString(2, user.getAddress());
-            pst.setString(2, user.getComment());
-            pst.execute();
+            pst.setString(2, hashString(user.getPassword()));
+            pst.setString(3, user.getName());
+            pst.setString(4, user.getAddress());
+            pst.setString(5, user.getComment());
+            pst.executeUpdate();
             conn.commit();
             conn.setAutoCommit(true);
             return true;
@@ -63,11 +65,7 @@ public class UserDaoMySqlImpl implements UserDao {
              ResultSet rs = statement.executeQuery(GET_ALL_USERS)) {
             while (rs.next()) {
                 User user = new User();
-                user.setLogin(rs.getString("login"));
-                user.setPassword(rs.getString("password"));
-                user.setName(rs.getString("name"));
-                user.setAddress(rs.getString("address"));
-                user.setComment(rs.getString("comment"));
+                fillUser(rs, user);
                 usersList.add(user);
             }
         } catch (SQLException e) {
@@ -87,12 +85,13 @@ public class UserDaoMySqlImpl implements UserDao {
     }
 
     @Override
-    public User getUserByLoginPass(String login, String pass) {
+    public User getUserByLogin(String login) {
         User user = new User();
         ResultSet rs = null;
-        try (PreparedStatement statement = conn.prepareStatement(GET_USER_BY_LOGIN_PASS)) {
+        boolean exist = false;
+        logger.debug(">>>UserDao.userExists: check user with login = " + login);
+        try (PreparedStatement statement = conn.prepareStatement(GET_USER_BY_LOGIN)) {
             statement.setString(1, login);
-            statement.setString(2, hashString(pass + SALT));
             rs = statement.executeQuery();
             fillUser(rs, user);
         } catch (SQLException e) {
@@ -100,26 +99,8 @@ public class UserDaoMySqlImpl implements UserDao {
         } finally {
             closeResultSet(rs);
         }
+        logger.debug(">>>UserDao.userExists: user is correct = " + exist);
         return user;
-    }
-
-    @Override
-    public boolean userExists(String login) {
-       // User user = new User();
-        ResultSet rs = null;
-        boolean exist = false;
-        try (PreparedStatement statement = conn.prepareStatement(GET_USER_BY_LOGIN)) {
-            statement.setString(1, login);
-            rs = statement.executeQuery();
-          //  fillUser(rs, user);
-            // check if ResultSet is empty
-            exist = rs.isBeforeFirst();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            closeResultSet(rs);
-        }
-        return exist;
     }
 
     private void fillUser(ResultSet rs, User user) throws SQLException {
@@ -130,6 +111,7 @@ public class UserDaoMySqlImpl implements UserDao {
             user.setName(rs.getString("name"));
             user.setAddress(rs.getString("address"));
             user.setComment(rs.getString("comment"));
+            logger.debug(">>>UserDao.userExists: GOT user with this login from DB = " + user);
         }
     }
 
@@ -142,14 +124,14 @@ public class UserDaoMySqlImpl implements UserDao {
         }
     }
 
-    private static String hashString(String hash) {
+    public static String hashString(String hash) {
         MessageDigest md5 = null;
         try {
             md5 = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        md5.update(StandardCharsets.UTF_8.encode(hash));
+        md5.update(StandardCharsets.UTF_8.encode(hash  + SALT));
         return String.format("%032x", new BigInteger(md5.digest()));
     }
 

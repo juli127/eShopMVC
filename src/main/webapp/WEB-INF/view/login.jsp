@@ -1,6 +1,12 @@
 <%@ include file="includes/header.jsp" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
+<%--<br>login: user: ${sessionScope.user}--%>
+<%--<br>login: showLoginForm: ${sessionScope.showLoginForm}--%>
+<%--<br>login: userName: ${sessionScope.userName}--%>
+<%--<br>login: user: ${sessionScope.user}--%>
+<%--<br>login: message: ${sessionScope.message}--%>
+
 <c:if test="${showLoginForm}">
     <h3>Log-in</h3>
     <center>
@@ -8,7 +14,7 @@
             <table border=0>
                 <tr>
                     <td>Введите e-mail в качестве логина</td>
-                    <td><input type='email' required name='login' value='<%=""%>'/>
+                    <td><input type='text' required name='login' value='<%=""%>'/>
                     </td>
                 </tr>
                 <br>

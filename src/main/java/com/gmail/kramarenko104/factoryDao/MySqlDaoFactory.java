@@ -35,8 +35,11 @@ public class MySqlDaoFactory extends DaoFactory {
         logger.debug("Connection to DB .....");
         try {
             ResourceBundle config = ResourceBundle.getBundle("config");
+            logger.debug("Connection string:" + "jdbc:mysql://" + config.getString("host") + "/" + config.getString("db")
+                    + "?" + "user=" + config.getString("usr") + "&password=" + config.getString("psw"));
             conn = DriverManager.getConnection("jdbc:mysql://" + config.getString("host") + "/" + config.getString("db")
                     + "?" + "user=" + config.getString("usr") + "&password=" + config.getString("psw"));
+
             logger.debug("Connection obtained");
         } catch (SQLException ex) {
             logger.debug("Connection to DB failed...");
@@ -51,9 +54,10 @@ public class MySqlDaoFactory extends DaoFactory {
         try {
             if (conn != null)
                 conn.close();
+            logger.debug("Connection to DB was closed");
+            Thread.dumpStack();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        logger.debug("Connection to DB was closed");
     }
 }

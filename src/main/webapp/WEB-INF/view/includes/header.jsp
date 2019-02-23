@@ -3,22 +3,19 @@
 <%@ page isELIgnored="false" %>
 <c:set var="username" value="${sessionScope.userName}"/>
 
+<c:choose>
+    <c:when test="${sessionScope.cart != null}">
+        <c:set var="cartsize" value="${sessionScope.cart.size}"/>
+    </c:when>
+    <c:otherwise>
+        <c:set var="cartsize" value="0"/>
+    </c:otherwise>
+</c:choose>
 <br><br>
 <%--<br>jsp: attempt: ${attempt}--%>
-header: showLoginForm: ${showLoginForm}
-<br>header: message: ${message1}
-<br>header: login: ${login}
-<%--<br>jsp: password: ${password}--%>
-<%--<br>jsp: logout: ${logout}--%>
-<br>header: user: ${user}
-<br>header: userName: ${userName}
-<br>header: messagecart: ${messagecart}
-<br>header: products: ${products}
-<br>header: selectedCategIsNull: ${selectedCategIsNull}
-<br>header: sessionScope.values(): ${sessionScope.values()}
-<br>header: sessionScope.values(): ${sessionScope.values()}
-<br>header: applicationScope.values(): ${applicationScope.values()}
-<br>header: session: ${session}
+<%--<br>header: user: ${user}--%>
+<%--<br>header: userName: ${userName}--%>
+<%--<br>header: session: ${session}--%>
 
 <c:choose>
     <c:when test="${username != null}">
@@ -70,7 +67,7 @@ header: showLoginForm: ${showLoginForm}
     </div>
 
     <div id="autontif" class="autontif">
-        ${greeting} в Вашей корзине ${(sessionScope.cart.size==null)?0:sessionScope.cart.size} товаров
+        ${greeting} в Вашей корзине ${cartsize} товаров
     </div>
 
     <p>

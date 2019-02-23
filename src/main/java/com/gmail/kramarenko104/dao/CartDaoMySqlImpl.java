@@ -1,7 +1,9 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.models.Cart;
-import com.gmail.kramarenko104.models.Product;
+import com.gmail.kramarenko104.factoryDao.MySqlDaoFactory;
+import com.gmail.kramarenko104.model.Cart;
+import com.gmail.kramarenko104.model.Product;
+import org.apache.log4j.Logger;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -16,14 +18,14 @@ public class CartDaoMySqlImpl implements CartDao {
     private final static String UPDATE_CART = "UPDATE carts SET quantity = ? WHERE userId =? AND productId = ?;";
     private final static String GET_PRODUCTS = "SELECT * FROM carts WHERE userId =? AND productId = ?;";
     private final static String GET_ALL_FROM_CART = "SELECT products.*, carts.quantity ROM products INNER JOIN carts ON products.id = carts.productId;";
-
-//    private Map<Integer, Integer> products;
+    private static Logger logger = Logger.getLogger(CartDaoMySqlImpl.class);
+    private Map<Integer, Integer> products;
     private int size;
     private Connection conn;
 
     public CartDaoMySqlImpl(Connection conn) {
         this.conn = conn;
-//        this.products = new HashMap<>();
+        this.products = new HashMap<>();
         size = 0;
     }
 
@@ -58,13 +60,14 @@ public class CartDaoMySqlImpl implements CartDao {
                 int quantity = rs.getInt("quantity");
                 cart.setProductId(productId);
                 cart.setQuantity(quantity);
-//                products.put(productId, quantity);
+                products.put(productId, quantity);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             closeResultSet(rs);
         }
+        size = products.size();
         return cart;
     }
 
@@ -78,7 +81,7 @@ public class CartDaoMySqlImpl implements CartDao {
                 pst.setInt(2, userId);
                 pst.setInt(3, productId);
                 pst.execute();
-//                products.put(productId, products.get(productId) + quantity);
+                products.put(productId, products.get(productId) + quantity);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -92,6 +95,7 @@ public class CartDaoMySqlImpl implements CartDao {
                 conn.commit();
                 conn.setAutoCommit(true);
 //                products.put(productId, quantity);
+                size++;
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -154,12 +158,13 @@ public class CartDaoMySqlImpl implements CartDao {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        size = 0;
     }
 
-//    @Override
-//    public int getSize() {
-//        return products.size();
-//    }
+    @Override
+    public int getSize() {
+        return products.size();
+    }
 
     @Override
     public Map<Product, Integer> getProductsMap() {

@@ -11,7 +11,7 @@
 </c:if>
 
 <h2>${userLine}</h2>
-<h2>message:${message}</h2>
+<h3>${message}</h3>
 <%--<c:if test="${selectedGoods.size() > 0}">--%>
 	<%--<table border=1>--%>
 			<%--&lt;%&ndash;<div class="productsTable">&ndash;%&gt;--%>

@@ -1,6 +1,6 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.models.Product;
+import com.gmail.kramarenko104.model.Product;
 import java.util.List;
 
 public interface ProductDao {
@@ -13,5 +13,6 @@ public interface ProductDao {
 
     List<Product> getAllProducts();
     List<Product> getProductsByCategory(int category);
+    int size();
 
 }

@@ -1,5 +1,6 @@
-package com.gmail.kramarenko104.servlets;
+package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import org.apache.log4j.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,18 +14,25 @@ import java.io.IOException;
 public class RegistrationServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(RegistrationServlet.class);
+    private DaoFactory daoFactory;
 
     public RegistrationServlet() {
+        daoFactory = DaoFactory.getSpecificDao();
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/views/registration.jsp");
+        RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/view/registration.jsp");
         rd.forward(req, resp);
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
+    }
+
+    @Override
+    public void destroy() {
+        daoFactory.closeConnection();
     }
 
 }

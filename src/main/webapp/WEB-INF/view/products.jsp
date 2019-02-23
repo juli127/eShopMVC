@@ -1,10 +1,15 @@
 <%@ include file="includes/header.jsp" %>
 <%@ page contentType="text/html; charset=UTF-8" %>
 
-<c:if test="${products.size() > 0}">
+<%--<br>products.jsp: user: ${sessionScope.user}--%>
+<%--<br>products.jsp: userName: ${sessionScope.userName}--%>
+<%--<br>products.jsp: selectedCateg: ${sessionScope.selectedCateg}--%>
+
+
+<c:if test="${sessionScope.products.size() > 0}">
     <table border=1>
-        <c:forEach var="product" items="${products}">
-            <%--<div class="productsTable">--%>
+        <c:forEach var="product" items="${sessionScope.products}">
+            <%--<div class="product">--%>
                 <td>
                     <table border=0>
                         <td><img src="resources/images/${product.image}" alt="" width="200" height="280"></td>

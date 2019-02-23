@@ -1,6 +1,9 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.models.Product;
+import com.gmail.kramarenko104.factoryDao.MySqlDaoFactory;
+import com.gmail.kramarenko104.model.Product;
+import org.apache.log4j.Logger;
+
 import java.io.FileInputStream;
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,11 +17,12 @@ public class ProductDaoMySqlImpl implements ProductDao {
    private String description;
    private File image;
 */
+    private static Logger logger = Logger.getLogger(ProductDaoMySqlImpl.class);
     private final static String GET_ALL_PRODUCTS = "SELECT * FROM products;";
     private final static String GET_PRODUCT_BY_ID = "SELECT * FROM products WHERE id = ?;";
     private final static String GET_PRODUCTS_BY_CATEGORY = "SELECT * FROM products WHERE category = ?;";
-
     private Connection conn;
+    private List<Product> allProductsList = new ArrayList<>();
 
     public ProductDaoMySqlImpl(Connection conn) {
         this.conn = conn;
@@ -43,6 +47,15 @@ public class ProductDaoMySqlImpl implements ProductDao {
         return product;
     }
 
+    private void fillProduct(ResultSet rs, Product product) throws SQLException {
+        product.setId(rs.getInt("id"));
+        product.setName(rs.getString("name"));
+        product.setPrice(rs.getInt("price"));
+        product.setDescription(rs.getString("description"));
+        product.setCategory(rs.getInt("category"));
+        product.setImage(rs.getString("image"));
+    }
+
     @Override
     public Product editProduct(int id, Product user) {
         return null;
@@ -55,33 +68,25 @@ public class ProductDaoMySqlImpl implements ProductDao {
 
     @Override
     public List<Product> getAllProducts() {
-        List<Product> allProductsList = new ArrayList<>();
+        logger.debug("ProductDao:getAllProducts: enter... " );
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(GET_ALL_PRODUCTS)) {
-            System.out.println("GET_ALL_PRODUCTS = " + GET_ALL_PRODUCTS);
-            System.out.println("has products? = " + rs.isBeforeFirst());
             while (rs.next()) {
                 Product product = new Product();
-                allProductsList.add(fillProduct(rs, product));
+                fillProduct(rs, product);
+                allProductsList.add(product);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        logger.debug("return = " + allProductsList);
         return allProductsList;
     }
 
-    private Product fillProduct(ResultSet rs, Product product) throws SQLException {
-        product.setId(rs.getInt("id"));
-        product.setName(rs.getString("name"));
-        product.setPrice(rs.getInt("price"));
-        product.setDescription(rs.getString("description"));
-        product.setCategory(rs.getInt("category"));
-        product.setImage(rs.getString("image"));
-        return product;
-    }
 
     @Override
     public List<Product> getProductsByCategory(int category) {
+        logger.debug("ProductDao:getProductsByCategory: enter... " );
         List<Product> productsList = new ArrayList<>();
         ResultSet rs = null;
         try (PreparedStatement ps = conn.prepareStatement(GET_PRODUCTS_BY_CATEGORY)) {
@@ -98,6 +103,11 @@ public class ProductDaoMySqlImpl implements ProductDao {
             closeResultSet(rs);
         }
         return productsList;
+    }
+
+    @Override
+    public int size() {
+        return allProductsList.size();
     }
 
     private void closeResultSet(ResultSet rs) {

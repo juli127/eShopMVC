@@ -1,4 +1,4 @@
-package com.gmail.kramarenko104.models;
+package com.gmail.kramarenko104.model;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.gmail.kramarenko104.servlets;
+package com.gmail.kramarenko104.controller;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

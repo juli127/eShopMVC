@@ -19,7 +19,7 @@
    VALUES('mash198@ukr.net','1111111', 'Maria', 'Odessa', 'dont call');
 
    INSERT INTO users (login, password, name, address, comment)
-   VALUES('alex@ukr.net','admin', 'Alexander', 'Odessa', 'dont call');
+   VALUES('admin','admin', 'Alexander', 'Odessa', 'dont call');
 
 -----------------------------------------------------------
 DROP TABLE categories;
@@ -82,8 +82,5 @@ FOREIGN KEY (category) REFERENCES categories(id));
  FOREIGN KEY (userId) REFERENCES users(id),
  FOREIGN KEY (productId) REFERENCES products(id));
 
- private int userId;
-     private int productId;
-     private int quantity;
 
-INSERT INTO carts (userId, productId, quantity) VALUES(5, 3, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(2, 3, 1);

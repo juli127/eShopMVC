@@ -1,12 +1,11 @@
-package com.gmail.kramarenko104.servlets;
+package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.dao.CartDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
-import com.gmail.kramarenko104.models.Cart;
-import com.gmail.kramarenko104.models.User;
+import com.gmail.kramarenko104.model.Cart;
+import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -37,8 +36,8 @@ public class CartServlet extends HttpServlet {
 
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
-            session.setAttribute("message", "<a href='login'>Войдите в систему</a>, чтобы простмотреть свою корзину. <br> " +
-                    "Или <a href='registration'>Зарегистрируйтесь</a>, если Вы этого еще не сделали");
+            session.setAttribute("message", "<a href='login'>Войдите в систему</a>, чтобы просмотреть свою корзину. <br> " +
+                    "Или <a href='registration'>зарегистрируйтесь</a>");
 
         } else {
             if (session.getAttribute("cart") == null) {
@@ -51,7 +50,7 @@ public class CartServlet extends HttpServlet {
                 daoFactory.closeConnection();
             }
         }
-        req.getRequestDispatcher("WEB-INF/views/cart.jsp").forward(req, resp);
+        req.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(req, resp);
 //        resp.sendRedirect(req.getContextPath() + "/cart");
 
 //        Product product = new Product();
@@ -64,4 +63,8 @@ public class CartServlet extends HttpServlet {
         doGet(request, response);
     }
 
+    @Override
+    public void destroy() {
+        daoFactory.closeConnection();
+    }
 }
