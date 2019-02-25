@@ -56,7 +56,9 @@ public class LoginServlet extends HttpServlet {
                 logger.debug("LoginServlet: user already logged in: " + currentUser);
                 session.setAttribute("userName", currentUser.getName());
                 showLoginForm = false;
-                viewToGo = "./cart";
+                if (Integer.valueOf(session.getAttribute("cartSize").toString()) > 0) {
+                    viewToGo = "./cart";
+                }
             } // not logged in yet
             else {
                 logger.debug("LoginServlet: nobody not logged in yet");
@@ -81,7 +83,9 @@ public class LoginServlet extends HttpServlet {
                             session.setAttribute("user", userDB);
                             session.setAttribute("userName", userDB.getName());
                             logger.debug("LoginServlet: user.getName() = " + userDB.getName());
-                            viewToGo = "./cart";
+                            if (Integer.valueOf(session.getAttribute("cartSize").toString()) > 0) {
+                                viewToGo = "./cart";
+                            }
                         }
                         else {
                             attempt++;
