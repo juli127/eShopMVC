@@ -69,6 +69,7 @@ public class ProductDaoMySqlImpl implements ProductDao {
     @Override
     public List<Product> getAllProducts() {
         logger.debug("ProductDao:getAllProducts: enter... " );
+        Thread.dumpStack();
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(GET_ALL_PRODUCTS)) {
             while (rs.next()) {

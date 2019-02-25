@@ -1,12 +1,12 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-</p>
-</div>
-</div>
-		
+</div><%--for id="content" --%>
+</div><%--for id="page" --%>
+<%--</p>--%>
+<br><br>
 <div id="footer" class="footer">
 	<p>Copyright (c) by Kramarenko Iuliia</p>
 </div>
-</div>
-<!-- end #footer -->
+
+</div> <%--for id="wrapper"--%>
 </body>
 </html>

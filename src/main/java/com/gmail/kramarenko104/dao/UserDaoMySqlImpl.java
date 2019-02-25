@@ -99,7 +99,7 @@ public class UserDaoMySqlImpl implements UserDao {
         } finally {
             closeResultSet(rs);
         }
-        logger.debug(">>>UserDao.userExists: user is correct = " + exist);
+        logger.debug(">>>UserDao.userExists: got user by login = " + user);
         return user;
     }
 

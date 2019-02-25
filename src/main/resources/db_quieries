@@ -83,4 +83,6 @@ FOREIGN KEY (category) REFERENCES categories(id));
  FOREIGN KEY (productId) REFERENCES products(id));
 
 
-INSERT INTO carts (userId, productId, quantity) VALUES(2, 3, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(4, 2, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(4, 1, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(4, 3, 2);

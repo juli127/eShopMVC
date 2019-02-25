@@ -14,7 +14,7 @@
             <table border=0>
                 <tr>
                     <td>Введите e-mail в качестве логина</td>
-                    <td><input type='text' required name='login' value='<%=""%>'/>
+                    <td><input type='text' required name='login' value='<%=""%>' autofocus/>
                     </td>
                 </tr>
                 <br>

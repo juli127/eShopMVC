@@ -6,13 +6,13 @@ import java.util.Map;
 
 public interface CartDao {
 
-    Cart createCart(int userId);
-    Cart getCart(int userId);
+    void createCart(int userId);
+    Map<Product, Integer> getProductsInCart(int userId);
     void addProduct(int userId, int productId, int quantity);
     void removeProduct(int userId, int productId, int quantity);
     void deleteCart(int userId);
 
     int getSize();
-    Map<Product, Integer> getProductsMap();
+//    int getTotalSum();
 
 }

@@ -30,13 +30,13 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         StringBuilder msgText = new StringBuilder();
         boolean showLoginForm = true;
         String viewToGo = "WEB-INF/view/login.jsp";
-        HttpSession session = request.getSession();
-        String log = request.getParameter("login");
-        String pass = request.getParameter("password");
+        HttpSession session = req.getSession();
+        String log = req.getParameter("login");
+        String pass = req.getParameter("password");
         logger.debug("LoginServlet: session==null ? " + (session == null));
         logger.debug("LoginServlet: user entered on LOGIN form log = " + log);
         logger.debug("LoginServlet: user entered on LOGIN form pass = " + pass);
@@ -56,7 +56,7 @@ public class LoginServlet extends HttpServlet {
                 logger.debug("LoginServlet: user already logged in: " + currentUser);
                 session.setAttribute("userName", currentUser.getName());
                 showLoginForm = false;
-                viewToGo = "WEB-INF/view/products.jsp";
+                viewToGo = "./cart";
             } // not logged in yet
             else {
                 logger.debug("LoginServlet: nobody not logged in yet");
@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
                         String passVerif = UserDaoMySqlImpl.hashString(pass);
                         accessGranted = (userDB.getPassword().equals(passVerif));
                         logger.debug("LoginServlet: accessGranted = " + accessGranted);
-                        showLoginForm = ((attempt == 0) || (!accessGranted && attempt < LOGIN_ATTEMPT_QUANTITY));
+                        showLoginForm = !accessGranted && attempt < LOGIN_ATTEMPT_QUANTITY;
                         logger.debug("LoginServlet: showLoginForm = " + showLoginForm);
                         if (accessGranted) {
                             attempt = 0;
@@ -81,10 +81,7 @@ public class LoginServlet extends HttpServlet {
                             session.setAttribute("user", userDB);
                             session.setAttribute("userName", userDB.getName());
                             logger.debug("LoginServlet: user.getName() = " + userDB.getName());
-                            viewToGo = "WEB-INF/view/products.jsp";
-//                            getServletContext().setAttribute("session", session);
-//                            getServletContext().setAttribute("user", user);
-//                            getServletContext().setAttribute("userName", user.getName());
+                            viewToGo = "./cart";
                         }
                         else {
                             attempt++;
@@ -121,17 +118,23 @@ public class LoginServlet extends HttpServlet {
 
         }
         msgText.append("</center>");
-        logger.debug("LoginServlet: viewToGo = " + viewToGo);
+        logger.debug("LoginServlet: FORWARD to view = " + viewToGo);
         session.setAttribute("showLoginForm", showLoginForm);
         session.setAttribute("message", msgText.toString());
         session.setAttribute("attempt", attempt);
-        RequestDispatcher rd = request.getRequestDispatcher(viewToGo);
-        rd.forward(request, response);
+
+        if (viewToGo.equals("./cart")){
+            resp.sendRedirect(viewToGo);
+        }
+        if (viewToGo.equals("WEB-INF/view/login.jsp")){
+            RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
+            rd.forward(req, resp);
+        }
 
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 
     @Override

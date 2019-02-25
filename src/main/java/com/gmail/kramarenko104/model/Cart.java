@@ -2,10 +2,18 @@ package com.gmail.kramarenko104.model;
 
 public class Cart {
 
+    private int id;
     private int userId;
     private int productId;
     private int quantity;
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getUserId() {
         return userId;
     }
@@ -28,5 +36,14 @@ public class Cart {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "Cart{" +
+                "userId=" + userId +
+                ", productId=" + productId +
+                ", quantity=" + quantity +
+                '}';
     }
 }

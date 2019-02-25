@@ -2,15 +2,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
 <c:set var="username" value="${sessionScope.userName}"/>
-
-<c:choose>
-    <c:when test="${sessionScope.cart != null}">
-        <c:set var="cartsize" value="${sessionScope.cart.size}"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="cartsize" value="0"/>
-    </c:otherwise>
-</c:choose>
 <br><br>
 <%--<br>jsp: attempt: ${attempt}--%>
 <%--<br>header: user: ${user}--%>
@@ -32,12 +23,12 @@
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <link href="resources/css/style.css" rel="stylesheet" type="text/css" media="screen"/>
+    <link href="static/css/style.css" rel="stylesheet" type="text/css" media="screen"/>
 </head>
-<body>
 
-<div class="wrapper">
-    <div id="header" class="container">
+<body>
+<div id="wrapper">
+    <div id="header">
         <table>
             <tr>
                 <td>
@@ -66,25 +57,25 @@
         </table>
     </div>
 
-    <div id="autontif" class="autontif">
-        ${greeting} в Вашей корзине ${cartsize} товаров
+    <div id="autoriz">
+        ${greeting} в Вашей корзине товаров: ${sessionScope.cartSize}</>
     </div>
 
-    <p>
-    <div class="page">
+    <%--<p>--%>
+    <div class="page" id="page">
         <div id="sidebar">
             <table>
-                <tr>ОДЕЖДА<a href="products?selectedCategory=1"><img src="resources/images/evening_dresses_small.jpg"
+                <tr>ОДЕЖДА<a href="products?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
                                                                      alt="" width="120" height="120"
                                                                      title="Одежда"/></a></tr>
-                <tr>ОБУВЬ<a href="products?selectedCategory=2"><img src="resources/images/evening_shoes_small.jpg"
+                <tr>ОБУВЬ<a href="products?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
                                                                     alt="" width="120" height="120" title="Обувь"/></a>
                 </tr>
-                <tr>АКСЕССУАРЫ<a href="products?selectedCategory=3"><img src="resources/images/aksess1.jpg" alt=""
+                <tr>АКСЕССУАРЫ<a href="products?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
                                                                          width="120" height="120"
                                                                          title="Аксессуары"/></a></tr>
-
             </table>
         </div>
         <!-- end #header -->
+
         <div id="content">
