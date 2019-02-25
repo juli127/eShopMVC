@@ -48,8 +48,8 @@ public class CartServlet extends HttpServlet {
 //                }
 //            }
 
-            if (session.getAttribute("addPurchaseId") != null) {
-                String[] selectedProduct = (session.getAttribute("addPurchaseId")).toString().split("&");
+            if (session.getAttribute("addPurchase") != null) {
+                String[] selectedProduct = (session.getAttribute("addPurchaseId")).toString().split(":");
 
                 for (String s : selectedProduct) {
                     int selectedProductId =  Integer.valueOf(selectedProduct[0]);
@@ -59,8 +59,8 @@ public class CartServlet extends HttpServlet {
                 }
             }
 
-            if (session.getAttribute("removePurchaseId") != null) {
-                String[] selectedProduct = (session.getAttribute("removePurchaseId")).toString().split("&");
+            if (session.getAttribute("removePurchase") != null) {
+                String[] selectedProduct = (session.getAttribute("removePurchaseId")).toString().split(":");
                 for (String s : selectedProduct) {
                     cartDao.removeProduct(currentUser.getId(), Integer.valueOf(selectedProduct[0]), Integer.valueOf(selectedProduct[1]));
                 }
@@ -82,8 +82,8 @@ public class CartServlet extends HttpServlet {
 
             logger.debug("CartServlet: cartDao.getSize(): " + cartDao.getSize());
             session.setAttribute("cartSize", cartDao.getSize());
-//            logger.debug("CartServlet: cartDao.getTotalSum(): " + cartDao.getTotalSum());
-//            session.setAttribute("totalSum", cartDao.getTotalSum());
+            logger.debug("CartServlet: cartDao.getTotalSum(): " + cartDao.getTotalSum());
+            session.setAttribute("totalSum", cartDao.getTotalSum());
         }
 
         req.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(req, resp);

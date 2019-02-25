@@ -174,7 +174,7 @@ a {
 }
 
 .productDescription{
-    width: 210px;
+    /*width: 210px;*/
 	padding: 0px 0px 2px 5px;
 }
 
@@ -185,11 +185,11 @@ a {
 	font-weight: bold;
 	text-align: center;
 	color:  #f59506;
-	width: 230px;
+	/*width: 230px;*/
 }
 
 .productName {
-    width: 230px;
+    /*width: 230px;*/
 	height: 40px;
 	font-size: 14px;
     text-align: center;
@@ -198,8 +198,14 @@ a {
 
 #cart{
 	text-align: center;
+	font-size: 10px;
+	margin: 0 0 0 20px;
 }
 
 #info{
+	color:  #f59506;
+}
+
+#title{
 	color:  #f59506;
 }

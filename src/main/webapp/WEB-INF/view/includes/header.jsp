@@ -58,7 +58,7 @@
     </div>
 
     <div id="autoriz">
-        ${greeting} в Вашей корзине товаров: ${sessionScope.cartSize}</>
+        ${greeting} в Вашей корзине товаров: ${sessionScope.cartSize==null?0:sessionScope.cartSize}</>
     </div>
 
     <%--<p>--%>

@@ -21,7 +21,7 @@ public class CartDaoMySqlImpl implements CartDao {
     private static Logger logger = Logger.getLogger(CartDaoMySqlImpl.class);
     private Connection conn;
     private int cartSize;
-//    private int totalSum = 0;
+    private int totalSum = 0;
 
     public CartDaoMySqlImpl(Connection conn) {
         this.conn = conn;
@@ -148,10 +148,10 @@ public class CartDaoMySqlImpl implements CartDao {
         return cartSize;
     }
 
-//    @Override
-//    public int getTotalSum() {
-//        return totalSum;
-//    }
+    @Override
+    public int getTotalSum() {
+        return totalSum;
+    }
 
     @Override
     public Map<Product, Integer> getProductsInCart(int userId) {
@@ -174,14 +174,14 @@ public class CartDaoMySqlImpl implements CartDao {
                 productsMap.put(product, rs.getInt("quantity"));
                 logger.debug("CartDao.getProductsInCart: GOT " + product + ", quantity: " + quantity);
                 size += quantity;
-//                totalSum += quantity * rs.getInt("price");
+                totalSum += quantity * rs.getInt("price");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         cartSize = size;
         logger.debug("CartDao.getProductsInCart: SUMMARY quantity " + size);
-//        logger.debug("CartDao.getProductsInCart: totalSum " + totalSum);
+        logger.debug("CartDao.getProductsInCart: totalSum " + totalSum);
         return productsMap;
     }
 

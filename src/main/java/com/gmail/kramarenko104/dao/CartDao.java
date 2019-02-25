@@ -13,6 +13,6 @@ public interface CartDao {
     void deleteCart(int userId);
 
     int getSize();
-//    int getTotalSum();
+    int getTotalSum();
 
 }
