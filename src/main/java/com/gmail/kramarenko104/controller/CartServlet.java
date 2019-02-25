@@ -84,6 +84,7 @@ public class CartServlet extends HttpServlet {
             session.setAttribute("cartSize", cartDao.getSize());
             logger.debug("CartServlet: cartDao.getTotalSum(): " + cartDao.getTotalSum());
             session.setAttribute("totalSum", cartDao.getTotalSum());
+            session.setAttribute("productsIds", productsInCart.keySet().toArray());
         }
 
         req.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(req, resp);

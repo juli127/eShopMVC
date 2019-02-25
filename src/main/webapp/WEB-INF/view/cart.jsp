@@ -7,32 +7,47 @@
     <c:set var="userLine" value="${username}, Вы выбрали следующие товары:"/>
 </c:if>
 <c:set var="productsInCart" value="${sessionScope.productsInCart}"/>
+<c:set var="productsIdsCart" value="${sessionScope.productsInCart.keySet}"/>
 <br><br>
-<h3><div id="info">${userLine}</div> </h3>
+<h3>
+    <div id="info">${userLine}</div>
+</h3>
 <c:set var="totalSum" value="${sessionScope.totalSum}"/>
+<c:set var="productsIds" value="${sessionScope.productsIds}"/>
 
 
 <br>
 <h3>${message}</h3>
 
-<script>var sum =0;</script>
+<script>var sum = 0;</script>
 <c:if test="${sessionScope.cartSize > 0}">
-        <table id="cart" border=1>
-            <tr id="title"><td>Наименование товара</td><td>цена</td><td>Количество</td>
+    <table id="cart" border=1>
+        <tr><span id="tableTitle">
+            <td>Наименование товара</td>
+            <td>цена</td>
+            <td>Количество</td></span></tr>
             <c:forEach var="purchase" items="${productsInCart}">
-                <tr>
-                    <td><div id="productName"><c:out value="${purchase.key.name}"/></div></td>
-                    <td><div id='price${purchase.key.id}'><c:out value="${purchase.key.price}"/> грн.</div></td>
-                    <td><button onclick="minus('${purchase.key.id}')">-</button>
-                        <span id='q${purchase.key.id}'>${purchase.value}</span>
-                        <button onclick="plus('${purchase.key.id}')">+</button>
-                    </td>
-                </tr>
-            </c:forEach>
-        </table>
-        <h3>Общая сумма заказа: <span id="sum">${totalSum==null?0:totalSum}</span> грн.</h3>
-        <br><button onclick="sum()"><font size ="2" style="shape-rendering: crispEdges">Пересчитать</font></button>
-        <br><button onclick="makeOrder('${userId}')"><font size ="2" style="shape-rendering: crispEdges">Оформить заказ</font></button>
+        <tr>
+            <td>
+                <div id="productName"><c:out value="${purchase.key.name}"/></div>
+            </td>
+            <td>
+                <div id='price${purchase.key.id}'><c:out value="${purchase.key.price}"/> грн.</div>
+            </td>
+            <td>
+                <button onclick="minus('${purchase.key.id}')">-</button>
+                <span id='q${purchase.key.id}'>${purchase.value}</span>
+                <button onclick="plus('${purchase.key.id}')">+</button>
+            </td>
+        </tr>
+        </c:forEach>
+    </table>
+    <h3>Общая сумма заказа: <span id="sum">${totalSum==null?0:totalSum}</span> грн.</h3>
+    <br>
+    <button onclick="sum()"><font size="2" style="shape-rendering: crispEdges">Пересчитать</font></button>
+    <br>
+    <button onclick="makeOrder('${userId}')"><font size="2" style="shape-rendering: crispEdges">Оформить заказ</font>
+    </button>
 
 </c:if>
 
@@ -43,14 +58,21 @@
 
 <script>
     <%--(${purchase.key.price}) * (document.getElementById('q'+ ${purchase.key.id}).innerHTML);--%>
+
     function sum() {
-       //* ???? как перебрать все строки в таблице???? for ( ){  */
-            var quantity = document.getElementById('q${purchase.key.id}').innerHTML;
-            var price = document.getElementById('price${purchase.key.id}').innerHTML;
-            var total = quantity * price;
-            console.log("quantity:" +quantity + ", price:" + price + ", total: " + total);
-            document.getElementById('sum').innerHTML = total;
-     //   }
+        //* ???? как перебрать все строки в таблице????   */
+        var total = 0;
+        alert("enter sum() with" + productsIds.toString());
+        for (i=0; i< productsIds.size(); i++) {
+            alert('prod:' + prod);
+            var quantity = document.getElementById('q${productsIds[i]}').innerHTML;
+            var price = document.getElementById('price${productsIds[i]}').innerHTML;
+            var total = total + quantity * price;
+            alert('quantity:' + quantity, ", price:" + price + ", total: " + total);
+        }
+        console.log("total: " + total);
+        alert("finally: total: " + total);
+        document.getElementById('sum').innerHTML = total;
     }
 
     function plus(purchaseId) {
@@ -62,7 +84,7 @@
             type: "POST",
             url: "./cart",
             data: "addPurchase=" + purchaseId + ":" + qnt,
-            success : function(response) {
+            success: function (response) {
                 alert('2 Товар добавлен');
             }
         });
@@ -73,10 +95,10 @@
         if (elem.innerHTML > 0) {
             elem.innerHTML = +elem.innerHTML - 1;
             $.ajax({
-                type : "POST",
-                url : "./cart",
-                data : "removePurchase=" + (purchaseId + ":" + qnt),
-                success : function(response) {
+                type: "POST",
+                url: "./cart",
+                data: "removePurchase=" + (purchaseId + ":" + qnt),
+                success: function (response) {
                     alert('Товар удален');
                 }
             });
@@ -86,10 +108,10 @@
     function makeOrder(userId) {
         var qnt = document.getElementById('q' + userId).innerHTML;
         $.ajax({
-            type : "POST",
-            url : "./order",
-            data : "orderUserID=" + (myId),
-            success : function(response) {
+            type: "POST",
+            url: "./order",
+            data: "orderUserID=" + (myId),
+            success: function (response) {
                 alert('Заказ оформлен');
             }
         });
