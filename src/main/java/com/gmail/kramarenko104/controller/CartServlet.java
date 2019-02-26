@@ -2,7 +2,6 @@ package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.dao.CartDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
-import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 @WebServlet(name = "CartServlet", urlPatterns = {"/cart"})
@@ -30,7 +30,6 @@ public class CartServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         HttpSession session = req.getSession();
-        CartDao cartDao = daoFactory.getCartDao();
         User currentUser = (User) session.getAttribute("user");
         if (currentUser == null) {
             session.setAttribute("message", "<a href='login'>Войдите в систему</a>, чтобы просмотреть свою корзину. <br> " +
@@ -38,6 +37,7 @@ public class CartServlet extends HttpServlet {
 
         }
         else {
+            CartDao cartDao = daoFactory.getCartDao();
             int userId = currentUser.getId();
             session.setAttribute("userId", userId);
             logger.debug("CartServlet: Current user: " + currentUser.getName());
@@ -50,7 +50,7 @@ public class CartServlet extends HttpServlet {
 
             if (session.getAttribute("addPurchase") != null) {
                 String[] selectedProduct = (session.getAttribute("addPurchaseId")).toString().split(":");
-
+                logger.debug("CartServlet: got from form " + Arrays.asList(selectedProduct));
                 for (String s : selectedProduct) {
                     int selectedProductId =  Integer.valueOf(selectedProduct[0]);
                     int newQuantity =  Integer.valueOf(selectedProduct[1]);
@@ -72,18 +72,32 @@ public class CartServlet extends HttpServlet {
 
             logger.debug("CartServlet: call  cartDao.getProductsInCart(userId=" + userId +")");
             Map<Product, Integer> productsInCart = cartDao.getProductsInCart(userId);
+            session.setAttribute("productsInCart", productsInCart);
             logger.debug("CartServlet: Products in the cart are: ");
             for (Map.Entry<Product, Integer> entry : productsInCart.entrySet()) {
                 Product product = entry.getKey();
                 int quantity = entry.getValue();
                 logger.debug(product + " : " + quantity);
             }
-            session.setAttribute("productsInCart", productsInCart);
 
-            logger.debug("CartServlet: cartDao.getSize(): " + cartDao.getSize());
-            session.setAttribute("cartSize", cartDao.getSize());
-            logger.debug("CartServlet: cartDao.getTotalSum(): " + cartDao.getTotalSum());
-            session.setAttribute("totalSum", cartDao.getTotalSum());
+            int cartSize = 0;
+            if (session.getAttribute("cartSize") == null){
+                cartSize = cartDao.getCartSize(currentUser.getId());
+                session.setAttribute("cartSize", cartSize);
+            } else {
+                cartSize = Integer.valueOf(session.getAttribute("cartSize").toString());
+            }
+            logger.debug("CartServlet: cartDao.getCartSize(): " + cartSize);
+
+            int totalSum = 0;
+            if (session.getAttribute("totalSum") == null){
+                totalSum = cartDao.getTotalSum(currentUser.getId());
+                session.setAttribute("totalSum", totalSum);
+            } else {
+                totalSum = Integer.valueOf(session.getAttribute("totalSum").toString());
+            }
+            logger.debug("CartServlet: totalSum: " + totalSum);
+
             session.setAttribute("productsIds", productsInCart.keySet().toArray());
         }
 

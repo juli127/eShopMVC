@@ -12,7 +12,7 @@ public interface CartDao {
     void removeProduct(int userId, int productId, int quantity);
     void deleteCart(int userId);
 
-    int getSize();
-    int getTotalSum();
+    int getCartSize(int userId);
+    int getTotalSum(int userId);
 
 }

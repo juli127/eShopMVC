@@ -1,5 +1,6 @@
 package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.dao.CartDao;
 import com.gmail.kramarenko104.dao.UserDao;
 import com.gmail.kramarenko104.dao.UserDaoMySqlImpl;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
@@ -25,7 +26,7 @@ public class LoginServlet extends HttpServlet {
     private int LOGIN_ATTEMPT_QUANTITY = 3;
     private int WAIT_SECONDS = 15;
 
-    public LoginServlet() {
+    public LoginServlet() throws ServletException, IOException {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
@@ -33,6 +34,8 @@ public class LoginServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         StringBuilder msgText = new StringBuilder();
         boolean showLoginForm = true;
+        int cartSize = 0;
+        CartDao cartDao = daoFactory.getCartDao();
         String viewToGo = "WEB-INF/view/login.jsp";
         HttpSession session = req.getSession();
         String log = req.getParameter("login");
@@ -45,18 +48,25 @@ public class LoginServlet extends HttpServlet {
         if (session != null) {
             logger.debug("LoginServlet: session != null");
             session.setAttribute("session", session);
-            Object attemptFromSession = session.getAttribute("attempt");
-            attempt = (attemptFromSession == null) ? 0 : (int) attemptFromSession;
+            attempt = (session.getAttribute("attempt") == null) ? 0 : (int) session.getAttribute("attempt");
+
             // already logged in
             User currentUser = (User) session.getAttribute("user");
             // be sure that username is correct
             logger.debug("LoginServlet: currentUser: " + (currentUser == null ? "" : currentUser));
 
             if (currentUser != null) {
+                if (session.getAttribute("cartSize") == null){
+                    cartSize = cartDao.getCartSize(currentUser.getId());
+                    session.setAttribute("cartSize", cartSize);
+                } else {
+                    cartSize = Integer.valueOf(session.getAttribute("cartSize").toString());
+                }
+
                 logger.debug("LoginServlet: user already logged in: " + currentUser);
                 session.setAttribute("userName", currentUser.getName());
                 showLoginForm = false;
-                if (Integer.valueOf(session.getAttribute("cartSize").toString()) > 0) {
+                if (cartSize > 0) {
                     viewToGo = "./cart";
                 }
             } // not logged in yet
@@ -68,22 +78,30 @@ public class LoginServlet extends HttpServlet {
                 if (log != null) {
                     logger.debug("LoginServlet: log != null");
                     UserDao userDao = daoFactory.getUserDao();
-                    User userDB = userDao.getUserByLogin(log);
-                    boolean exist = (userDB != null);
+                    currentUser = userDao.getUserByLogin(log);
+                    boolean exist = (currentUser != null);
                     logger.debug("LoginServlet: user is present in DB = " + exist);
+
                     if (exist) {
                         String passVerif = UserDaoMySqlImpl.hashString(pass);
-                        accessGranted = (userDB.getPassword().equals(passVerif));
+                        accessGranted = (currentUser.getPassword().equals(passVerif));
                         logger.debug("LoginServlet: accessGranted = " + accessGranted);
                         showLoginForm = !accessGranted && attempt < LOGIN_ATTEMPT_QUANTITY;
                         logger.debug("LoginServlet: showLoginForm = " + showLoginForm);
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
-                            session.setAttribute("user", userDB);
-                            session.setAttribute("userName", userDB.getName());
-                            logger.debug("LoginServlet: user.getName() = " + userDB.getName());
-                            if (Integer.valueOf(session.getAttribute("cartSize").toString()) > 0) {
+                            session.setAttribute("user", currentUser);
+                            session.setAttribute("userName", currentUser.getName());
+                            logger.debug("LoginServlet: user.getName() = " + currentUser.getName());
+
+                            if (session.getAttribute("cartSize") == null){
+                                cartSize = cartDao.getCartSize(currentUser.getId());
+                                session.setAttribute("cartSize", cartSize);
+                            } else {
+                                cartSize = Integer.valueOf(session.getAttribute("cartSize").toString());
+                            }
+                            if (cartSize > 0) {
                                 viewToGo = "./cart";
                             }
                         }
@@ -130,7 +148,7 @@ public class LoginServlet extends HttpServlet {
         if (viewToGo.equals("./cart")){
             resp.sendRedirect(viewToGo);
         }
-        if (viewToGo.equals("WEB-INF/view/login.jsp")){
+        else {
             RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
             rd.forward(req, resp);
         }

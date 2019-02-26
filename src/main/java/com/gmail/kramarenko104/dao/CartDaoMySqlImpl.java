@@ -21,7 +21,6 @@ public class CartDaoMySqlImpl implements CartDao {
     private static Logger logger = Logger.getLogger(CartDaoMySqlImpl.class);
     private Connection conn;
     private int cartSize;
-    private int totalSum = 0;
 
     public CartDaoMySqlImpl(Connection conn) {
         this.conn = conn;
@@ -144,20 +143,41 @@ public class CartDaoMySqlImpl implements CartDao {
     }
 
     @Override
-    public int getSize() {
+    public int getCartSize(int userId) {
+        int size = 0;
+        try (PreparedStatement pst = conn.prepareStatement(GET_ALL_FROM_CART)) {
+            pst.setInt(1, userId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                size += rs.getInt("quantity");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        cartSize = size;
         return cartSize;
     }
 
     @Override
-    public int getTotalSum() {
+    public int getTotalSum(int userId) {
+        Map<Product, Integer> productsMap = new HashMap<>();
+        int totalSum = 0;
+        try (PreparedStatement pst = conn.prepareStatement(GET_ALL_FROM_CART)) {
+            pst.setInt(1, userId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                totalSum += rs.getInt("quantity") * rs.getInt("price");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        logger.debug("CartDao.getProductsInCart: totalSum " + totalSum);
         return totalSum;
     }
 
     @Override
     public Map<Product, Integer> getProductsInCart(int userId) {
         Map<Product, Integer> productsMap = new HashMap<>();
-        int size = 0;
-        int quantity = 0;
         logger.debug("CartDao.getProductsInCart: " + GET_ALL_FROM_CART + userId);
         try (PreparedStatement pst = conn.prepareStatement(GET_ALL_FROM_CART)) {
             pst.setInt(1, userId);
@@ -170,18 +190,12 @@ public class CartDaoMySqlImpl implements CartDao {
                 product.setDescription(rs.getString("description"));
                 product.setPrice(rs.getInt("price"));
                 product.setImage(rs.getString("image"));
-                quantity = rs.getInt("quantity");
+                rs.getInt("quantity");
                 productsMap.put(product, rs.getInt("quantity"));
-                logger.debug("CartDao.getProductsInCart: GOT " + product + ", quantity: " + quantity);
-                size += quantity;
-                totalSum += quantity * rs.getInt("price");
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        cartSize = size;
-        logger.debug("CartDao.getProductsInCart: SUMMARY quantity " + size);
-        logger.debug("CartDao.getProductsInCart: totalSum " + totalSum);
         return productsMap;
     }
 

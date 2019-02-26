@@ -45,30 +45,30 @@ public class RunApp {
 //        products.forEach(e -> System.out.println(e));
 //        daoFactory.closeConnection();
 
-        UserDao userDao = daoFactory.getUserDao();
-        User user = new User();
-        user.setLogin("admin");
-        user.setPassword("admin");
-        user.setName("Alexander");
-        user.setAddress("Odessa");
-        user.setComment("admin");
-        userDao.createUser(user);
-
-        user = new User();
-        user.setLogin("lex@gmail.com");
-        user.setPassword("A2345678");
-        user.setName("Alex");
-        user.setAddress("Kiev");
-        user.setComment("call before delivery");
-        userDao.createUser(user);
-
-        user = new User();
-        user.setLogin("mash198@ukr.net");
-        user.setPassword("1111111");
-        user.setName("Maria");
-        user.setAddress("Lviv");
-        user.setComment("d'ont call");
-        userDao.createUser(user);
+//        UserDao userDao = daoFactory.getUserDao();
+//        User user = new User();
+//        user.setLogin("admin");
+//        user.setPassword("admin");
+//        user.setName("Alexander");
+//        user.setAddress("Odessa");
+//        user.setComment("admin");
+//        userDao.createUser(user);
+//
+//        user = new User();
+//        user.setLogin("lex@gmail.com");
+//        user.setPassword("A2345678");
+//        user.setName("Alex");
+//        user.setAddress("Kiev");
+//        user.setComment("call before delivery");
+//        userDao.createUser(user);
+//
+//        user = new User();
+//        user.setLogin("mash198@ukr.net");
+//        user.setPassword("1111111");
+//        user.setName("Maria");
+//        user.setAddress("Lviv");
+//        user.setComment("d'ont call");
+//        userDao.createUser(user);
 
 
 //        ProductDao productDao = daoFactory.getProductDao();

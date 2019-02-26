@@ -15,13 +15,12 @@
 <c:set var="totalSum" value="${sessionScope.totalSum}"/>
 <c:set var="productsIds" value="${sessionScope.productsIds}"/>
 
-
 <br>
 <h3>${message}</h3>
 
-<script>var sum = 0;</script>
 <c:if test="${sessionScope.cartSize > 0}">
-    <table id="cart" border=1>
+    <div id="cart" >
+    <table border=1>
         <tr><span id="tableTitle">
             <td>Наименование товара</td>
             <td>цена</td>
@@ -42,10 +41,12 @@
         </tr>
         </c:forEach>
     </table>
-    <h3>Общая сумма заказа: <span id="sum">${totalSum==null?0:totalSum}</span> грн.</h3>
+    </div>
+
+    <h2>Общая сумма заказа: <span id="sum">${totalSum==null?0:totalSum}</span> грн.</h2>
     <br>
     <button onclick="sum()"><font size="2" style="shape-rendering: crispEdges">Пересчитать</font></button>
-    <br>
+    <br><br>
     <button onclick="makeOrder('${userId}')"><font size="2" style="shape-rendering: crispEdges">Оформить заказ</font>
     </button>
 
