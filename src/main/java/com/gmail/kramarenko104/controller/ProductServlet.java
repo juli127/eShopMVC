@@ -2,6 +2,7 @@ package com.gmail.kramarenko104.controller;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -27,26 +28,28 @@ public class ProductServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ProductDao productDao = daoFactory.getProductDao();
-//        req.setAttribute("categories", productDao.getCategoriesList());
-        String selectedCateg = req.getParameter("selectedCategory");
-        List<Product> products;
         HttpSession session = req.getSession();
+        ProductDao productDao = daoFactory.getProductDao();
 
-        // when form is opened at the first time (selectedCateg == null)
+        String selectedCateg = req.getParameter("selectedCategory");
+        List<Product> allProducts;
+
+        // when form is opened at the first time, selectedCateg == null
         if (selectedCateg != null) {
-            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
+            allProducts = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
         } else {
-            products = productDao.getAllProducts();
+            allProducts = productDao.getAllProducts();
         }
 
         session.setAttribute("selectedCateg", selectedCateg);
-        session.setAttribute("products", products);
-        session.setAttribute("selectedCategIsNull", (selectedCateg==null));
+//        session.setAttribute("allProducts", allProducts);
+//        session.setAttribute("productsIds", allProducts.stream().map(product -> product.getId()).collect(Collectors.toList()));
+//        session.setAttribute("selectedCategIsNull", (selectedCateg==null));
 
-        getServletContext().setAttribute("products", products);
-
+//        getServletContext().setAttribute("products", products);
 //        products.forEach(e -> System.out.println(e));
+        daoFactory.deleteProductDao(productDao);
+
         RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/view/products.jsp");
         rd.forward(req, resp);
     }

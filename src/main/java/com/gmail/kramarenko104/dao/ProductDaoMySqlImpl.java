@@ -119,28 +119,28 @@ public class ProductDaoMySqlImpl implements ProductDao {
             }
         }
     }
-
-    public List<String> getCategoriesListS() {
-        List<String> allCategoriesList = new ArrayList<>();
-        try (Statement st = conn.createStatement();
-             ResultSet rs = st.executeQuery("SELECT name FROM categories;")) {
-            while (rs.next()) {
-                String category = rs.getString(1);
-                System.out.println("contr: " + category);
-                allCategoriesList.add(category);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return allCategoriesList;
-    }
+//
+//    public List<String> getCategoriesListS() {
+//        List<String> allCategoriesList = new ArrayList<>();
+//        try (Statement st = conn.createStatement();
+//             ResultSet rs = st.executeQuery("SELECT name FROM categories;")) {
+//            while (rs.next()) {
+//                String category = rs.getString(1);
+//                System.out.println("contr: " + category);
+//                allCategoriesList.add(category);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return allCategoriesList;
+//    }
 
     // save picture into BLOB field of DB
-    public void insertImage(FileInputStream fis) throws SQLException {
-        String query = "INSERT INTO Picture (picture) VALUES (?)";
-        PreparedStatement pstmt = conn.prepareStatement(query);
-        pstmt.setBinaryStream(1, fis);
-        pstmt.executeUpdate();
-    }
+//    public void insertImage(FileInputStream fis) throws SQLException {
+//        String query = "INSERT INTO Picture (picture) VALUES (?)";
+//        PreparedStatement pstmt = conn.prepareStatement(query);
+//        pstmt.setBinaryStream(1, fis);
+//        pstmt.executeUpdate();
+//    }
 
 }

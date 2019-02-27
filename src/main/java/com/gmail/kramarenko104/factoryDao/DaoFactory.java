@@ -10,6 +10,11 @@ public abstract class DaoFactory {
 	public abstract UserDao getUserDao();
 	public abstract ProductDao getProductDao();
 	public abstract CartDao getCartDao();
+
+	public abstract void deleteUserDao(UserDao userDao);
+	public abstract void deleteProductDao(ProductDao productDao);
+	public abstract void deleteCartDao(CartDao cartDao);
+
 	public abstract void closeConnection();
 
 	public static DaoFactory getSpecificDao(){

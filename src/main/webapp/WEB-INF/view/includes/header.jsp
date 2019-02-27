@@ -3,13 +3,13 @@
 <%@ page isELIgnored="false" %>
 <c:set var="username" value="${sessionScope.userName}"/>
 <br><br>
-<%--<br>header: session: ${session}--%>
-<%--<br>header: user: ${user}--%>
-<%--<br>header: userName: ${userName}--%>
-<%--<br>header: cartSize: ${cartSize}--%>
-<%--<br>header: totalSum: ${totalSum}--%>
-<%--<br>header: productsInCart: ${productsInCart}--%>
-<%--<br>header: productsIds: ${productsIds}--%>
+<br>header: session: ${session}
+<br>header: user: ${user}
+<br>header: userName: ${userName}
+<br>header: cartSize: ${cartSize}
+<br>header: totalSum: ${totalSum}
+<br>header: productsInCart: ${productsInCart}
+<br>header: productsIds: ${productsIds}
 
 <c:choose>
     <c:when test="${username != null}">

@@ -11,20 +11,26 @@ public class MySqlDaoFactory extends DaoFactory {
 
     private static Logger logger = Logger.getLogger(MySqlDaoFactory.class);
     Connection conn;
+    UserDaoMySqlImpl userDaoMySqlImpl;
+    ProductDaoMySqlImpl productDaoMySqlImpl;
+    CartDaoMySqlImpl cartDaoMySqlImpl;
 
     @Override
     public UserDao getUserDao() {
-        return new UserDaoMySqlImpl(conn);
+        userDaoMySqlImpl = new UserDaoMySqlImpl(conn);
+        return userDaoMySqlImpl;
     }
 
     @Override
     public ProductDao getProductDao() {
-        return new ProductDaoMySqlImpl(conn);
+        productDaoMySqlImpl = new ProductDaoMySqlImpl(conn);
+        return productDaoMySqlImpl;
     }
 
     @Override
     public CartDao getCartDao() {
-        return new CartDaoMySqlImpl(conn);
+        cartDaoMySqlImpl = new CartDaoMySqlImpl(conn);
+        return cartDaoMySqlImpl;
     }
 
     public MySqlDaoFactory() {
@@ -48,6 +54,28 @@ public class MySqlDaoFactory extends DaoFactory {
             logger.debug("VendorError: " + ex.getErrorCode());
         }
     }
+
+    @Override
+    public void deleteUserDao(UserDao userDao) {
+        if(userDao != null){
+            userDao = null;
+        }
+    }
+
+    @Override
+    public void deleteProductDao(ProductDao productDao) {
+        if(productDao != null){
+            productDao = null;
+        }
+    }
+
+    @Override
+    public void deleteCartDao(CartDao cartDao) {
+        if(cartDao != null){
+            cartDao = null;
+        }
+    }
+
 
     @Override
     public void closeConnection() {

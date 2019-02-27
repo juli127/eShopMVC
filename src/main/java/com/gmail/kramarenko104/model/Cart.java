@@ -1,19 +1,13 @@
 package com.gmail.kramarenko104.model;
 
+import java.util.Map;
+
 public class Cart {
 
-    private int id;
     private int userId;
-    private int productId;
-    private int quantity;
 
-    public int getId() {
-        return id;
-    }
+    private Map<Integer, Integer> products;
 
-    public void setId(int id) {
-        this.id = id;
-    }
     public int getUserId() {
         return userId;
     }
@@ -22,28 +16,18 @@ public class Cart {
         this.userId = userId;
     }
 
-    public int getProductId() {
-        return productId;
+    public Map<Integer, Integer> getProducts() {
+        return products;
     }
 
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setProducts(Map<Integer, Integer> products) {
+        this.products = products;
     }
 
     @Override
     public String toString() {
-        return "Cart{" +
-                "userId=" + userId +
-                ", productId=" + productId +
-                ", quantity=" + quantity +
-                '}';
+        StringBuilder result = new StringBuilder("Cart: [");
+        products.forEach((productId, quantity) -> result.append("(productId : " + productId + ", quantity : " + quantity + ")"));
+        return result.append("]").toString();
     }
 }
