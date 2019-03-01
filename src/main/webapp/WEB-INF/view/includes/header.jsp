@@ -2,14 +2,15 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
 <c:set var="username" value="${sessionScope.userName}"/>
+<span userId='${sessionScope.user.id}'></span>
 <br><br>
-<br>header: session: ${session}
-<br>header: user: ${user}
-<br>header: userName: ${userName}
-<br>header: cartSize: ${cartSize}
-<br>header: totalSum: ${totalSum}
-<br>header: productsInCart: ${productsInCart}
-<br>header: productsIds: ${productsIds}
+<%--<br>header: session: ${session}--%>
+<br>header: sessionScope.userId: ${sessionScope.user.id}
+<br>header: sessionScope.user: ${sessionScope.user}
+<br>header: sessionScope.userName: ${sessionScope.userName}
+<br>header: sessionScope.cartSize: ${sessionScope.cartSize}
+<br>header: sessionScope.totalSum: ${sessionScope.totalSum}
+<br>header: sessionScope.message: ${sessionScope.message}
 
 <c:choose>
     <c:when test="${username != null}">
@@ -60,9 +61,11 @@
         </table>
     </div>
 
+    <c:if test="${username != null}">
     <div id="autoriz">
-        ${greeting} в Вашей корзине товаров: ${sessionScope.cartSize==null?0:sessionScope.cartSize}</>
+        ${greeting} в Вашей корзине товаров: <span id="goodsCount">${sessionScope.cartSize==null?0:sessionScope.cartSize}</span></>
     </div>
+    </c:if>
 
     <%--<p>--%>
     <div class="page" id="page">

@@ -13,13 +13,15 @@
     );
 
    INSERT INTO users (login, password, name, address, comment)
+   VALUES('admin','admin', 'Alexander', 'Odessa', 'dont call');
+
+   INSERT INTO users (login, password, name, address, comment)
    VALUES('lex@gmail.com','A2345678', 'Alex', 'Kiev', 'call before delivery');
 
    INSERT INTO users (login, password, name, address, comment)
    VALUES('mash198@ukr.net','1111111', 'Maria', 'Odessa', 'dont call');
 
-   INSERT INTO users (login, password, name, address, comment)
-   VALUES('admin','admin', 'Alexander', 'Odessa', 'dont call');
+
 
 -----------------------------------------------------------
 DROP TABLE categories;

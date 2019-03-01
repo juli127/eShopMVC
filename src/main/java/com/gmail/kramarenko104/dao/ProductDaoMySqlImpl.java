@@ -68,8 +68,7 @@ public class ProductDaoMySqlImpl implements ProductDao {
 
     @Override
     public List<Product> getAllProducts() {
-        logger.debug("ProductDao:getAllProducts: enter... " );
-        Thread.dumpStack();
+     //   logger.debug("ProductDao:getAllProducts: enter... " );
         try (Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(GET_ALL_PRODUCTS)) {
             while (rs.next()) {
@@ -80,7 +79,7 @@ public class ProductDaoMySqlImpl implements ProductDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        logger.debug("return = " + allProductsList);
+        //logger.debug("ProductDao:getAllProducts: return = " + allProductsList);
         return allProductsList;
     }
 

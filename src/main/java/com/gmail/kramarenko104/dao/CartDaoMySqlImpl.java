@@ -13,6 +13,7 @@ public class CartDaoMySqlImpl implements CartDao {
 
     private final static String ADD_TO_CART = "INSERT INTO carts (userId, productId, quantity) VALUES(?,?,?);";
     private final static String DELETE_CART = "DELETE FROM carts WHERE id = ?;";
+    private final static String DELETE_PRODUCT = "DELETE FROM carts WHERE id = ? AND productId ?;";
     private final static String UPDATE_CART = "UPDATE carts SET quantity = ? WHERE userId =? AND productId = ?;";
     private final static String GET_PRODUCTS_BY_USERID_AND_PRODUCTID = "SELECT * FROM carts WHERE userId =? AND productId = ?;";
     private final static String GET_PRODUCTS_BY_USERID = "SELECT * FROM carts WHERE userId =?;";
@@ -41,11 +42,11 @@ public class CartDaoMySqlImpl implements CartDao {
 
     @Override
     public void addProduct(int userId, int productId, int addQuantity) {
-        logger.debug("CartDao.addProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + addQuantity);
+        logger.debug("++++CartDao.addProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + addQuantity);
         int dbQuantity = getProductQuantity(userId, productId);
         // there is already such product in dB, just update quantity
         if (dbQuantity > 0) {
-            logger.debug("CartDao.addProduct: there is already such product in dB, just update quantity");
+            logger.debug("++++CartDao.addProduct: there is already such product in dB, just update quantity");
             try (PreparedStatement pst = conn.prepareStatement(UPDATE_CART)) {
                 conn.setAutoCommit(false);
                 pst.setInt(1, dbQuantity + addQuantity);
@@ -59,7 +60,7 @@ public class CartDaoMySqlImpl implements CartDao {
             }
         }
         else { //there isn't such product in dB, add it
-            logger.debug("CartDao.addProduct: there isn't such product in dB, add it");
+            logger.debug("++++CartDao.addProduct: there isn't such product in dB, add it");
             try (PreparedStatement pst = conn.prepareStatement(ADD_TO_CART)) {
                 conn.setAutoCommit(false);
                 pst.setInt(1, userId);
@@ -89,33 +90,46 @@ public class CartDaoMySqlImpl implements CartDao {
         } finally {
             closeResultSet(rs);
         }
+        logger.debug("CartDao.getProductQuantity: there is " + quantity + " pieces of product " + productId + " for userId " + userId + " in the cart");
         return quantity;
     }
 
     @Override
     public void removeProduct(int userId, int productId, int rmQuantity) {
-        logger.debug("CartDao.removeProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + rmQuantity);
+        logger.debug("----CartDao.removeProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + rmQuantity);
         int dbQuantity = getProductQuantity(userId, productId);
 
         // there is already such product in dB, just update quantity
         if (dbQuantity > 0) {
-            logger.debug("CartDao.removeProduct: there is such product in dB, update quantity");
+            if (dbQuantity > 1) {
+                logger.debug("----CartDao.removeProduct: there is such product in dB, update quantity");
 
-            try (PreparedStatement pst = conn.prepareStatement(UPDATE_CART)) {
-                conn.setAutoCommit(false);
+                try (PreparedStatement pst = conn.prepareStatement(UPDATE_CART)) {
+                    conn.setAutoCommit(false);
 
-                // cannot remove more then we have
-                if (dbQuantity < rmQuantity) {
-                    rmQuantity = dbQuantity;
+                    // cannot remove more then we have
+                    if (dbQuantity < rmQuantity) {
+                        rmQuantity = dbQuantity;
+                    }
+                    pst.setInt(1, dbQuantity - rmQuantity);
+                    pst.setInt(2, userId);
+                    pst.setInt(3, productId);
+                    pst.execute();
+                    conn.commit();
+                    conn.setAutoCommit(true);
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-                pst.setInt(1, dbQuantity - rmQuantity);
-                pst.setInt(2, userId);
-                pst.setInt(3, productId);
-                pst.execute();
-                conn.commit();
-                conn.setAutoCommit(true);
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } else {  // there is only 1 quantity of the product, so, delete this record from DB
+                logger.debug("----CartDao.removeProduct: there is only one product in dB, so, delete it from DB");
+                try (PreparedStatement pst = conn.prepareStatement(DELETE_PRODUCT)) {
+                    pst.setInt(1, userId);
+                    pst.setInt(2, productId);
+                    pst.execute();
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
         else { //there isn't such product in dB, do nothing

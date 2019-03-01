@@ -32,21 +32,17 @@ public class ProductServlet extends HttpServlet {
         ProductDao productDao = daoFactory.getProductDao();
 
         String selectedCateg = req.getParameter("selectedCategory");
-        List<Product> allProducts;
+        List<Product> products;
 
         // when form is opened at the first time, selectedCateg == null
         if (selectedCateg != null) {
-            allProducts = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
+            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
         } else {
-            allProducts = productDao.getAllProducts();
+            products = productDao.getAllProducts();
         }
 
         session.setAttribute("selectedCateg", selectedCateg);
-//        session.setAttribute("allProducts", allProducts);
-//        session.setAttribute("productsIds", allProducts.stream().map(product -> product.getId()).collect(Collectors.toList()));
-//        session.setAttribute("selectedCategIsNull", (selectedCateg==null));
-
-//        getServletContext().setAttribute("products", products);
+        session.setAttribute("products", products);
 //        products.forEach(e -> System.out.println(e));
         daoFactory.deleteProductDao(productDao);
 

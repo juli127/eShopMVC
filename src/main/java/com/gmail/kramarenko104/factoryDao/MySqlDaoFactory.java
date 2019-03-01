@@ -83,7 +83,7 @@ public class MySqlDaoFactory extends DaoFactory {
             if (conn != null)
                 conn.close();
             logger.debug("Connection to DB was closed");
-            Thread.dumpStack();
+         //   Thread.dumpStack();
         } catch (SQLException e) {
             e.printStackTrace();
         }

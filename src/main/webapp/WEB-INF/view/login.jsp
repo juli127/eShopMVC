@@ -8,7 +8,6 @@
 <%--<br>login: message: ${sessionScope.message}--%>
 
 <c:if test="${showLoginForm}">
-    <h3>Log-in</h3>
     <center>
         <form action='login' method='post'>
             <table border=0>

@@ -33,6 +33,7 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         StringBuilder msgText = new StringBuilder();
+        logger.debug("LoginServlet: =================enter========================");
         boolean showLoginForm = true;
         int cartSize = 0;
 
@@ -44,6 +45,7 @@ public class LoginServlet extends HttpServlet {
         String log = req.getParameter("login");
         String pass = req.getParameter("password");
         logger.debug("LoginServlet: session==null ? " + (session == null));
+        logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered pass = " + pass);
         msgText.append("<center>");
@@ -159,7 +161,7 @@ public class LoginServlet extends HttpServlet {
             RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
             rd.forward(req, resp);
         }
-
+        logger.debug("LoginServlet: =================exit========================");
     }
 
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

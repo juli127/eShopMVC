@@ -30,20 +30,20 @@ public class RunApp {
     public static void main(String[] args) {
 
         DaoFactory daoFactory = DaoFactory.getSpecificDao();
-//        ProductDao productDao = daoFactory.getProductDao();
+        ProductDao productDao = daoFactory.getProductDao();
 ////        req.setAttribute("categories", productDao.getCategoriesList());
-//        String selectedCateg = "3";
-//        List<Product> products;
-//
-//        // when form is opened at the first time (selectedCateg == null)
-//        if (selectedCateg != null) {
-//            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
-//        } else {
-//            products = productDao.getAllProducts();
-//        }
-//
-//        products.forEach(e -> System.out.println(e));
-//        daoFactory.closeConnection();
+        String selectedCateg = "3";
+        List<Product> products;
+
+        // when form is opened at the first time (selectedCateg == null)
+        if (selectedCateg != null) {
+            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
+        } else {
+            products = productDao.getAllProducts();
+        }
+
+        products.forEach(e -> System.out.println(e));
+        daoFactory.closeConnection();
 
 //        UserDao userDao = daoFactory.getUserDao();
 //        User user = new User();
