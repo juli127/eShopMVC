@@ -91,11 +91,13 @@ public class CartServlet extends HttpServlet {
             }
 
             Map<Product, Integer> productsInCart = null;
+            logger.debug("CartServlet: productsInCart attribute is null? " +
+                    (session.getAttribute("productsInCart") == null));
             if (session.getAttribute("productsInCart") == null || needRefresh) {
                 productsInCart = cartDao.getAllProducts(userId);
                 session.setAttribute("productsInCart", productsInCart);
                 //logger.debug("CartServlet.doGet: Refresh  productsInCart==  "+ productsInCart);
-                session.setAttribute("productsIds", productsInCart.keySet().toArray());
+                //session.setAttribute("productsIds", productsInCart.keySet().toArray());
             }
 
             if (session.getAttribute("totalSum") == null  || needRefresh) {
@@ -104,7 +106,7 @@ public class CartServlet extends HttpServlet {
                     totalSum += (int)entry.getValue() * ((Product)entry.getKey()).getPrice();
                 }
                 session.setAttribute("totalSum", totalSum);
-                logger.debug("CartServlet.doGet: >>>>>> Refresh  totalSum==  "+ totalSum);
+                logger.debug("CartServlet.doGet: >>>>>> Refresh  totalSum ==  "+ totalSum);
             }
 
             session.setAttribute("user", currentUser);
@@ -113,19 +115,11 @@ public class CartServlet extends HttpServlet {
         }
 
         logger.debug("CartServlet: needRefresh ==  "+ needRefresh);
-
         logger.debug("CartServlet.doGet: >>>>>> where session.getAttribute(cartSize)= " + session.getAttribute("cartSize"));
         logger.debug("CartServlet.doGet: >>>>>> where session.getAttribute(totalSum)= " + session.getAttribute("totalSum"));
 
-
-            if (needRefresh || currentUser == null) {
-                logger.debug("CartServlet.doGet: >>>>>> sendRedirect to /cart........... ");
-                response.sendRedirect(request.getContextPath() + "/cart");
-            }
-            else {
-                logger.debug("CartServlet.doGet: >>>>>> call forward to cart.jsp........... ");
-                request.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(request, response);
-            }
+        logger.debug("CartServlet.doGet: >>>>>> call forward to cart.jsp........... ");
+        request.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(request, response);
 
         logger.debug("CartServlet.doGet: -------exit-------------------- ");
     }

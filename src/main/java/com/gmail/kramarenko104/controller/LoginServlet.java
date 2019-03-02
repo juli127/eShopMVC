@@ -146,7 +146,7 @@ public class LoginServlet extends HttpServlet {
 
         }
         msgText.append("</center>");
-        logger.debug("LoginServlet: FORWARD to view = " + viewToGo);
+        logger.debug("LoginServlet: go to " + viewToGo);
         session.setAttribute("showLoginForm", showLoginForm);
         session.setAttribute("message", msgText.toString());
         session.setAttribute("attempt", attempt);
@@ -154,10 +154,13 @@ public class LoginServlet extends HttpServlet {
         daoFactory.deleteCartDao(cartDao);
         daoFactory.deleteUserDao(userDao);
 
+        // login was successful, redirect to cart controller
         if (viewToGo.equals("./cart")){
+            logger.debug("LoginServlet: login was successful, redirect to cart controller");
             resp.sendRedirect(viewToGo);
         }
-        else {
+        else { // login was unsuccessful, try again, go to login.jsp
+            logger.debug("LoginServlet: login was unsuccessful, try again, go to login.jsp");
             RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
             rd.forward(req, resp);
         }

@@ -41,7 +41,7 @@
     function buy(productId) {
         var elem = document.getElementById('productQnt' + productId);
         var qnt = +elem.innerHTML;
-        var userid = ${sessionScope.user.id};
+        var userid = ${sessionScope.user.id == null? 0: sessionScope.user.id};
         alert('user.id=' + userid);
         if (userid == null || userid.equals("")) {
             alert("Войдите в систему или зарегистрируйтесь, чтобы купить товар!");
@@ -92,7 +92,7 @@
     }
 
     function parseRespose(response) {
-        var respData = respData = response.toString().split("<br>");
+        var respData = response.toString().split("<br>");
         for (var i = 0; i < respData.length; i++) {
             if (respData[i].startsWith("header:")) {
                 var start = respData[i].indexOf("header: ");

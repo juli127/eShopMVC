@@ -2,7 +2,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 <c:set var="userLine" value=""/>
-<c:set var="userId" value="${sessionScope.userId}"/>
+<c:set var="userId" value="${sessionScope.user.id}"/>
 <c:if test="${username != null && sessionScope.cartSize > 0}">
     <c:set var="userLine" value="${username}, Вы выбрали следующие товары:"/>
 </c:if>

@@ -11,6 +11,9 @@
 <br>header: sessionScope.cartSize: ${sessionScope.cartSize}
 <br>header: sessionScope.totalSum: ${sessionScope.totalSum}
 <br>header: sessionScope.message: ${sessionScope.message}
+<br>header: sessionScope.regErrors: ${sessionScope.regErrors}
+<br>header: sessionScope.productsInCart: ${sessionScope.productsInCart}
+
 
 <c:choose>
     <c:when test="${username != null}">
