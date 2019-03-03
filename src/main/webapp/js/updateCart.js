@@ -1,49 +1,91 @@
-
-function sum() {
-   // ???? как перебрать все строки в таблице????
-   //  (${purchase.key.price}) * (document.getElementById('q'+ ${purchase.key.id}).innerHTML);
-    var total = 0;
-    alert("enter sum() with" + productsIds.toString());
-    for (i=0; i< productsIds.size(); i++) {
-        alert('prod:' + prod);
-        var quantity = document.getElementById('q${productsIds[i]}').innerHTML;
-        var price = document.getElementById('price${productsIds[i]}').innerHTML;
-        var total = total + quantity * price;
-        alert('quantity:' + quantity, ", price:" + price + ", total: " + total);
-    }
-    console.log("total: " + total);
-    alert("finally: total: " + total);
-    document.getElementById('sum').innerHTML = total;
-}
-
-function plus(purchaseId) {
-    var elem = document.getElementById('q' + purchaseId);
+// scripts for 'product' page
+function plus(productId) {
+    alert('plus: productId == null ? ' + (productId == null));
+    alert('plus: from form == ' + (document.getElementById('productId').innerText));
+    var elem = document.getElementById('productQnt' + productId);
     var qnt = +elem.innerHTML + 1;
+    // alert('plus: qnt = ' + qnt);
     elem.innerHTML = qnt;
-    alert('1 Товар добавлен');
-    $.ajax({
-        type: "POST",
-        url: "./cart",
-        data: { addPurchase : purchaseId + ":" + qnt },
-        success: function (response) {
-            alert('2 Товар добавлен');
-        }
-    });
 }
 
-function minus(purchaseId) {
-    var elem = document.getElementById('q' + purchaseId);
+function minus(productId) {
+    alert('minus: productId == null ? ' + (productId == null));
+    var elem = document.getElementById('productQnt' + productId);
+    var qnt = +elem.innerHTML;
+    if (elem.innerHTML > 0) {
+        elem.innerHTML = qnt - 1;
+    }
+    // alert('minus: qnt = ' + qnt);
+}
+
+function buy(productId) {
+    var elem = document.getElementById('productQnt' + productId);
+    var qnt = +elem.innerHTML;
+    var userid = ${sessionScope.user.id == null? 0: sessionScope.user.id};
+    alert('user.id=' + userid);
+    if (userid == null || userid.equals("")) {
+        alert("Войдите в систему или зарегистрируйтесь, чтобы купить товар!");
+    } else {
+        alert("Покупаем товар!");
+        $.ajax({
+            type: "POST",
+            url: "./cart",
+            data: "addPurchase=" + productId + ":" + qnt,
+            success: function (response) {
+                parseRespose(response);
+            }
+        });
+        alert(${sessionScope.user.name} +", товар был добавлен в Вашу корзину");
+    }
+}
+
+// scripts for 'cart' page
+function deleteFromCart(productId) {
+    var elem = document.getElementById('q' + productId);
     var qnt = +elem.innerHTML;
     if (elem.innerHTML > 0) {
         elem.innerHTML = qnt - 1;
         $.ajax({
             type: "POST",
             url: "./cart",
-            data: "removePurchase=" + (purchaseId + ":" + qnt),
+            data: "removePurchase=" + productId + ":" + 1,
+            // data: { removePurchase : productId + ":" + qnt },
             success: function (response) {
-                alert('Товар удален');
+                parseRespose(response);
             }
         });
+    }
+}
+
+function addToCart(productId) {
+    var elem = document.getElementById('q' + productId);
+    var qnt = +elem.innerHTML + 1;
+    elem.innerHTML = qnt;
+    $.ajax({
+        type: "POST",
+        url: "./cart",
+        data: "addPurchase=" + productId + ":" + 1,
+        success: function (response) {
+            parseRespose(response);
+        }
+    });
+}
+
+function parseRespose(response) {
+    var respData = response.toString().split("<br>");
+    for (var i = 0; i < respData.length; i++) {
+        if (respData[i].startsWith("header:")) {
+            var start = respData[i].indexOf("header: ");
+            if (start >= 0) {
+                respData[i] = respData[i].substring(start + 8).trim();
+                if (respData[i].startsWith("totalSum:")) {
+                    document.getElementById('TotalSum').innerHTML = respData[i].substring(start + 9).trim();
+                }
+                if (respData[i].startsWith("cartSize:")) {
+                    document.getElementById('goodsCount').innerHTML = respData[i].substring(start + 9).trim();
+                }
+            }
+        }
     }
 }
 
