@@ -18,7 +18,7 @@
     <context:component-scan base-package="com.gmail.kramarenko104.controller" />
 
     <!-- Views' location -->
-    <bean
+    <bean id = "viewResolver"
         class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix"><value>/WEB-INF/view/</value></property>
         <property name="suffix"><value>.jsp</value></property>

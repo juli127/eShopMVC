@@ -3,7 +3,7 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 
 
-<c:if test="${sessionScope.regErrors.size() > 0}" >
+<c:if test="${sessionScope.regErrors.size() > 0}">
     <c:forEach var="regError" items="${sessionScope.regErrors}">
         <script>
             var elem = document.getElementById("regError.getKey()");
@@ -14,43 +14,39 @@
 </c:if>
 
 <form method="POST" action="/registration">
-    <table>
-        <tr>
-            <td>Login</td>
-            <td><input type='email' required name='login' value="" autofocus/></td>
-            <td><span id='regLogin'></span></td>
-        </tr>
-        <tr>
-            <td>Password</td>
-            <td><input type='password' name='password'  value=""/></td>
+    <fieldset>
+        <legend>Registration form</legend>
+        <p><label for="login">Login <em>*</em></label>
+            <input type="email" id="login" value="" autocomplete="on" required autofocus/>
+            <span id='regLogin'></span>
+        </p>
+        <p><label for="passw">Password <em>*</em></label>
+            <input type="password" id="passw" autocomplete="off" required value=""/>
             <span id='regPassword'></span>
-        </tr>
-        <tr>
-            <td>Retype Password</td>
-            <td><input type='password' name='repassword' value=""/></td>
-            <td><span id='regRepassword'></span></td>
-        </tr>
-        <tr>
-            <td>Name</td>
-            <td><input type='text' name='name' value=""/></td>
-            <td><span id='regName'></span></td>
-        </tr>
-        <tr>
-            <td>Address</td>
-            <td><input type='text' name='address' value=""/></td>
-            <td><span id='regAddress'></span></td>
-        </tr>
-        <tr>
-            <td>Comment</td>
-            <td><input type='text' name='comment' value=""/></td>
-            <td><span id='regComment'></span></td>
-        </tr>
-        <tr>
-            <td colspan = "2">
-                <input type = "submit" value = "Submit"/>
-            </td>
-        </tr>
-    </table>
+        </p>
+        </p>
+        <p><label for="repassword">Retype Password <em>*</em></label>
+            <input type="password" id="repassword" autocomplete="off" required value=""/>
+            <<span id='regRepassword'></span>
+        </p>
+        </p>
+            <label for="name">Name <em>*</em></label>
+            <input type="text" id="name" value="" required autocomplete="on"/>
+            <span id='regName'></span>
+        </p>
+        </p>
+            <label for="address">Address <em>*</em></label>
+            <input type="text" id="address" value="" required autocomplete="on"/>
+            <span id='regAddress'></span>
+        </p>
+        </p>
+            <label for="comment">Comment </label>
+             <input type="text" id="comment" value="" required autocomplete="on"/>
+            <span id='regComment'></span>
+        </p>
+        </p>
+    </fieldset>
+    <p><input type="submit" value="Submit"></p>
     <%--Login: <input type='email' required name='login' value="" autofocus/><span id='regLogin'></span>--%>
     <%--Password: <input type='password' name='password'  value=""/><span id='regPassword'></span>--%>
     <%--Retype Password:<input type='password' name='repassword' value=""/><span id='regRepassword'></span>--%>

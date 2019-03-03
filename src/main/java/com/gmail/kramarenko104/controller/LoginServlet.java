@@ -9,6 +9,7 @@ import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -43,6 +44,7 @@ public class LoginServlet extends HttpServlet {
     }
 
     @RequestMapping(method = RequestMethod.GET)
+//    public String doGet(@ModelAttribute("mvc-dispatcher")User user, ModelMap model) {
     public String doGet(ModelMap model) {
         StringBuilder msgText = new StringBuilder();
         logger.debug("LoginServlet: =================enter========================");
@@ -53,18 +55,18 @@ public class LoginServlet extends HttpServlet {
         UserDao userDao = daoFactory.getUserDao();
 
         String viewToGo = "WEB-INF/view/login.jsp";
-        HttpSession session = getSession();
+//        HttpSession session = getSession();
         String log = (String)model.get("login");
         String pass = (String)model.get("password");
-        logger.debug("LoginServlet: session==null ? " + (session == null));
+//        logger.debug("LoginServlet: session==null ? " + (session == null));
         logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered pass = " + pass);
         msgText.append("<center>");
 
-        if (session != null) {
+//        if (session != null) {
             logger.debug("LoginServlet: session != null");
-            model.put("session", session);
+//            model.put("session", session);
             attempt = (model.get("attempt") == null) ? 0 : (int)model.get("attempt");
 
             // already logged in
@@ -156,7 +158,7 @@ public class LoginServlet extends HttpServlet {
                 }
             }
 
-        }
+//        }
         msgText.append("</center>");
         logger.debug("LoginServlet: go to " + viewToGo);
         model.put("showLoginForm", showLoginForm);
