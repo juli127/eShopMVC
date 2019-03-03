@@ -47,8 +47,7 @@ public class CartServlet {
         User currentUser = (User) model.get("user");
         if (currentUser == null) {
             logger.debug("CartServlet: Current user == null ");
-            model.put("message", "<a href='login'>Войдите в систему</a>, чтобы просмотреть свою корзину. <br> " +
-                    "Или <a href='registration'>зарегистрируйтесь</a>");
+            model.put("message", "<a href='login'>Login</a> to see your cart. Or <a href='registration'>Register.</a>");
 
             // be sure that all user's corresponding values are null, too
             model.put("cartSize", null);
@@ -130,7 +129,6 @@ public class CartServlet {
         logger.debug("CartServlet.doGet: >>>>>> call forward to cart.jsp........... ");
         logger.debug("CartServlet.doGet: -------exit-------------------- ");
         return "cart";
-
 
     }
 

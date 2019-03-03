@@ -169,13 +169,10 @@ public class LoginServlet extends HttpServlet {
         // login was successful, redirect to cart controller
         if (viewToGo.equals("cart")){
             logger.debug("LoginServlet: login was successful, redirect to cart controller");
-            return "cart";
-            //resp.sendRedirect(viewToGo);
+            return "redirect:cart";
         }
         else { // login was unsuccessful, try again, go to login.jsp
             logger.debug("LoginServlet: login was unsuccessful, try again, go to login.jsp");
-//            RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
-//            rd.forward(req, resp);
             return "login";
         }
     }
