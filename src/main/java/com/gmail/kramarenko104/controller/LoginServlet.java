@@ -54,18 +54,16 @@ public class LoginServlet extends HttpServlet {
         CartDao cartDao = daoFactory.getCartDao();
         UserDao userDao = daoFactory.getUserDao();
 
-        String viewToGo = "WEB-INF/view/login.jsp";
+        String viewToGo = "login";
 //        HttpSession session = getSession();
         String log = (String)model.get("login");
         String pass = (String)model.get("password");
 //        logger.debug("LoginServlet: session==null ? " + (session == null));
         logger.debug("LoginServlet: user entered log = " + log);
-        logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered pass = " + pass);
         msgText.append("<center>");
 
 //        if (session != null) {
-            logger.debug("LoginServlet: session != null");
 //            model.put("session", session);
             attempt = (model.get("attempt") == null) ? 0 : (int)model.get("attempt");
 
@@ -79,10 +77,12 @@ public class LoginServlet extends HttpServlet {
                     Cart cart = cartDao.getCart(currentUser.getId());
                     cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
                     model.put("cartSize", cartSize);
+                    model.addAttribute("cartSize", cartSize);
                 }
 
                 logger.debug("LoginServlet: user already logged in: " + currentUser);
                 model.put("userName", currentUser.getName());
+                model.addAttribute("userName", currentUser.getName());
                 showLoginForm = false;
                 if (cartSize > 0) {
                     viewToGo = "cart";
@@ -113,13 +113,16 @@ public class LoginServlet extends HttpServlet {
                             attempt = 0;
                             showLoginForm = false;
                             model.put("user", currentUser);
+                            model.addAttribute("user", currentUser);
                             model.put("userName", currentUser.getName());
+                            model.addAttribute("userName", currentUser.getName());
                             logger.debug("LoginServlet: user.getName() = " + currentUser.getName());
 
                             if (model.get("cartSize") == null) {
                                 Cart cart = cartDao.getCart(currentUser.getId());
                                 cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
                                 model.put("cartSize", cartSize);
+                                model.addAttribute("cartSize", cartSize);
                             }
                             if (cartSize > 0) {
                                 viewToGo = "cart";
@@ -162,8 +165,11 @@ public class LoginServlet extends HttpServlet {
         msgText.append("</center>");
         logger.debug("LoginServlet: go to " + viewToGo);
         model.put("showLoginForm", showLoginForm);
+        model.addAttribute("showLoginForm", showLoginForm);
         model.put("message", msgText.toString());
+        model.addAttribute("message", msgText.toString());
         model.put("attempt", attempt);
+        model.addAttribute("attempt", attempt);
 
         daoFactory.deleteCartDao(cartDao);
         daoFactory.deleteUserDao(userDao);

@@ -44,6 +44,8 @@ public class OrderServlet extends HttpServlet {
         if (currentUser == null) {
             model.put("message", "<a href='login'>Login</a> to see your cart. <br> " +
                     "Or <a href='registration'>register</a>");
+            model.addAttribute("message", "<a href='login'>Login</a> to see your cart. <br> " +
+                    "Or <a href='registration'>register</a>");
 
         }
         else {

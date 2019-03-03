@@ -23,20 +23,24 @@ public class LogoutServlet extends HttpServlet {
     public LogoutServlet() {
     }
 
-    private static HttpSession getSession() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true);
-    }
+//    private static HttpSession getSession() {
+//        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        return attr.getRequest().getSession(true);
+//    }
 
     @RequestMapping(method = RequestMethod.GET)
     public String doGet(ModelMap model) {
-        HttpSession session = getSession();
-        session.invalidate();
-        session = getSession();
+//        HttpSession session = getSession();
+//        session.invalidate();
+//        session = getSession();
         model.put("user", null);
         model.put("showLoginForm", true);
         model.put("message", "");
         model.put("attempt", 0);
+        model.addAttribute("user", null);
+        model.addAttribute("showLoginForm", true);
+        model.addAttribute("message", "");
+        model.addAttribute("attempt", 0);
         return "products";
     }
 }

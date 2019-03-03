@@ -108,6 +108,8 @@ public class RegistrationServlet extends HttpServlet {
                     message.append("<br><font color='green'><center>Hi, " + name + "! <br>You are registered now.</font>");
                     model.put("user", newUser);
                     model.put("userName", newUser.getName());
+                    model.addAttribute("user", newUser);
+                    model.addAttribute("userName", newUser.getName());
                 } else {
                     needRegistration = true;
                     message.append("<br><font color='red'><center>User wan't registered because of DB problems</font>");
@@ -116,10 +118,11 @@ public class RegistrationServlet extends HttpServlet {
             } else {
                 needRegistration = true;
                 model.put("regErrors", errors);
+                model.addAttribute("regErrors", errors);
             }
         }
         model.put("message", message.toString());
-
+        model.addAttribute("message", message.toString());
         if (needRegistration) {
             return "registration";
         } else {

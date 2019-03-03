@@ -48,12 +48,17 @@ public class CartServlet {
         if (currentUser == null) {
             logger.debug("CartServlet: Current user == null ");
             model.put("message", "<a href='login'>Login</a> to see your cart. Or <a href='registration'>Register.</a>");
-
+            model.addAttribute("message", "<a href='login'>Login</a> to see your cart. Or <a href='registration'>Register.</a>");
             // be sure that all user's corresponding values are null, too
             model.put("cartSize", null);
             model.put("userName", null);
             model.put("totalSum", 0);
             model.put("productsInCart", null);
+            model.addAttribute("cartSize", null);
+            model.addAttribute("userName", null);
+            model.addAttribute("totalSum", 0);
+            model.addAttribute("productsInCart", null);
+
         }
         else {
             CartDao cartDao = daoFactory.getCartDao();
@@ -95,6 +100,7 @@ public class CartServlet {
                 Cart cart = cartDao.getCart(currentUser.getId());
                 int cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
                 model.put("cartSize", cartSize);
+                model.addAttribute("cartSize", cartSize);
                 logger.debug("CartServlet: Refresh  cart size==  "+ cartSize);
             }
 
@@ -104,6 +110,7 @@ public class CartServlet {
             if (model.get("productsInCart") == null || needRefresh) {
                 productsInCart = cartDao.getAllProducts(userId);
                 model.put("productsInCart", productsInCart);
+                model.addAttribute("productsInCart", productsInCart);
                 //logger.debug("CartServlet.doGet: Refresh  productsInCart==  "+ productsInCart);
                 //session.setAttribute("productsIds", productsInCart.keySet().toArray());
             }
@@ -114,11 +121,12 @@ public class CartServlet {
                     totalSum += (int)entry.getValue() * ((Product)entry.getKey()).getPrice();
                 }
                 model.put("totalSum", totalSum);
+                model.addAttribute("totalSum", totalSum);
                 logger.debug("CartServlet.doGet: >>>>>> Refresh  totalSum ==  "+ totalSum);
             }
 
             model.put("user", currentUser);
-
+            model.addAttribute("user", currentUser);
             daoFactory.deleteCartDao(cartDao);
         }
 

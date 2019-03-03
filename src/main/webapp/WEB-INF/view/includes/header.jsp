@@ -13,7 +13,7 @@
 <br>header: sessionScope.message: ${sessionScope.message}
 <br>header: sessionScope.regErrors: ${sessionScope.regErrors}
 <br>header: sessionScope.productsInCart: ${sessionScope.productsInCart}
-
+<br>header: header.values(): ${header.values()}
 
 <c:choose>
     <c:when test="${username != null}">
