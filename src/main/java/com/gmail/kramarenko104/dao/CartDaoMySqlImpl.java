@@ -146,36 +146,6 @@ public class CartDaoMySqlImpl implements CartDao {
         }
     }
 
-//    public int getCartSize(int userId){
-//        int cartSize = 0;
-//        try (PreparedStatement pst = conn.prepareStatement(GET_PRODUCTS_BY_USERID)) {
-//            pst.setInt(1, userId);
-//            ResultSet rs = pst.executeQuery();
-//            while (rs.next()) {
-//                cartSize += rs.getInt("quantity");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        logger.debug("CartDao.getCartSize: " + cartSize);
-//        return cartSize;
-//    }
-//
-//    public int getTotalSum(int userId) {
-//        int total = 0;
-//        try (PreparedStatement pst = conn.prepareStatement(GET_PRODUCTS_BY_USERID)) {
-//            pst.setInt(1, userId);
-//            ResultSet rs = pst.executeQuery();
-//            while (rs.next()) {
-//                total += rs.getInt("quantity") * rs.getInt("price");
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        logger.debug("CartDao.getTotalSum: totalSum " + total);
-//        return total;
-//    }
-
     @Override
     public Map<Product, Integer> getAllProducts(int userId) {
         Map<Product, Integer> productsMap = new HashMap<>();

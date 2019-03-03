@@ -7,16 +7,23 @@ import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
+@Controller
+@RequestMapping("/login")
 public class LoginServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(LoginServlet.class);
@@ -30,8 +37,13 @@ public class LoginServlet extends HttpServlet {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private static HttpSession getSession() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true);
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    public String doGet(ModelMap model) {
         StringBuilder msgText = new StringBuilder();
         logger.debug("LoginServlet: =================enter========================");
         boolean showLoginForm = true;
@@ -41,9 +53,9 @@ public class LoginServlet extends HttpServlet {
         UserDao userDao = daoFactory.getUserDao();
 
         String viewToGo = "WEB-INF/view/login.jsp";
-        HttpSession session = req.getSession();
-        String log = req.getParameter("login");
-        String pass = req.getParameter("password");
+        HttpSession session = getSession();
+        String log = (String)model.get("login");
+        String pass = (String)model.get("password");
         logger.debug("LoginServlet: session==null ? " + (session == null));
         logger.debug("LoginServlet: user entered log = " + log);
         logger.debug("LoginServlet: user entered log = " + log);
@@ -52,26 +64,26 @@ public class LoginServlet extends HttpServlet {
 
         if (session != null) {
             logger.debug("LoginServlet: session != null");
-            session.setAttribute("session", session);
-            attempt = (session.getAttribute("attempt") == null) ? 0 : (int) session.getAttribute("attempt");
+            model.put("session", session);
+            attempt = (model.get("attempt") == null) ? 0 : (int)model.get("attempt");
 
             // already logged in
-            User currentUser = (User) session.getAttribute("user");
+            User currentUser = (User)model.get("user");
             // be sure that username is correct
             logger.debug("LoginServlet: currentUser: " + (currentUser == null ? "" : currentUser));
 
             if (currentUser != null) {
-                if (session.getAttribute("cartSize") == null) {
+                if (model.get("cartSize") == null) {
                     Cart cart = cartDao.getCart(currentUser.getId());
                     cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
-                    session.setAttribute("cartSize", cartSize);
+                    model.put("cartSize", cartSize);
                 }
 
                 logger.debug("LoginServlet: user already logged in: " + currentUser);
-                session.setAttribute("userName", currentUser.getName());
+                model.put("userName", currentUser.getName());
                 showLoginForm = false;
                 if (cartSize > 0) {
-                    viewToGo = "./cart";
+                    viewToGo = "cart";
                 }
             } // not logged in yet
             else {
@@ -98,17 +110,17 @@ public class LoginServlet extends HttpServlet {
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
-                            session.setAttribute("user", currentUser);
-                            session.setAttribute("userName", currentUser.getName());
+                            model.put("user", currentUser);
+                            model.put("userName", currentUser.getName());
                             logger.debug("LoginServlet: user.getName() = " + currentUser.getName());
 
-                            if (session.getAttribute("cartSize") == null) {
+                            if (model.get("cartSize") == null) {
                                 Cart cart = cartDao.getCart(currentUser.getId());
                                 cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
-                                session.setAttribute("cartSize", cartSize);
+                                model.put("cartSize", cartSize);
                             }
                             if (cartSize > 0) {
-                                viewToGo = "./cart";
+                                viewToGo = "cart";
                             }
                         }
                         else {
@@ -147,30 +159,33 @@ public class LoginServlet extends HttpServlet {
         }
         msgText.append("</center>");
         logger.debug("LoginServlet: go to " + viewToGo);
-        session.setAttribute("showLoginForm", showLoginForm);
-        session.setAttribute("message", msgText.toString());
-        session.setAttribute("attempt", attempt);
+        model.put("showLoginForm", showLoginForm);
+        model.put("message", msgText.toString());
+        model.put("attempt", attempt);
 
         daoFactory.deleteCartDao(cartDao);
         daoFactory.deleteUserDao(userDao);
 
         // login was successful, redirect to cart controller
-        if (viewToGo.equals("./cart")){
+        if (viewToGo.equals("cart")){
             logger.debug("LoginServlet: login was successful, redirect to cart controller");
-            resp.sendRedirect(viewToGo);
+            return "cart";
+            //resp.sendRedirect(viewToGo);
         }
         else { // login was unsuccessful, try again, go to login.jsp
             logger.debug("LoginServlet: login was unsuccessful, try again, go to login.jsp");
-            RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
-            rd.forward(req, resp);
+//            RequestDispatcher rd = req.getRequestDispatcher(viewToGo);
+//            rd.forward(req, resp);
+            return "login";
         }
-        logger.debug("LoginServlet: =================exit========================");
     }
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        doGet(req, resp);
+    @RequestMapping(method = RequestMethod.POST)
+    protected void doPost(ModelMap model) {
+        doGet(model);
     }
 
+    // where to close connection???
     @Override
     public void destroy() {
         daoFactory.closeConnection();

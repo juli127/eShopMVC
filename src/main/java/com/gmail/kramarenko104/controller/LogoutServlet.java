@@ -1,5 +1,12 @@
 package com.gmail.kramarenko104.controller;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -9,24 +16,27 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet (name = "WebServlet", urlPatterns = {"/logout"})
+@Controller
+@RequestMapping("/logout")
 public class LogoutServlet extends HttpServlet {
 
     public LogoutServlet() {
     }
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
-//        session.setAttribute("logout", "logged out");
-        session.invalidate();
-        session = request.getSession();
-        session.setAttribute("user", null);
-        session.setAttribute("showLoginForm", true);
-        session.setAttribute("message", "");
-        session.setAttribute("attempt", 0);
+    private static HttpSession getSession() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true);
+    }
 
-        RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/view/products.jsp");
-        rd.forward(request, response);
+    @RequestMapping(method = RequestMethod.GET)
+    public String doGet(ModelMap model) {
+        HttpSession session = getSession();
+        session.invalidate();
+        session = getSession();
+        model.put("user", null);
+        model.put("showLoginForm", true);
+        model.put("message", "");
+        model.put("attempt", 0);
+        return "products";
     }
 }

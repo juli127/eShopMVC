@@ -4,7 +4,7 @@
 <c:set var="userLine" value=""/>
 <c:set var="userId" value="${sessionScope.user.id}"/>
 <c:if test="${username != null && sessionScope.cartSize > 0}">
-    <c:set var="userLine" value="${username}, Вы выбрали следующие товары:"/>
+    <c:set var="userLine" value="${username}, your cart:"/>
 </c:if>
 <c:set var="productsInCart" value="${sessionScope.productsInCart}"/>
 <c:set var="totalSum" value="${sessionScope.totalSum}"/>
@@ -19,16 +19,16 @@
 <c:if test="${sessionScope.cartSize > 0}">
     <table id="cart" border=1>
         <tr><span id="tableTitle">
-            <td>Наименование товара</td>
-            <td>цена</td>
-            <td>Количество</td></span></tr>
+            <td>Product's name</td>
+            <td>Price</td>
+            <td>Quantity</td></span></tr>
         <c:forEach var="purchase" items="${productsInCart}">
             <tr>
                 <td>
                     <div id="productName"><c:out value="${purchase.key.name}"/></div>
                 </td>
                 <td>
-                    <div id='price${purchase.key.id}'><c:out value="${purchase.key.price}"/> грн.</div>
+                    <div id='price${purchase.key.id}'><c:out value="${purchase.key.price}"/> UAH</div>
                 </td>
                 <td>
                     <button onclick="deleteFromCart('${purchase.key.id}')">-</button>
@@ -38,11 +38,11 @@
             </tr>
         </c:forEach>
     </table>
-    <h3>Общая сумма заказа: <span id="TotalSum">${totalSum==null?0:totalSum}</span> грн.</h3>
+    <h3>Total cart's sum: <span id="TotalSum">${totalSum==null?0:totalSum}</span> UAH</h3>
     <%--<br>--%>
     <%--<button onclick="recount()"><font size="2" style="shape-rendering: crispEdges">Пересчитать</font></button>--%>
     <%--<br>--%>
-    <button onclick="makeOrder('${userId}')"><font size="2" style="shape-rendering: crispEdges">Оформить заказ</font>
+    <button onclick="makeOrder('${userId}')"><font size="2" style="shape-rendering: crispEdges">Make order</font>
     </button>
 
 </c:if>

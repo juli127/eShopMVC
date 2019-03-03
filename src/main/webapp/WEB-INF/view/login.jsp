@@ -9,16 +9,16 @@
 
 <c:if test="${showLoginForm}">
     <center>
-        <form action='login' method='post'>
+        <form action='/login' method='post'>
             <table border=0>
                 <tr>
-                    <td>Введите e-mail в качестве логина</td>
+                    <td>Enter e-mail as login</td>
                     <td><input type='text' required name='login' value='<%=""%>' autofocus/>
                     </td>
                 </tr>
                 <br>
                 <tr>
-                    <td>Введите пароль</td>
+                    <td>Enter password</td>
                     <td><input type='password' required name='password'/></td>
                 </tr>
                 <td></td>

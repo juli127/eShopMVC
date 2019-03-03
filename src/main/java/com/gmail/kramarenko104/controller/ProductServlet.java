@@ -1,23 +1,20 @@
 package com.gmail.kramarenko104.controller;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.gmail.kramarenko104.dao.ProductDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import org.apache.log4j.Logger;
 import com.gmail.kramarenko104.model.Product;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
-@WebServlet(name = "ProductServlet", urlPatterns = {"/", "/products"})
-public class ProductServlet extends HttpServlet {
+@Controller
+@RequestMapping({"/", "/products"})
+public class ProductServlet extends HttpServlet{
 
     private static Logger logger = Logger.getLogger(ProductServlet.class);
     private DaoFactory daoFactory;
@@ -26,14 +23,13 @@ public class ProductServlet extends HttpServlet {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+    @RequestMapping(method = RequestMethod.GET)
+    public String doGet(ModelMap model) {
+
         ProductDao productDao = daoFactory.getProductDao();
+        String selectedCateg = (String)model.get("selectedCategory");
 
-        String selectedCateg = req.getParameter("selectedCategory");
         List<Product> products;
-
         // when form is opened at the first time, selectedCateg == null
         if (selectedCateg != null) {
             products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
@@ -41,22 +37,22 @@ public class ProductServlet extends HttpServlet {
             products = productDao.getAllProducts();
         }
 
-        session.setAttribute("selectedCateg", selectedCateg);
-        session.setAttribute("products", products);
+        model.addAttribute("selectedCateg", selectedCateg);
+        model.addAttribute("products", products);
 //        products.forEach(e -> System.out.println(e));
         daoFactory.deleteProductDao(productDao);
-
-        RequestDispatcher rd = req.getRequestDispatcher("/WEB-INF/view/products.jsp");
-        rd.forward(req, resp);
+        return("products");
     }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public String doPost(ModelMap model) {
+        return doGet(model);
+    }
+
+    // where to close connection???
     @Override
     public void destroy() {
         daoFactory.closeConnection();
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        doGet(request, response);
     }
 
 }

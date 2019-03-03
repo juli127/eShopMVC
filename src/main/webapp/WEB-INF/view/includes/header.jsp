@@ -46,17 +46,17 @@
                 <td>
                     <div id="menu">
                         <ul>
-                            <li><a href="products">Каталог товаров</a></li>
+                            <li><a href="products">All categories</a></li>
                             <c:choose>
                                 <c:when test="${username != null}">
                                     <li><a href="logout">Logout</a></li>
                                 </c:when>
                                 <c:otherwise>
                                     <li><a href="login">Login</a></li>
-                                    <li><a href="registration">Регистрация</a></li>
+                                    <li><a href="registration">Registration</a></li>
                                 </c:otherwise>
                             </c:choose>
-                            <li><a href="cart">Корзина</a></li>
+                            <li><a href="cart">Cart</a></li>
                         </ul>
                     </div>
                 </td>
@@ -66,25 +66,25 @@
 
     <c:if test="${username != null}">
     <div id="autoriz">
-        ${greeting} в Вашей корзине товаров: <span id="goodsCount">${sessionScope.cartSize==null?0:sessionScope.cartSize}</span></>
+            ${greeting} your cart has <span id="goodsCount">${sessionScope.cartSize==null?0:sessionScope.cartSize}</span></> items
+</div>
+</c:if>
+
+<%--<p>--%>
+<div class="page" id="page">
+    <div id="sidebar">
+        <table>
+            <tr>DRESSES<a href="products?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
+                                                                  alt="" width="120" height="120"
+                                                                  title="DRESSES"/></a></tr>
+            <tr>SHOES<a href="products?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
+                                                                alt="" width="120" height="120" title="SHOES"/></a>
+            </tr>
+            <tr>ACCESSORIES<a href="products?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
+                                                                      width="120" height="120"
+                                                                      title="ACCESSORIES"/></a></tr>
+        </table>
     </div>
-    </c:if>
+    <!-- end #header -->
 
-    <%--<p>--%>
-    <div class="page" id="page">
-        <div id="sidebar">
-            <table>
-                <tr>ОДЕЖДА<a href="products?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
-                                                                     alt="" width="120" height="120"
-                                                                     title="Одежда"/></a></tr>
-                <tr>ОБУВЬ<a href="products?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
-                                                                    alt="" width="120" height="120" title="Обувь"/></a>
-                </tr>
-                <tr>АКСЕССУАРЫ<a href="products?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
-                                                                         width="120" height="120"
-                                                                         title="Аксессуары"/></a></tr>
-            </table>
-        </div>
-        <!-- end #header -->
-
-        <div id="content">
+    <div id="content">

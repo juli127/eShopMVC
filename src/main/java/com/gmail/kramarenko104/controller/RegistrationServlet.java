@@ -4,23 +4,22 @@ import com.gmail.kramarenko104.dao.UserDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@WebServlet(name = "RegistrationServlet", urlPatterns = {"/registration"})
+@Controller
+@RequestMapping("/registration")
 public class RegistrationServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(RegistrationServlet.class);
@@ -30,24 +29,28 @@ public class RegistrationServlet extends HttpServlet {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        RequestDispatcher rd = req.getRequestDispatcher("WEB-INF/view/registration.jsp");
-        rd.forward(req, resp);
+    private static HttpSession getSession() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true);
     }
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        HttpSession session = request.getSession();
+    @RequestMapping(method = RequestMethod.GET)
+    public String doGet(ModelMap model) {
+        return "registration.jsp";
+    }
 
+    @RequestMapping(method = RequestMethod.POST)
+    public String doPost(ModelMap model) {
+        HttpSession session = getSession();
         StringBuilder message = new StringBuilder();
         boolean needRegistration = false;
 
-        String login = request.getParameter("login");
-        String pass = request.getParameter("password");
-        String repass = request.getParameter("repassword");
-        String name = request.getParameter("name");
-        String address = request.getParameter("address");
-        String comment = request.getParameter("comment");
+        String login = (String) model.get("login");
+        String pass = (String) model.get("password");
+        String repass = (String) model.get("repassword");
+        String name = (String) model.get("name");
+        String address = (String) model.get("address");
+        String comment = (String) model.get("comment");
 
         Map<String, String> regData = new HashMap<>();
         regData.put("login", login);
@@ -58,77 +61,72 @@ public class RegistrationServlet extends HttpServlet {
 
         Map<String, String> errors = new HashMap<>();
 
-        if (session != null) {
-            // already logged in
-            if (session.getAttribute("user") != null) {
-                logger.debug("RegisrtServlet: some user is already logged in");
-                User currentUser = (User) session.getAttribute("user");
-                String currentLogin = (currentUser).getLogin();
-                if (currentLogin.equals(login)) {
-                    logger.debug("RegisrtServlet: logged in user tries to registere. Just forward him to page with products");
-                    message.append("<br><b><font color='green'><center>Hi, " + currentUser.getName() + ". <br>You are registered already.</font><b>");
-                } else { // we should logout and login as the new user
-                    logger.debug("RegisrtServlet: try to register when user is logged in. Then logout and forward to registartion.jsp");
-                    session.invalidate();
-                    session = request.getSession();
-                    needRegistration = true;
-                }
-            } else {// not logged in yet
-                logger.debug("RegisrtServlet: no one user is logged in. Just check entered fields from registration form");
+        // already logged in
+        if (session.getAttribute("user") != null) {
+            logger.debug("RegistrServlet: some user is already logged in");
+            User currentUser = (User) session.getAttribute("user");
+            String currentLogin = (currentUser).getLogin();
+            if (currentLogin.equals(login)) {
+                logger.debug("RegistrServlet: logged in user tries to registere. Just forward him to page with products");
+                message.append("<br><b><font color='green'><center>Hi, " + currentUser.getName() + ". <br>You are registered already.</font><b>");
+            } else { // we should logout and login as the new user
+                logger.debug("RegistrServlet: try to register when user is logged in. Then logout and forward to registartion.jsp");
+                session.invalidate();
+                session = getSession();
+                needRegistration = true;
+            }
+        } else {// not logged in yet
+            logger.debug("RegistrServlet: no one user is logged in. Just check entered fields from registration form");
 
-                for (Map.Entry<String,String> entry: regData.entrySet()){
-                    if (entry.getValue().length() < 1){
-                        errors.put(entry.getKey(), "Cannot be empty!");
-                    }
+            for (Map.Entry<String, String> entry : regData.entrySet()) {
+                if (entry.getValue().length() < 1) {
+                    errors.put(entry.getKey(), "Cannot be empty!");
                 }
-                regData = null;
+            }
+            regData = null;
 
-                if (repass.length() > 0 && !pass.equals(repass)) {
-                    errors.put("regRepassword", "Password and retyped one don't match!");
-                }
+            if (repass.length() > 0 && !pass.equals(repass)) {
+                errors.put("regRepassword", "Password and retyped one don't match!");
+            }
 
-                String patternString = "([0-9a-zA-Z]+){4,}";
-                Pattern pattern = Pattern.compile(patternString);
-                Matcher matcher = pattern.matcher(pass);
-                if (pass.length() > 0 && !matcher.matches()) {
-                    errors.put("regPassword","Password should has minimum 4 symbols with at least one upper case letter and 1 digit!");
-                }
+            String patternString = "([0-9a-zA-Z]+){4,}";
+            Pattern pattern = Pattern.compile(patternString);
+            Matcher matcher = pattern.matcher(pass);
+            if (pass.length() > 0 && !matcher.matches()) {
+                errors.put("regPassword", "Password should has minimum 4 symbols with at least one upper case letter and 1 digit!");
+            }
 
-                if (errors.size() == 0) {
-                    UserDao userDao = daoFactory.getUserDao();
-                    User newUser = new User();
-                    newUser.setLogin(login);
-                    newUser.setPassword(pass);
-                    newUser.setAddress(address);
-                    newUser.setComment(comment);
-                    if (userDao.createUser(newUser)) {
-                        message.append("<br><font color='green'><center>Hi, " + name + "! <br>You are registered now.</font>");
-                        session.setAttribute("user", newUser);
-                        session.setAttribute("userName", newUser.getName());
-                    } else {
-                        needRegistration = true;
-                        message.append("<br><font color='red'><center>User wan't registered because of DB problems</font>");
-                    }
-                    daoFactory.deleteUserDao(userDao);
+            if (errors.size() == 0) {
+                UserDao userDao = daoFactory.getUserDao();
+                User newUser = new User();
+                newUser.setLogin(login);
+                newUser.setPassword(pass);
+                newUser.setAddress(address);
+                newUser.setComment(comment);
+                if (userDao.createUser(newUser)) {
+                    message.append("<br><font color='green'><center>Hi, " + name + "! <br>You are registered now.</font>");
+                    model.put("user", newUser);
+                    model.put("userName", newUser.getName());
                 } else {
                     needRegistration = true;
-                    session.setAttribute("regErrors", errors);
+                    message.append("<br><font color='red'><center>User wan't registered because of DB problems</font>");
                 }
-            }
-
-            if (needRegistration){
-                RequestDispatcher rd = request.getRequestDispatcher("WEB-INF/views/registartion.jsp");
-                rd.forward(request, response);
+                daoFactory.deleteUserDao(userDao);
             } else {
-                response.sendRedirect("WEB-INF/views/products.jsp");
+                needRegistration = true;
+                model.put("regErrors", errors);
             }
-            session.setAttribute("message", message.toString());
         }
+        model.put("message", message.toString());
 
+        if (needRegistration) {
+            return "registration";
+        } else {
+            return "products";
+        }
+    }
 
-
-}
-
+    // where to close connection???
     @Override
     public void destroy() {
         daoFactory.closeConnection();

@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.gmail.kramarenko104</groupId>
-  <artifactId>eShop</artifactId>
+  <artifactId>eShopMVC</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>war</packaging>
 
@@ -13,30 +13,66 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
+    <springframework.version>5.1.5.RELEASE</springframework.version>
   </properties>
 
   <dependencies>
-    <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+
+      <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-core</artifactId>
+          <version>${springframework.version}</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.springframework/spring-context -->
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-context</artifactId>
+          <version>${springframework.version}</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-beans</artifactId>
+          <version>${springframework.version}</version>
+      </dependency>
+
+      <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework/spring-expression &ndash;&gt;-->
+      <!--<dependency>-->
+          <!--<groupId>org.springframework</groupId>-->
+          <!--<artifactId>spring-expression</artifactId>-->
+          <!--<version>${springframework.version}</version>-->
+      <!--</dependency>-->
+
+      <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-webmvc</artifactId>
+          <version>${springframework.version}</version>
+      </dependency>
+
+      <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+          <version>${springframework.version}</version>
+      </dependency>
+
+
+      <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
+      <dependency>
+          <groupId>commons-logging</groupId>
+          <artifactId>commons-logging</artifactId>
+          <version>1.2</version>
+      </dependency>
+      
+      <!-- https://mvnrepository.com/artifact/jstl/jstl -->
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
       <version>1.2</version>
     </dependency>
-
-    <!-- https://mvnrepository.com/artifact/xstream/xstream -->
-    <!--<dependency>-->
-      <!--<groupId>xstream</groupId>-->
-      <!--<artifactId>xstream</artifactId>-->
-      <!--<version>1.2.2</version>-->
-    <!--</dependency>-->
-
-    <!-- https://mvnrepository.com/artifact/javax.servlet/servlet-api -->
-    <!--<dependency>-->
-      <!--<groupId>javax.servlet</groupId>-->
-      <!--<artifactId>servlet-api</artifactId>-->
-      <!--<version>2.5</version>-->
-      <!--<scope>provided</scope>-->
-    <!--</dependency>-->
 
     <dependency>
       <groupId>javax.servlet</groupId>
@@ -72,7 +108,7 @@
   </dependencies>
 
   <build>
-    <finalName>eShop</finalName>
+    <finalName>eShopMVC</finalName>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven
 				defaults (may be moved to parent pom) -->
       <plugins>
