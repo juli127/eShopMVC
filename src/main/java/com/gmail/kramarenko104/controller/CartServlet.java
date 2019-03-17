@@ -3,26 +3,22 @@ package com.gmail.kramarenko104.controller;
 import com.gmail.kramarenko104.dao.CartDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
-import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
+import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.util.Map;
+import java.io.*;
+
 
 @Controller
 @RequestMapping("/cart")
-public class CartServlet {
+public class CartServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(CartServlet.class);
     private DaoFactory daoFactory;
@@ -31,123 +27,93 @@ public class CartServlet {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        daoFactory.openConnection();
 
-    private static HttpSession getSession() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true);
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String doGet(ModelMap model) {
-
-        logger.debug("CartServlet: -------enter-------------------- ");
-//        HttpSession session = getSession();
-        boolean needRefresh = false;
-
-        User currentUser = (User) model.get("user");
-        if (currentUser == null) {
-            logger.debug("CartServlet: Current user == null ");
-            model.put("message", "<a href='login'>Login</a> to see your cart. Or <a href='registration'>Register.</a>");
-            model.addAttribute("message", "<a href='login'>Login</a> to see your cart. Or <a href='registration'>Register.</a>");
-            // be sure that all user's corresponding values are null, too
-            model.put("cartSize", null);
-            model.put("userName", null);
-            model.put("totalSum", 0);
-            model.put("productsInCart", null);
-            model.addAttribute("cartSize", null);
-            model.addAttribute("userName", null);
-            model.addAttribute("totalSum", 0);
-            model.addAttribute("productsInCart", null);
-
-        }
-        else {
-            CartDao cartDao = daoFactory.getCartDao();
-
+        if (session.getAttribute("user") != null) {
+            User currentUser = (User) session.getAttribute("user");
             logger.debug("CartServlet: Current user: " + currentUser.getName());
             int userId = currentUser.getId();
 
-            //////////////////// CHANGE CART /////////////////////////////////////
-            String addProducts = (String) model.get("addPurchase");
-            if (addProducts != null) {
-                logger.debug("CatServlet: GOT PARAMETER addPurchase: === " + addProducts);
-                String[] addProductsArr = ((String)addProducts).split(":");
-                for (String s : addProductsArr) {
-                    int productId = Integer.valueOf(addProductsArr[0]);
-                    int quantity = Integer.valueOf(addProductsArr[1]);
-                    cartDao.addProduct(currentUser.getId(), productId, quantity);
-                    logger.debug("CartServlet: for user: " + currentUser.getName() + "was added " + quantity + " of productId " + productId);
+            Cart userCart = null;
+            if (session.getAttribute("userCart") == null) {
+                CartDao cartDao = daoFactory.getCartDao();
+                userCart = cartDao.getCart(userId);
+                if (userCart == null) {
+                    logger.debug("CartServlet: cart from DB == null! create new cart for userId: " + userId);
+                    userCart = new Cart(userId);
+                }
+                session.setAttribute("userCart", userCart);
+                daoFactory.deleteCartDao(cartDao);
+            }
+        }
+        daoFactory.closeConnection();
+        req.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        daoFactory.openConnection();
+        boolean needRefresh = false;
+
+        if (session.getAttribute("user") != null) {
+            User currentUser = (User) session.getAttribute("user");
+            logger.debug("CartServlet: Current user: " + currentUser.getName());
+            int userId = currentUser.getId();
+
+            // CHANGE CART
+            CartDao cartDao = daoFactory.getCartDao();
+            // get info from Ajax POST req (from updateCart.js)
+            String param = req.getParameter("action");
+            if (param != null && param.length() > 0) {
+                int productId = 0;
+                int quantity = 0;
+                switch (param) {
+                    case "add":
+                        logger.debug("CatServlet: GOT PARAMETER 'add'....");
+                        productId = Integer.valueOf(req.getParameter("productId"));
+                        quantity = Integer.valueOf(req.getParameter("quantity"));
+                        logger.debug("CatServlet: userId: " + currentUser.getId() + ", productId: "+ productId + ", quantity: " + quantity);
+                        cartDao.addProduct(currentUser.getId(), productId, quantity);
+                        logger.debug("CartServlet: for user '" + currentUser.getName() + "' was added " + quantity + " of productId: " + productId);
+                        break;
+                    case "remove":
+                        logger.debug("CartServlet: GOT PARAMETER 'remove' ");
+                        productId = Integer.valueOf(req.getParameter("productId"));
+                        quantity = Integer.valueOf(req.getParameter("quantity"));
+                        cartDao.removeProduct(currentUser.getId(), productId, quantity);
+                        logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
+                        break;
                 }
                 needRefresh = true;
             }
-
-            String rmProducts = (String) model.get("removePurchase");
-            if (rmProducts != null) {
-                logger.debug("CartServlet: GOT PARAMETER removePurchase: === " + rmProducts);
-                String[] rmProductsArr = ((String)rmProducts).split(":");
-                for (String s : rmProductsArr) {
-                    int productId = Integer.valueOf(rmProductsArr[0]);
-                    int quantity = Integer.valueOf(rmProductsArr[1]);
-                    cartDao.removeProduct(currentUser.getId(), productId, quantity);
-                    logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
+            //  REFRESH CART's characteristics if refresh need
+            Cart userCart = null;
+            if (session.getAttribute("userCart") == null || needRefresh) {
+                userCart = cartDao.getCart(userId);
+                if (userCart == null) {
+                    logger.debug("CartServlet: cart from DB == null! create the new cart for userId: " + userId);
+                    userCart = new Cart(userId);
                 }
-                needRefresh = true;
-            }
+                session.setAttribute("userCart", userCart);
 
-            ///////////////// REFRESH CART's characteristics if refresh need ////////////////////////////////////////
-            logger.debug("CartServlet: needRefresh ==  "+ needRefresh);
-
-            if (model.get("cartSize") == null || needRefresh) {
-                Cart cart = cartDao.getCart(currentUser.getId());
-                int cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
-                model.put("cartSize", cartSize);
-                model.addAttribute("cartSize", cartSize);
-                logger.debug("CartServlet: Refresh  cart size==  "+ cartSize);
-            }
-
-            Map<Product, Integer> productsInCart = null;
-            logger.debug("CartServlet: productsInCart attribute is null? " +
-                    (model.get("productsInCart") == null));
-            if (model.get("productsInCart") == null || needRefresh) {
-                productsInCart = cartDao.getAllProducts(userId);
-                model.put("productsInCart", productsInCart);
-                model.addAttribute("productsInCart", productsInCart);
-                //logger.debug("CartServlet.doGet: Refresh  productsInCart==  "+ productsInCart);
-                //session.setAttribute("productsIds", productsInCart.keySet().toArray());
-            }
-
-            if (model.get("totalSum") == null  || needRefresh) {
-                int totalSum = 0;
-                for (Map.Entry entry: productsInCart.entrySet()){
-                    totalSum += (int)entry.getValue() * ((Product)entry.getKey()).getPrice();
+                // send JSON with updated Cart back to cart.jsp
+                if (userCart != null) {
+                    String jsondata = new Gson().toJson(userCart);
+                    logger.debug("CartServlet: send JSON data to cart.jsp ---->" + jsondata);
+                    try(PrintWriter out = resp.getWriter()) {
+                        resp.setContentType("application/json");
+                        resp.setCharacterEncoding("UTF-8");
+                        out.print(jsondata);
+                        out.flush();
+                    }
                 }
-                model.put("totalSum", totalSum);
-                model.addAttribute("totalSum", totalSum);
-                logger.debug("CartServlet.doGet: >>>>>> Refresh  totalSum ==  "+ totalSum);
             }
-
-            model.put("user", currentUser);
-            model.addAttribute("user", currentUser);
             daoFactory.deleteCartDao(cartDao);
         }
-
-        logger.debug("CartServlet: needRefresh ==  "+ needRefresh);
-        logger.debug("CartServlet.doGet: >>>>>> where model.get(cartSize)= " + model.get("cartSize"));
-        logger.debug("CartServlet.doGet: >>>>>> where model.get(totalSum)= " + model.get("totalSum"));
-
-        logger.debug("CartServlet.doGet: >>>>>> call forward to cart.jsp........... ");
-        logger.debug("CartServlet.doGet: -------exit-------------------- ");
-        return "cart";
-
-    }
-
-    @RequestMapping(method = RequestMethod.POST)
-    protected void doPost(ModelMap model) {
-        doGet(model);
-    }
-
-    // where to close connection???
-//    @Override
-    public void destroy() {
         daoFactory.closeConnection();
     }
 }

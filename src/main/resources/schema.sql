@@ -7,13 +7,13 @@ CREATE TABLE IF NOT EXISTS users(
     name VARCHAR(30),
     address VARCHAR(50),
     comment VARCHAR(100),
-    PRIMARY KEY (id)
+    PRIMARY KEY (orderNumber)
     );
 
 CREATE TABLE IF NOT EXISTS categories (
 id INT AUTO_INCREMENT,
 name VARCHAR(100) UNIQUE NOT NULL,
-PRIMARY KEY (id));
+PRIMARY KEY (orderNumber));
 
 CREATE TABLE IF NOT EXISTS products (
 id INT AUTO_INCREMENT,
@@ -22,13 +22,25 @@ category INT,
 price INT,
 description VARCHAR(300),
 image VARCHAR(100),
-PRIMARY KEY (id),
-FOREIGN KEY (category) REFERENCES categories(id));
+PRIMARY KEY (orderNumber),
+FOREIGN KEY (category) REFERENCES categories(orderNumber));
 
 
 CREATE TABLE IF NOT EXISTS carts (
+ id INT,
  userId INT,
  productId INT,
  quantity INT,
- FOREIGN KEY (userId) REFERENCES users(id),
- FOREIGN KEY (productId) REFERENCES products(id));
+ PRIMARY KEY (orderNumber),
+ FOREIGN KEY (userId) REFERENCES users(orderNumber),
+ FOREIGN KEY (productId) REFERENCES products(orderNumber));
+
+
+CREATE TABLE IF NOT EXISTS orders (
+ orderNumber INT,
+ status VARCHAR(100),
+ userId INT,
+ productId INT,
+ quantity INT,
+ FOREIGN KEY (userId) REFERENCES users(orderNumber),
+ FOREIGN KEY (productId) REFERENCES products(orderNumber));

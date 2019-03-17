@@ -8,15 +8,9 @@ import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,172 +22,130 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     private static Logger logger = Logger.getLogger(LoginServlet.class);
-    private int attempt;
-    private long startTime;
+    private static final int MAX_LOGIN_ATTEMPTS = 3;
+    private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
+    private static final String adminLog = "admin";
     private DaoFactory daoFactory;
-    private int LOGIN_ATTEMPT_QUANTITY = 3;
-    private int WAIT_SECONDS = 15;
+    private int attempt;
 
     public LoginServlet() throws ServletException, IOException {
         daoFactory = DaoFactory.getSpecificDao();
     }
 
-    private static HttpSession getSession() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true);
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        session.setAttribute("showLoginForm", true);
+        session.setAttribute("message", null);
+        session.setAttribute("attempt", null);
+        req.getRequestDispatcher("WEB-INF/view/login.jsp").forward(req, resp);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-//    public String doGet(@ModelAttribute("mvc-dispatcher")User user, ModelMap model) {
-    public String doGet(ModelMap model) {
-        StringBuilder msgText = new StringBuilder();
-        logger.debug("LoginServlet: =================enter========================");
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        daoFactory.openConnection();
         boolean showLoginForm = true;
-        int cartSize = 0;
+        boolean accessGranted = false;
+        StringBuilder msgText = new StringBuilder();
+        boolean isAdmin = false;
+        User currentUser = null;
 
-        CartDao cartDao = daoFactory.getCartDao();
-        UserDao userDao = daoFactory.getUserDao();
+        String viewToGo = "WEB-INF/view/login.jsp";
+        String login = req.getParameter("login");
+        String pass = req.getParameter("password");
 
-        String viewToGo = "login";
-//        HttpSession session = getSession();
-        String log = (String)model.get("login");
-        String pass = (String)model.get("password");
-//        logger.debug("LoginServlet: session==null ? " + (session == null));
-        logger.debug("LoginServlet: user entered log = " + log);
-        logger.debug("LoginServlet: user entered pass = " + pass);
-        msgText.append("<center>");
-
-//        if (session != null) {
-//            model.put("session", session);
-            attempt = (model.get("attempt") == null) ? 0 : (int)model.get("attempt");
+        if (session != null) {
+            attempt = (session.getAttribute("attempt") == null) ? 0 : (int) session.getAttribute("attempt");
 
             // already logged in
-            User currentUser = (User)model.get("user");
-            // be sure that username is correct
-            logger.debug("LoginServlet: currentUser: " + (currentUser == null ? "" : currentUser));
-
-            if (currentUser != null) {
-                if (model.get("cartSize") == null) {
-                    Cart cart = cartDao.getCart(currentUser.getId());
-                    cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
-                    model.put("cartSize", cartSize);
-                    model.addAttribute("cartSize", cartSize);
-                }
-
-                logger.debug("LoginServlet: user already logged in: " + currentUser);
-                model.put("userName", currentUser.getName());
-                model.addAttribute("userName", currentUser.getName());
-                showLoginForm = false;
-                if (cartSize > 0) {
-                    viewToGo = "cart";
-                }
+            if (session.getAttribute("user") != null) {
+                currentUser = (User) session.getAttribute("user");
+                accessGranted = true;
             } // not logged in yet
             else {
-                logger.debug("LoginServlet: user didn't log in yet");
-                boolean accessGranted = false;
                 long waitTime = 0;
 
-                if ((log != null) && !("".equals(log))) {
-                    logger.debug("LoginServlet: log != null");
-
-                    currentUser = userDao.getUserByLogin(log);
+                if ((login != null) && !("".equals(login))) {
+                    session.setAttribute("login", login);
+                    UserDao userDao = daoFactory.getUserDao();
+                    currentUser = userDao.getUserByLogin(login);
                     boolean exist = (currentUser != null);
-                    logger.debug("LoginServlet: user is present in DB = " + exist);
 
                     if (exist) {
                         String passVerif = UserDaoMySqlImpl.hashString(pass);
-
-                        logger.debug("LoginServlet: currentUser = " + currentUser);
-                        logger.debug("LoginServlet: passVerif = " + passVerif);
                         accessGranted = (currentUser.getPassword().equals(passVerif));
-                        logger.debug("LoginServlet: accessGranted = " + accessGranted);
-                        showLoginForm = !accessGranted && attempt < LOGIN_ATTEMPT_QUANTITY;
-                        logger.debug("LoginServlet: showLoginForm = " + showLoginForm);
+                        showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
+
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
-                            model.put("user", currentUser);
-                            model.addAttribute("user", currentUser);
-                            model.put("userName", currentUser.getName());
-                            model.addAttribute("userName", currentUser.getName());
-                            logger.debug("LoginServlet: user.getName() = " + currentUser.getName());
-
-                            if (model.get("cartSize") == null) {
-                                Cart cart = cartDao.getCart(currentUser.getId());
-                                cartSize = cart.getProducts().values().stream().reduce(0, (a, b) -> a + b);
-                                model.put("cartSize", cartSize);
-                                model.addAttribute("cartSize", cartSize);
+                            session.setAttribute("user", currentUser);
+                            session.setAttribute("login", null);
+                            logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
+                            if (adminLog.equals(login) && userDao.getUserByLogin(adminLog).getPassword().equals(passVerif)){
+                                isAdmin = true;
                             }
-                            if (cartSize > 0) {
-                                viewToGo = "cart";
-                            }
-                        }
-                        else {
+                        } else {
                             attempt++;
-                            if (attempt >= LOGIN_ATTEMPT_QUANTITY) {
-                                if (attempt == LOGIN_ATTEMPT_QUANTITY) {
-                                    startTime = System.currentTimeMillis();
+                            if (attempt >= MAX_LOGIN_ATTEMPTS) {
+                                if (attempt == MAX_LOGIN_ATTEMPTS) {
+                                    session.setAttribute("startTime", System.currentTimeMillis());
                                 }
-                                waitTime = WAIT_SECONDS - (System.currentTimeMillis() - startTime) / 1000;
+                                waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long)session.getAttribute("startTime" ))/ 1000;
                                 if (waitTime > 0) {
-                                    msgText.append("<br><font size=4 color='red'><b> Форма будет снова доступна через " + waitTime + " секунд</b></font>");
+                                    msgText.append("<br><font size=3 color='red'><b> Attempts' limit is exceeded. Login form will be available in " + waitTime + " seconds</b></font>");
                                     showLoginForm = false;
-                                }
-                                else {
+                                } else {
                                     attempt = 0;
                                     showLoginForm = true;
                                 }
-                            }
-                            else if (attempt >= 0) {
-                                msgText.append("<b><font size=4 color='red'>Неправильный пароль, попробуйте еще раз! (попытка #" + attempt + ")</font>");
+                            } else if (attempt >= 0) {
+                                msgText.append("<b><font size=3 color='red'>Wrong password, try again! You have 3 attempts. (attempt #" + attempt + ")</font>");
                             }
                         }
-                    }
-                    else {
+                    } else {
                         attempt = 0;
                         showLoginForm = false;
-                        msgText.append("<br><b><font size=3 color='green'><center>Пользователь с таким логином еще не был зарегистрирован.</b>");
-                        msgText.append("<br><b>Вы можете <a href='registration'>зарегестрироваться по ссылке</a></b></font>");
+                        msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
                     }
-                }
-                else {
+                    daoFactory.deleteUserDao(userDao);
+                } else {
                     attempt = 0;
                 }
             }
-
-//        }
-        msgText.append("</center>");
-        logger.debug("LoginServlet: go to " + viewToGo);
-        model.put("showLoginForm", showLoginForm);
-        model.addAttribute("showLoginForm", showLoginForm);
-        model.put("message", msgText.toString());
-        model.addAttribute("message", msgText.toString());
-        model.put("attempt", attempt);
-        model.addAttribute("attempt", attempt);
-
-        daoFactory.deleteCartDao(cartDao);
-        daoFactory.deleteUserDao(userDao);
-
-        // login was successful, redirect to cart controller
-        if (viewToGo.equals("cart")){
-            logger.debug("LoginServlet: login was successful, redirect to cart controller");
-            return "redirect:cart";
         }
-        else { // login was unsuccessful, try again, go to login.jsp
-            logger.debug("LoginServlet: login was unsuccessful, try again, go to login.jsp");
-            return "login";
+        // for authorized user get the corresponding shopping Cart
+        if (accessGranted) {
+            CartDao cartDao = daoFactory.getCartDao();
+            showLoginForm = false;
+            Cart userCart = (Cart) session.getAttribute("userCart");
+            if (userCart == null) {
+                userCart = cartDao.getCart(currentUser.getId());
+                if (userCart == null) {
+                    userCart = new Cart(currentUser.getId());
+                }
+                session.setAttribute("userCart", userCart);
+            }
+            if (userCart.getItemsCount() > 0) {
+                viewToGo = "./cart";
+            } else {
+                viewToGo = "./product";
+            }
+            daoFactory.deleteCartDao(cartDao);
         }
-    }
 
-    @RequestMapping(method = RequestMethod.POST)
-    protected void doPost(ModelMap model) {
-        doGet(model);
-    }
-
-    // where to close connection???
-    @Override
-    public void destroy() {
         daoFactory.closeConnection();
-    }
 
+        session.setAttribute("showLoginForm", showLoginForm);
+        session.setAttribute("message", msgText.toString());
+        session.setAttribute("attempt", attempt);
+        session.setAttribute("isAdmin", isAdmin);
+
+        if ("WEB-INF/view/login.jsp".equals(viewToGo)){
+            req.getRequestDispatcher(viewToGo).forward(req, resp);
+        } else {
+            resp.sendRedirect(viewToGo);
+        }
+    }
 }

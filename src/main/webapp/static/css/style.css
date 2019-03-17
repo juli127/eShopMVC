@@ -114,16 +114,6 @@ a {
 	border: none;
 }
 
-#autoriz {
-    color: #FFFFFF;
-    width: 940px;
-    margin: 0px auto;
-    font-size: 14px;
-    text-align: right;
-	padding: 5px 5px 5px 5px;
-
-}
-
 #sidebar {
 	float: left;
 	width: 120px;
@@ -131,13 +121,6 @@ a {
 	margin: 0 50px 0 5px;
 	padding: 5px 5px 5px 5px;
 }
-
-/*.page {*/
-    /*float: center;*/
-    /*padding: 5px 5px 5px 5px;*/
-	/*width: 800px;*/
-	/*margin: 0 20px 0 120px;*/
-/*}*/
 
 #table {
 	padding: 2px 2px 2px 2px;
@@ -174,38 +157,82 @@ a {
 }
 
 .productDescription{
-    /*width: 210px;*/
+	text-align: center;
 	padding: 0px 0px 2px 5px;
 }
 
 
 #price {
 	font-family: Arial, Helvetica, sans-serif;
-	font-size: 16px;
+    font-size: 120%;
 	font-weight: bold;
 	text-align: center;
 	color:  #f59506;
-	/*width: 230px;*/
+    padding: 2px;
 }
 
 .productName {
-    /*width: 230px;*/
-	height: 40px;
+	height: 38px;
 	font-size: 14px;
     text-align: center;
-	padding: 2px 2px 1px 2px;
+	padding: 1px;
 }
 
 #cart{
 	text-align: center;
-	font-size: 10px;
-	margin: 0 0 0 280px;
+    font-size: 110%;
+	margin: 0 0 0 40%;
+    padding: 1px;
+}
+
+#tableTitle{
+	color:  #f59506;
+}
+
+#errorMsgText {
+    font-size: 120%;
+	  color: #f50508;
+}
+
+#RegMsg{
+    color: #f50508;
+    font-size: 130%;
+    text-align: center;
+}
+
+#autoriz {
+    color: #63ce29;
+    width: 940px;
+    margin: 1%;
+    font-size: 130%;
+    text-align: right;
+    padding: 5px 5px 5px 5px;
+
+}
+
+#myTableFormatting{
+	text-align: left;
+	font-size: 100%;
+}
+
+#infoGreen{
+    color: #26cc31;
+    font-size: 130%;
+    text-align: center;
+    align-content: center;
 }
 
 #info{
-	color:  #f59506;
+    color:  #f59506;
+    font-size: 130%;
+    text-align: center;
+    align-content: center;
 }
 
-.tableTitle{
-	color:  #f59506;
+#myButtonsFormatting {
+	font-size: 140%;
+    align-content: center;
+	style: "shape-rendering: crispEdges";
+    text-align: center;
+    padding: 1%;
 }

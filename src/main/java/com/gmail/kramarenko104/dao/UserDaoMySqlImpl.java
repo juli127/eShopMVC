@@ -2,7 +2,6 @@ package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
-
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -13,12 +12,12 @@ import java.util.List;
 
 public class UserDaoMySqlImpl implements UserDao {
 
-    private final static String CREATE_USER = "INSERT INTO users(login, password, name, address, comment) VALUES(?,?,?,?,?);";
-    private final static String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?);";
-    private final static String GET_USER_BY_LOGIN_PASS = "SELECT * FROM users WHERE login = ? AND  password = ?";
-    private final static String GET_ALL_USERS = "SELECT * FROM users;";
-    private final static String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
-    private final static String SALT = "34Ru9k";
+    private static final String CREATE_USER = "INSERT INTO users(login, password, name, address, comment) VALUES(?,?,?,?,?);";
+    private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?);";
+    private static final String GET_ALL_USERS = "SELECT * FROM users;";
+    private final static String DELETE_USER = "DELETE FROM users WHERE id = ?;";
+    private static final String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
+    private static final String SALT = "34Ru9k";
     private Connection conn;
     private static Logger logger = Logger.getLogger(UserDaoMySqlImpl.class);
 
@@ -41,17 +40,24 @@ public class UserDaoMySqlImpl implements UserDao {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
         }
         return false;
     }
 
     @Override
     public User getUser(int id) {
-        User user = new User();
+        User user = null;
         try (PreparedStatement pst = conn.prepareStatement(GET_USER_BY_ID)) {
             pst.setInt(1, id);
             ResultSet rs = pst.executeQuery();
-            fillUser(rs, user);
+            if (rs.next()) {
+                fillUser(rs, "");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -64,8 +70,7 @@ public class UserDaoMySqlImpl implements UserDao {
         try (Statement statement = conn.createStatement();
              ResultSet rs = statement.executeQuery(GET_ALL_USERS)) {
             while (rs.next()) {
-                User user = new User();
-                fillUser(rs, user);
+                User user = fillUser(rs, "ignore");
                 usersList.add(user);
             }
         } catch (SQLException e) {
@@ -75,53 +80,38 @@ public class UserDaoMySqlImpl implements UserDao {
     }
 
     @Override
-    public User editUser(int id, User user) {
-        return null;
-    }
-
-    @Override
-    public boolean deleteUser(int id) {
-        return false;
-    }
-
-    @Override
     public User getUserByLogin(String login) {
-        User user = new User();
         ResultSet rs = null;
         boolean exist = false;
-        logger.debug(">>>UserDao.userExists: check user with login = " + login);
+        User user = null;
         try (PreparedStatement statement = conn.prepareStatement(GET_USER_BY_LOGIN)) {
             statement.setString(1, login);
             rs = statement.executeQuery();
-            fillUser(rs, user);
+            if (rs.next()) {
+                user = fillUser(rs, "");
+            }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            closeResultSet(rs);
         }
-        logger.debug(">>>UserDao.userExists: got user by login = " + user);
         return user;
     }
 
-    private void fillUser(ResultSet rs, User user) throws SQLException {
-        while (rs.next()) {
+    private User fillUser(ResultSet rs, String pass) throws SQLException {
+        User user = new User();
+        String login = rs.getString("login");
+        if (login != null) {
             user.setId(rs.getInt("id"));
-            user.setLogin(rs.getString("login"));
-            user.setPassword(rs.getString("password"));
+            user.setLogin(login);
+            if ("ignore".equals(pass)) {
+                user.setPassword("");
+            } else {
+                user.setPassword(rs.getString("password"));
+            }
             user.setName(rs.getString("name"));
             user.setAddress(rs.getString("address"));
             user.setComment(rs.getString("comment"));
-            logger.debug(">>>UserDao.userExists: GOT user with this login from DB = " + user);
         }
-    }
-
-    private void closeResultSet(ResultSet rs) {
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (SQLException ex) {
-            }
-        }
+        return user;
     }
 
     public static String hashString(String hash) {
@@ -131,8 +121,19 @@ public class UserDaoMySqlImpl implements UserDao {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        md5.update(StandardCharsets.UTF_8.encode(hash  + SALT));
+        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
         return String.format("%032x", new BigInteger(md5.digest()));
     }
 
+    @Override
+    public boolean deleteUser(int id) {
+        try (PreparedStatement pst = conn.prepareStatement(DELETE_USER)) {
+            pst.setInt(1, id);
+            pst.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

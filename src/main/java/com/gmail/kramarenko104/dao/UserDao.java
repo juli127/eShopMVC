@@ -10,7 +10,6 @@ public interface UserDao {
     boolean createUser(User user);
     User getUser(int id);
     User getUserByLogin(String login);
-    User editUser(int id, User user);
     boolean deleteUser(int id);
 
     List<User> getAllUsers();

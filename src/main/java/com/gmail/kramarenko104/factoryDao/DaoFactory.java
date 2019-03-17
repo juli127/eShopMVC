@@ -1,24 +1,22 @@
 package com.gmail.kramarenko104.factoryDao;
 
-import com.gmail.kramarenko104.dao.CartDao;
-import com.gmail.kramarenko104.dao.ProductDao;
-import com.gmail.kramarenko104.dao.UserDao;
+import com.gmail.kramarenko104.dao.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 public abstract class DaoFactory {
 
-	public abstract UserDao getUserDao();
-	public abstract ProductDao getProductDao();
-	public abstract CartDao getCartDao();
+    private UserDaoMySqlImpl userDaoMySqlImpl;
+    private ProductDaoMySqlImpl productDaoMySqlImpl;
+    private CartDaoMySqlImpl cartDaoMySqlImpl;
+    private OrderDaoMySqlImpl orderDaoMySqlImpl;
+	private Connection conn;
 
-	public abstract void deleteUserDao(UserDao userDao);
-	public abstract void deleteProductDao(ProductDao productDao);
-	public abstract void deleteCartDao(CartDao cartDao);
-
-	public abstract void closeConnection();
+    public abstract void openConnection();
 
 	public static DaoFactory getSpecificDao(){
-		ResourceBundle config = ResourceBundle.getBundle("config");
+		ResourceBundle config = ResourceBundle.getBundle("application");
 		DaoFactory daoFactory = null;
 		try {
 			daoFactory = (DaoFactory) Class.forName(config.getString("factoryClass")).newInstance();
@@ -31,5 +29,62 @@ public abstract class DaoFactory {
 		}
 		return daoFactory;
 	}
+
+    public void setConnection(Connection conn){
+        this.conn = conn;
+    }
+
+    public void closeConnection(){
+        try {
+            if (conn != null)
+                conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public UserDao getUserDao() {
+        userDaoMySqlImpl = new UserDaoMySqlImpl(conn);
+        return userDaoMySqlImpl;
+    }
+
+    public ProductDao getProductDao() {
+        productDaoMySqlImpl = new ProductDaoMySqlImpl(conn);
+        return productDaoMySqlImpl;
+    }
+
+    public CartDao getCartDao() {
+        cartDaoMySqlImpl = new CartDaoMySqlImpl(conn);
+        return cartDaoMySqlImpl;
+    }
+
+    public OrderDao getOrderDao() {
+        orderDaoMySqlImpl = new OrderDaoMySqlImpl(conn);
+        return orderDaoMySqlImpl;
+    }
+
+    public void deleteUserDao(UserDao userDao) {
+        if (userDao != null) {
+            userDao = null;
+        }
+    }
+
+    public void deleteProductDao(ProductDao productDao) {
+        if (productDao != null) {
+            productDao = null;
+        }
+    }
+
+    public void deleteCartDao(CartDao cartDao) {
+        if (cartDao != null) {
+            cartDao = null;
+        }
+    }
+
+    public void deleteOrderDao(OrderDao orderDao) {
+        if (orderDao != null) {
+            orderDao = null;
+        }
+    }
 
 }

@@ -1,28 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
-<c:set var="username" value="${sessionScope.userName}"/>
-<span userId='${sessionScope.user.id}'></span>
-<br><br>
-<%--<br>header: session: ${session}--%>
-<br>header: sessionScope.userId: ${sessionScope.user.id}
-<br>header: sessionScope.user: ${sessionScope.user}
-<br>header: sessionScope.userName: ${sessionScope.userName}
-<br>header: sessionScope.cartSize: ${sessionScope.cartSize}
-<br>header: sessionScope.totalSum: ${sessionScope.totalSum}
-<br>header: sessionScope.message: ${sessionScope.message}
-<br>header: sessionScope.regErrors: ${sessionScope.regErrors}
-<br>header: sessionScope.productsInCart: ${sessionScope.productsInCart}
-<br>header: header.values(): ${header.values()}
 
-<c:choose>
-    <c:when test="${username != null}">
-        <c:set var="greeting" value="${username},"/>
-    </c:when>
-    <c:otherwise>
-        <c:set var="greeting" value=""/>
-    </c:otherwise>
-</c:choose>
+<c:set var="user" value="${sessionScope.user}"/>
+<c:set var="username" value="${user.name}"/>
+<c:set var="cart" value="${sessionScope.userCart}"/>
+<c:set var="itemsCount" value="${cart.itemsCount}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -48,7 +31,7 @@
                         <ul>
                             <li><a href="products">All categories</a></li>
                             <c:choose>
-                                <c:when test="${username != null}">
+                                <c:when test="${user != null}">
                                     <li><a href="logout">Logout</a></li>
                                 </c:when>
                                 <c:otherwise>
@@ -57,6 +40,10 @@
                                 </c:otherwise>
                             </c:choose>
                             <li><a href="cart">Cart</a></li>
+                            <li><a href="order">Order</a></li>
+                            <c:if test="${sessionScope.isAdmin}">
+                                <li><a href="admin">Admin</a></li>
+                            </c:if>
                         </ul>
                     </div>
                 </td>
@@ -64,11 +51,16 @@
         </table>
     </div>
 
-    <c:if test="${username != null}">
     <div id="autoriz">
-            ${greeting} your cart has <span id="goodsCount">${sessionScope.cartSize==null?0:sessionScope.cartSize}</span></> items
-</div>
-</c:if>
+        <c:choose>
+            <c:when test="${user != null && username.length() > 0}">
+                ${username}, your cart has <span id="itemsCountField">${itemsCount==null?0:itemsCount}</span> items
+            </c:when>
+            <c:otherwise>
+            <font color=red>You should register or login before shopping or see your cart/order!</font>
+            </c:otherwise>
+        </c:choose>
+    </div>
 
 <%--<p>--%>
 <div class="page" id="page">

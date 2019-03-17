@@ -7,39 +7,39 @@
    INSERT INTO users (login, password, name, address, comment)
    VALUES('mash198@ukr.net','1111111', 'Maria', 'Odessa', 'dont call');
 
-INSERT INTO categories (name) VALUES('одежда');
-INSERT INTO categories (name) VALUES('обувь');
-INSERT INTO categories (name) VALUES('аксессуары');
+INSERT INTO categories (name) VALUES('dresses');
+INSERT INTO categories (name) VALUES('shoes');
+INSERT INTO categories (name) VALUES('accessories');
 
 INSERT INTO products (name, category, price, description, image)
-VALUES('Nora Naviano Imressive dusty blue',1, 3450, 'Голубое вечернее платье с вышитым лифом и узким поясом. Модель 2019 г. Основной материал: атлас. Легкое сияние ткани и романтичный приглушенный оттенок голубого покорят самых мечтательных девушек. ', 'dusty-blue-400x650_3400.jpg');
+VALUES('Nora Naviano Imressive dusty blue',1, 3450, 'Blue evening dress with an embroidered bodice and a narrow belt. Model of 2019 year. Main material: atlas. Light shine of a fabric and the romantic muffled shade of blue will submit the most dreamy girls. ', 'dusty-blue-400x650_3400.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Very berry marsala',1, 1654, 'Very berry. Длинное атласное платье с гипюровым верхом, завышенной линией талии и вырезом-лодочка. Цвет: марсала.', 'evening_dress_f1_2300.jpg');
+  VALUES('Very berry marsala',1, 1654, 'Very berry. Long satin dress with a guipure top, a high waistline and a boat neckline. Color: Marsala.', 'evening_dress_f1_2300.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Платье "Фелиция"',1, 3400, 'Платье из шелкового сатина. Топ платья кружевной. Юбка из шелкового сатина идеально ложится на бедрах за счет складок. Восхитительно смотрятся платья А-образного кроя в атласном варианте, особенно в пастельных цветах: пепельной розе, персиковом, кофейном.', 'evening_dress_felicia_4500.jpg');
+  VALUES('Dress "Felicia"',1, 3400, 'Silk satin dress. The top of the dress is laced. Silk satin skirt fits perfectly on the hips due to the folds. Dresses of A-shaped cut look amazing in a satin version, especially in pastel colors: ashy rose, peach, coffee colors.', 'evening_dress_felicia_4500.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Балетки ROSE GOLD Rock Glitter Ankle',2, 2100, 'Удобные стильные балетки, украшенные блестками', 'baletki_1255.jpg');
+  VALUES('Shoes ROSE GOLD Rock Glitter Ankle',2, 2100, 'Comfortable stylish shoes decorated with sequins', 'baletki_1255.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Dolce & Gabbana',2, 3500, 'Туфли Dolce & Gabbana, бархат винного оттенка, украшены стразами', 'Dolce & Gabbana_3500.jpg');
+  VALUES('Dolce & Gabbana',2, 3500, 'Shoes Dolce & Gabbana, velvet wine shade, decorated with rhinestones', 'Dolce & Gabbana_3500.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Rene Caovilla',2, 3750, 'Вечерние туфли Rene Caovilla, черный бархат со стразами.', 'Rene_Caovilla_4300.jpg');
+  VALUES('Rene Caovilla',2, 3750, 'Evening shoes Rene Caovilla, black velvet with rhinestones.', 'Rene_Caovilla_4300.jpg');
 
   INSERT INTO products (name, category, price, description, image)
-  VALUES('Женская сумка Parfois 163918-BU',3, 1429, 'Португалия, размер 28 x 29 x 13 см', 'parfois_163918-BU.jpg');
+  VALUES('Lady bag Parfois 163918-BU',3, 1429, 'Portugal, size 28 x 29 x 13 см', 'parfois_163918-BU.jpg');
 
  INSERT INTO products (name, category, price, description, image)
- VALUES('Женская сумка Furla',3, 1200, 'Италия. Размер 22 х 4,5 х 15 см', 'furla_1.jpg');
+ VALUES('Lady bag Furla',3, 1200, 'Italy, size 22 х 4,5 х 15 см', 'furla_1.jpg');
 
  INSERT INTO products (name, category, price, description, image)
- VALUES('Вечерний клатч со стразами',3, 1200, 'Наружная часть сумочки полностью покрыта орнаментом из страз. Задняя часть аксессуара – серебристая парчовая ткань. Корпус жесткий, металлический каркас серебристого цвета. Размер 22 х 4,5 х 12 см', 'klatch.jpg');
+ VALUES('Evening clutch with rhinestones', 3, 1200, 'The outer part of the bag is completely covered with rhinestone ornament. The back of the accessory is silver brocade. The case is rigid, the metal frame is silver. The size 22 х 4,5 х 12 см', 'klatch.jpg');
 
 
 
-INSERT INTO carts (userId, productId, quantity) VALUES(1, 2, 1);
-INSERT INTO carts (userId, productId, quantity) VALUES(1, 1, 1);
-INSERT INTO carts (userId, productId, quantity) VALUES(1, 3, 2);
+INSERT INTO carts (userId, productId, quantity) VALUES(4, 2, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(4, 1, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(5, 3, 2);
