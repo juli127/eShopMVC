@@ -1,30 +1,48 @@
 package com.gmail.kramarenko104;
 
+import com.gmail.kramarenko104.controller.ProductServlet;
 import com.gmail.kramarenko104.dao.ProductDao;
+import com.gmail.kramarenko104.dao.UserDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Product;
+import com.gmail.kramarenko104.model.User;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-import java.util.List;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.security.Principal;
+import java.util.*;
 
 public class RunApp {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        DaoFactory daoFactory = DaoFactory.getSpecificDao();
-        ProductDao productDao = daoFactory.getProductDao();
-////        req.setAttribute("categories", productDao.getCategoriesList());
-        String selectedCateg = "3";
-        List<Product> products;
 
-        // when form is opened at the first time (selectedCateg == null)
-        if (selectedCateg != null) {
-            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
-        } else {
-            products = productDao.getAllProducts();
-        }
+        new Mytest().test();
 
-        products.forEach(e -> System.out.println(e));
-        daoFactory.closeConnection();
+
+//        DaoFactory daoFactory = DaoFactory.getSpecificDao();
+//        ProductDao productDao = daoFactory.getProductDao();
+//        String selectedCateg = "3";
+//        List<Product> products;
+//
+//        // when form is opened at the first time (selectedCateg == null)
+//        if (selectedCateg != null) {
+//            products = productDao.getProductsByCategory(Integer.parseInt(selectedCateg));
+//        } else {
+//            products = productDao.getAllProducts();
+//        }
+//
+//        products.forEach(e -> System.out.println(e));
+//        daoFactory.deleteProductDao(productDao);
 
 //        UserDao userDao = daoFactory.getUserDao();
 //        User user = new User();
@@ -74,4 +92,13 @@ public class RunApp {
 //        System.out.println("products = " + products);
 //        daoFactory.closeConnection();
     }
+}
+
+class Mytest {
+    public void test(){
+        ClassLoader classLoader = getClass().getClassLoader();
+        String configFile = new File(classLoader.getResource("hikari.properties").getFile()).getAbsolutePath();
+        System.out.println(configFile);
+    }
+
 }
