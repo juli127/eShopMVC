@@ -15,7 +15,7 @@ public class MySqlJDBCDaoFactory extends DaoFactory {
     public MySqlJDBCDaoFactory() {
         ResourceBundle config = null;
         try {
-            config = ResourceBundle.getBundle("jdbc");
+            config = ResourceBundle.getBundle("application");
         } catch (MissingResourceException e) {
             e.printStackTrace();
         }
@@ -29,7 +29,7 @@ public class MySqlJDBCDaoFactory extends DaoFactory {
             e.printStackTrace();
         }
         connStr = new StringBuilder().append(config.getString("url"))
-                .append("?").append("user=").append(config.getString("username"))
+                .append("?").append("user=").append(config.getString("user"))
                 .append("&password=").append(config.getString("password")).toString();
     }
 

@@ -1,35 +1,30 @@
 package com.gmail.kramarenko104.factoryDao;
 
+import com.zaxxer.hikari.HikariConfig;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ResourceBundle;
-import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.HikariConfig;
 
 public class MySqlHikariDataSourceFactory extends DaoFactory {
     private static Logger logger = Logger.getLogger(MySqlHikariDataSourceFactory.class);
-    private HikariDataSource hikariDataSource;
 
-    public MySqlHikariDataSourceFactory(){
-        ResourceBundle rb = ResourceBundle.getBundle("hikari");
-        HikariConfig config = new HikariConfig();
-        config.setDriverClassName(rb.getString("datasource.driverClassName"));
-        config.setJdbcUrl(rb.getString("datasource.jdbcUrl"));
-        config.setUsername(rb.getString("datasource.user"));
-        config.setPassword(rb.getString("datasource.password"));
-        config.setMinimumIdle(Integer.valueOf(rb.getString("datasource.minimumIdle")));
-        config.setMaximumPoolSize(Integer.valueOf(rb.getString("datasource.maximumPoolSize")));
-        hikariDataSource = new HikariDataSource(config);
-    }
+    @Autowired
+    private HikariConfig hikariConfig;
+    @Autowired
+    private DataSource hikariDataSource;
+
+    public MySqlHikariDataSourceFactory(){}
 
     @Override
     public void openConnection() {
         try {
+            logger.debug("dataSource: " + hikariDataSource);
+            logger.debug("hikariConfig: " + hikariConfig);
             Connection conn = hikariDataSource.getConnection();
             super.setConnection(conn);
             logger.debug("Connection obtained");
-            super.setConnection(conn);
         } catch (SQLException e) {
             logger.debug("Connection failed. SQLException: " + e.getMessage());
         }

@@ -77,7 +77,7 @@ public class RegistrationServlet extends HttpServlet {
                         errors.put("", "Password and retyped one don't match!");
                     }
 
-                    String patternString = "([0-9a-zA-Z]+){4,}";
+                    String patternString = "([0-9a-zA-Z]+@[0-9a-zA-Z.]){4,}";
                     Pattern pattern = Pattern.compile(patternString);
                     Matcher matcher = pattern.matcher(pass);
                     if (pass.length() > 0 && !matcher.matches()) {
