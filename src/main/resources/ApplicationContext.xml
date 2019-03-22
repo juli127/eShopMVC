@@ -2,9 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean name="hikariConfig" class="com.zaxxer.hikari.HikariConfig"
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig"
         p:driverClassName="com.mysql.jdbc.Driver"
         p:jdbcUrl="jdbc:mysql://localhost:3306/eshopdb"
         p:username="julia"
@@ -14,14 +15,11 @@
         p:poolName="springHikariCP"
     />
 
-    <bean name="dataSource" class="com.zaxxer.hikari.HikariDataSource">
-        <constructor-arg name="configuration" ref="hikariConfig" />
-    </bean>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" c:configuration-ref="hikariConfig"/>
 
-    <bean name="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory" destroy-method="closeConnection" >
-    </bean>
+    <bean id="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory" destroy-method="closeConnection" />
 
-    <bean name="daoFactory" class="com.gmail.kramarenko104.factoryDao.DaoFactory" abstract="true" factory-method="getSpecificDao" destroy-method="closeConnection"
+    <bean id="daoFactory" class="com.gmail.kramarenko104.factoryDao.DaoFactory" abstract="true" factory-method="getSpecificDao" destroy-method="closeConnection"
         p:connection-ref="#{dataSource.getConnection()}"
         p:userDaoMySqlImpl-ref="userDao"
         p:productDaoMySqlImpl-ref="productDao"
@@ -29,21 +27,20 @@
         p:orderDaoMySqlImpl-ref="orderDao"
     />
 
-    <bean name="userDao" class="com.gmail.kramarenko104.dao.UserDaoMySqlImpl" lazy-init="true">
-        <constructor-arg name="conn" ref="#{dataSource.getConnection()}"></constructor-arg>
-    </bean>
+    <bean id="userDao" class="com.gmail.kramarenko104.dao.UserDaoMySqlImpl" lazy-init="true"
+          c:conn="#{dataSource.getConnection()}"/>
+    <bean id="productDao" class="com.gmail.kramarenko104.dao.ProductDaoMySqlImpl" lazy-init="true"
+          c:conn="#{dataSource.getConnection()}"/>
+    <bean id="cartDao" class="com.gmail.kramarenko104.dao.CartDaoMySqlImpl" lazy-init="true"
+          c:conn="#{dataSource.getConnection()}"/>
+    <bean id="orderDao" class="com.gmail.kramarenko104.dao.OrderDaoMySqlImpl" lazy-init="true"
+          c:conn="#{dataSource.getConnection()}"/>
 
-    <bean name="productDao" class="com.gmail.kramarenko104.dao.ProductDaoMySqlImpl" lazy-init="true">
-        <constructor-arg name="conn" ref="#{dataSource.getConnection()}"></constructor-arg>
-    </bean>
 
-    <bean name="cartDao" class="com.gmail.kramarenko104.dao.CartDaoMySqlImpl" lazy-init="true">
-        <constructor-arg name="conn" ref="#{dataSource.getConnection()}"></constructor-arg>
-    </bean>
-
-    <bean name="orderDao" class="com.gmail.kramarenko104.dao.OrderDaoMySqlImpl" lazy-init="true">
-        <constructor-arg name="conn" ref="#{dataSource.getConnection()}"></constructor-arg>
-    </bean>
+    <bean id="user" class="com.gmail.kramarenko104.model.User" lazy-init="true" scope="session"/>
+    <bean id="product" class="com.gmail.kramarenko104.model.Product" lazy-init="true" scope="prototype"/>
+    <bean id="cart" class="com.gmail.kramarenko104.model.Cart" lazy-init="true" c:userId="#{user.id}" scope="session"/>
+    <bean id="order" class="com.gmail.kramarenko104.model.Order" lazy-init="true" scope="session"/>
 
 
 
