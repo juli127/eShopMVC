@@ -22,11 +22,11 @@
     </bean>
 
     <bean name="daoFactory" class="com.gmail.kramarenko104.factoryDao.DaoFactory" abstract="true" factory-method="getSpecificDao" destroy-method="closeConnection"
-        p:connection="#{dataSource.getConnection()}"
-        p:userDaoMySqlImpl="userDao"
-        p:productDaoMySqlImpl="productDao"
-        p:cartDaoMySqlImpl="cartDao"
-        p:orderDaoMySqlImpl="orderDao"
+        p:connection-ref="#{dataSource.getConnection()}"
+        p:userDaoMySqlImpl-ref="userDao"
+        p:productDaoMySqlImpl-ref="productDao"
+        p:cartDaoMySqlImpl-ref="cartDao"
+        p:orderDaoMySqlImpl-ref="orderDao"
     />
 
     <bean name="userDao" class="com.gmail.kramarenko104.dao.UserDaoMySqlImpl" lazy-init="true">
