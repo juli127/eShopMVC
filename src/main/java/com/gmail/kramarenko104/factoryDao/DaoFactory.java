@@ -2,11 +2,12 @@ package com.gmail.kramarenko104.factoryDao;
 
 import com.gmail.kramarenko104.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
+@Component
 public abstract class DaoFactory {
 
     @Autowired

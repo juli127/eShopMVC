@@ -1,9 +1,10 @@
 package com.gmail.kramarenko104.factoryDao;
 
 import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -13,16 +14,16 @@ public class MySqlHikariDataSourceFactory extends DaoFactory {
     @Autowired
     private HikariConfig hikariConfig;
     @Autowired
-    private DataSource hikariDataSource;
+    private HikariDataSource dataSource;
 
     public MySqlHikariDataSourceFactory(){}
 
     @Override
     public void openConnection() {
         try {
-            logger.debug("dataSource: " + hikariDataSource);
-            logger.debug("hikariConfig: " + hikariConfig);
-            Connection conn = hikariDataSource.getConnection();
+            logger.debug("MySqlHikariDataSourceFactory.openConnection:  dataSource: " + dataSource);
+            logger.debug("MySqlHikariDataSourceFactory.openConnection:  hikariConfig: " + hikariConfig);
+            Connection conn = dataSource.getConnection();
             super.setConnection(conn);
             logger.debug("Connection obtained");
         } catch (SQLException e) {
