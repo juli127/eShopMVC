@@ -125,9 +125,9 @@ public class LoginController {
                 model.addAttribute("userCart", userCart);
             }
             if (userCart.getItemsCount() > 0) {
-                viewToGo = "./cart";
+                viewToGo = "/cart";
             } else {
-                viewToGo = "./product";
+                viewToGo = "/product";
             }
             daoFactory.deleteCartService(cartService);
         }

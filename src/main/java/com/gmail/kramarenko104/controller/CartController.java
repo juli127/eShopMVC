@@ -7,17 +7,15 @@ import com.gmail.kramarenko104.service.CartService;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
 
 
 @Controller
@@ -56,10 +54,13 @@ public class CartController {
     }
 
 
-    @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(HttpServletRequest req, HttpServletResponse resp, Model model) throws IOException {
+    @RequestMapping(method = RequestMethod.POST, produces="text/json")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    protected String doPost(HttpServletRequest req, Model model) {
         daoFactory.openConnection();
         boolean needRefresh = false;
+        String jsonResp = null;
 
         if (model.containsAttribute("user")) {
             User currentUser = (User) model.asMap().get("user");
@@ -106,22 +107,11 @@ public class CartController {
                 if (userCart != null) {
                     String jsondata = new Gson().toJson(userCart);
                     logger.debug("CartServlet: send JSON data to cart.jsp ---->" + jsondata);
-                    try(PrintWriter out = resp.getWriter()) {
-                        resp.setContentType("application/json");
-                        resp.setCharacterEncoding("UTF-8");
-                        out.print(jsondata);
-                        out.flush();
-                    }
                 }
             }
             daoFactory.deleteCartService(cartService);
         }
         daoFactory.closeConnection();
-        return "cart";
-    }
-
-    public static HttpSession session() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true); // true == allow create
+        return jsonResp;
     }
 }
