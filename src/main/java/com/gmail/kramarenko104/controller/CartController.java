@@ -10,12 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.*;
 
 
 @Controller
@@ -57,7 +52,10 @@ public class CartController {
     @RequestMapping(method = RequestMethod.POST, produces="text/json")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    protected String doPost(HttpServletRequest req, Model model) {
+    protected String doPost(@RequestParam("action") String action,
+                            @RequestParam("productId") int productId,
+                            @RequestParam("quantity") int quantity,
+                            Model model) {
         daoFactory.openConnection();
         boolean needRefresh = false;
         String jsonResp = null;
@@ -70,23 +68,16 @@ public class CartController {
             // CHANGE CART
             CartService cartService = daoFactory.getCartService();
             // get info from Ajax POST req (from updateCart.js)
-            String param = req.getParameter("action");
-            if (param != null && param.length() > 0) {
-                int productId = 0;
-                int quantity = 0;
-                switch (param) {
+            if (action != null && action.length() > 0) {
+                switch (action) {
                     case "add":
                         logger.debug("CatServlet: GOT PARAMETER 'add'....");
-                        productId = Integer.valueOf(req.getParameter("productId"));
-                        quantity = Integer.valueOf(req.getParameter("quantity"));
                         logger.debug("CatServlet: userId: " + currentUser.getId() + ", productId: "+ productId + ", quantity: " + quantity);
                         cartService.addProduct(currentUser.getId(), productId, quantity);
                         logger.debug("CartServlet: for user '" + currentUser.getName() + "' was added " + quantity + " of productId: " + productId);
                         break;
                     case "remove":
                         logger.debug("CartServlet: GOT PARAMETER 'remove' ");
-                        productId = Integer.valueOf(req.getParameter("productId"));
-                        quantity = Integer.valueOf(req.getParameter("quantity"));
                         cartService.removeProduct(currentUser.getId(), productId, quantity);
                         logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
                         break;

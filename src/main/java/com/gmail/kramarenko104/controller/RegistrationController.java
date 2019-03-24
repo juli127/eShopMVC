@@ -10,13 +10,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -45,7 +43,14 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(HttpServletRequest req, Model model) throws ServletException, IOException {
+    protected String doPost(@RequestParam("login") String login,
+                            @RequestParam("password") String pass,
+                            @RequestParam("repassword") String repass,
+                            @RequestParam("name") String name,
+                            @RequestParam("address") String address,
+                            @RequestParam("comment") String comment,
+                            Model model) {
+
         daoFactory.openConnection();
 
         StringBuilder message = new StringBuilder();
@@ -54,13 +59,6 @@ public class RegistrationController {
         boolean needRegistration = true;
         boolean userExist = false;
         String viewToGo = "registration";
-
-        String login = req.getParameter("login");
-        String pass = req.getParameter("password");
-        String repass = req.getParameter("repassword");
-        String name = req.getParameter("name");
-        String address = req.getParameter("address");
-        String comment = req.getParameter("comment");
 
         if (model.asMap().get("session") != null) {
             if (!"".equals(login)) {
