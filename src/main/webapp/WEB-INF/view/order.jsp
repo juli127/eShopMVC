@@ -1,6 +1,6 @@
 <%@ include file="includes/header.jsp" %>
 
-<c:set var="order" value="${sessionScope.newOrder}"/>
+<c:set var="order" value="${newOrder}"/>
 
 <c:if test="${user != null}">
 <c:choose>

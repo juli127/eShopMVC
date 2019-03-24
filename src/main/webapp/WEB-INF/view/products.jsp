@@ -1,6 +1,6 @@
 <%@ include file="includes/header.jsp" %>
 
-<c:set var="cartProducts" value="${sessionScope.products}"/>
+<c:set var="cartProducts" value="${products}"/>
 
 <c:if test="${cartProducts.size() > 0}">
     <c:forEach var="product" items="${cartProducts}">

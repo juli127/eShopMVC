@@ -1,10 +1,11 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
+<jsp:output omit-xml-declaration="yes" />
 
-<c:set var="user" value="${sessionScope.user}"/>
+<c:set var="user" value="${user}"/>
 <c:set var="username" value="${user.name}"/>
-<c:set var="cart" value="${sessionScope.userCart}"/>
+<c:set var="cart" value="${userCart}"/>
 <c:set var="itemsCount" value="${cart.itemsCount}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -41,7 +42,7 @@
                             </c:choose>
                             <li><a href="cart">Cart</a></li>
                             <li><a href="order">Order</a></li>
-                            <c:if test="${sessionScope.isAdmin}">
+                            <c:if test="${isAdmin}">
                                 <li><a href="admin">Admin</a></li>
                             </c:if>
                         </ul>
