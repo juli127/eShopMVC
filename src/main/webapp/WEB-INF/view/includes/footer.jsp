@@ -1,14 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
-</div><%--for orderNumber="content" --%>
-</div><%--for orderNumber="page" --%>
+</div><%--for id="content" --%>
+</div><%--for id="page" --%>
 <%--</p>--%>
 
 <br><br>
-<div orderNumber="footer" class="footer">
+<div id="footer" class="footer">
     <p>Copyright (c) by Kramarenko Iuliia</p>
 </div>
 
-</div> <%--for orderNumber="wrapper"--%>
+</div> <%--for id="wrapper"--%>
 </body>
 </html>
 

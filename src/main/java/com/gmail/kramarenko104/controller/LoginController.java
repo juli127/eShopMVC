@@ -12,8 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/login")
@@ -40,7 +39,9 @@ public class LoginController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(HttpServletRequest req, Model model)  {
+    protected String doPost(@RequestParam("login") String login,
+                            @RequestParam("password") String pass,
+                            Model model) {
         daoFactory.openConnection();
         boolean showLoginForm = true;
         boolean accessGranted = false;
@@ -49,69 +50,65 @@ public class LoginController {
         User currentUser = null;
         String viewToGo = "login";
 
-        String login = req.getParameter("login");
-        String pass = req.getParameter("password");
+        attempt = (model.asMap().get("attempt") == null) ? 0 : (int) model.asMap().get("attempt");
 
-        if(model.asMap().get("session") != null) {
-            attempt = (model.asMap().get("attempt") == null) ? 0 : (int) model.asMap().get("attempt");
+        // already logged in
+        if (model.asMap().get("user") != null) {
+            currentUser = (User) model.asMap().get("user");
+            accessGranted = true;
+        } // not logged in yet
+        else {
+            long waitTime = 0;
 
-            // already logged in
-            if (model.asMap().get("user") != null) {
-                currentUser = (User) model.asMap().get("user");
-                accessGranted = true;
-            } // not logged in yet
-            else {
-                long waitTime = 0;
+            if ((login != null) && !("".equals(login))) {
+                model.addAttribute("login", login);
+                UserService userService = daoFactory.getUserService();
+                currentUser = userService.getUserByLogin(login);
+                boolean exist = (currentUser != null);
 
-                if ((login != null) && !("".equals(login))) {
-                    model.addAttribute("login", login);
-                    UserService userService = daoFactory.getUserService();
-                    currentUser = userService.getUserByLogin(login);
-                    boolean exist = (currentUser != null);
+                if (exist) {
+                    String passVerif = UserServiceImpl.hashString(pass);
+                    accessGranted = (currentUser.getPassword().equals(passVerif));
+                    showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
 
-                    if (exist) {
-                        String passVerif = UserServiceImpl.hashString(pass);
-                        accessGranted = (currentUser.getPassword().equals(passVerif));
-                        showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
-
-                        if (accessGranted) {
-                            attempt = 0;
-                            showLoginForm = false;
-                            model.addAttribute("user", currentUser);
-                            model.addAttribute("login", null);
-                            logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
-                            if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
-                                isAdmin = true;
-                            }
-                        } else {
-                            attempt++;
-                            if (attempt >= MAX_LOGIN_ATTEMPTS) {
-                                if (attempt == MAX_LOGIN_ATTEMPTS) {
-                                    model.addAttribute("startTime", System.currentTimeMillis());
-                                }
-                                waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long) model.asMap().get("startTime")) / 1000;
-                                if (waitTime > 0) {
-                                    msgText.append("<br><font size=3 color='red'><b> Attempts' limit is exceeded. Login form will be available in " + waitTime + " seconds</b></font>");
-                                    showLoginForm = false;
-                                } else {
-                                    attempt = 0;
-                                    showLoginForm = true;
-                                }
-                            } else if (attempt >= 0) {
-                                msgText.append("<b><font size=3 color='red'>Wrong password, try again! You have 3 attempts. (attempt #" + attempt + ")</font>");
-                            }
-                        }
-                    } else {
+                    if (accessGranted) {
                         attempt = 0;
                         showLoginForm = false;
-                        msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
+                        model.addAttribute("user", currentUser);
+                        model.addAttribute("login", null);
+                        logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
+                        if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
+                            isAdmin = true;
+                        }
+                    } else {
+                        attempt++;
+                        if (attempt >= MAX_LOGIN_ATTEMPTS) {
+                            if (attempt == MAX_LOGIN_ATTEMPTS) {
+                                model.addAttribute("startTime", System.currentTimeMillis());
+                            }
+                            waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long) model.asMap().get("startTime")) / 1000;
+                            if (waitTime > 0) {
+                                msgText.append("<br><font size=3 color='red'><b> Attempts' limit is exceeded. Login form will be available in " + waitTime + " seconds</b></font>");
+                                showLoginForm = false;
+                            } else {
+                                attempt = 0;
+                                showLoginForm = true;
+                            }
+                        } else if (attempt >= 0) {
+                            msgText.append("<b><font size=3 color='red'>Wrong password, try again! You have 3 attempts. (attempt #" + attempt + ")</font>");
+                        }
                     }
-                    daoFactory.deleteUserService(userService);
                 } else {
                     attempt = 0;
+                    showLoginForm = false;
+                    msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
                 }
+                daoFactory.deleteUserService(userService);
+            } else {
+                attempt = 0;
             }
         }
+
         // for authorized user get the corresponding shopping Cart
         if (accessGranted) {
             CartService cartService = daoFactory.getCartService();
@@ -139,12 +136,17 @@ public class LoginController {
         model.addAttribute("attempt", attempt);
         model.addAttribute("isAdmin", isAdmin);
 
-        if ("login".equals(viewToGo)){
+        if ("login".equals(viewToGo)) {
             //req.getRequestDispatcher(viewToGo).forward(req, resp);
             return "login";
         } else {
             //resp.sendRedirect(viewToGo);
-            return "redirect:"+ viewToGo;
+            return "redirect:" + viewToGo;
         }
     }
+//
+//    public static HttpSession session() {
+//        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+//        return attr.getRequest().getSession(true); // true == allow create
+//    }
 }

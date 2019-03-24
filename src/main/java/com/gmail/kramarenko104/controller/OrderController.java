@@ -12,10 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequestMapping("/order")
@@ -34,16 +31,17 @@ public class OrderController {
         return "order";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(HttpServletRequest req, HttpServletResponse resp, Model model) {
+    @RequestMapping(method = RequestMethod.POST, produces="text/json")
+    protected String doPost(@RequestParam("action") String action,
+                            @RequestParam("userId") int userId,
+                            Model model) {
         daoFactory.openConnection();
         boolean needRefresh = false;
+        String jsondata = null;
 
         if (model.asMap().get("user") != null) {
             // get info from Ajax POST request (updateCart.js)
-            String param = req.getParameter("action");
-            if (param != null && (param.equals("makeOrder"))) {
-                int userId = Integer.valueOf(req.getParameter("userId"));
+            if (action != null && (action.equals("makeOrder"))) {
                 logger.debug("OrderServlet.POST: got userId from POST request: " + userId);
 
                 // any user can have only one existing now cart and many processed orders (userId uniquely identifies cart)
@@ -59,16 +57,8 @@ public class OrderController {
 
                 // send JSON back with the new Order to show on order.jsp
                 if (newOrder != null) {
-                    String jsondata = new Gson().toJson(newOrder);
+                    jsondata = new Gson().toJson(newOrder);
                     logger.debug("OrderServlet: send JSON data to cart.jsp ---->" + jsondata);
-                    try(PrintWriter out = resp.getWriter()) {
-                        resp.setContentType("application/json");
-                        resp.setCharacterEncoding("UTF-8");
-                        out.print(jsondata);
-                        out.flush();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 }
                 cartService.deleteCart(Integer.valueOf(userId));
                 model.addAttribute("userCart", null);
@@ -77,6 +67,6 @@ public class OrderController {
             }
         }
         daoFactory.closeConnection();
-        return "order";
+        return jsondata;
     }
 }
