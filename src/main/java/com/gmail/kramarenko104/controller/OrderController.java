@@ -9,15 +9,11 @@ import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -31,27 +27,19 @@ public class OrderController {
     private DaoFactory daoFactory;
 
     public OrderController() {
-        //daoFactory = DaoFactory.getSpecificDao();
-    }
-
-    public static HttpSession session() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true); // true == allow create
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView doGet() {
-        return new ModelAndView("WEB-INF/view/order.jsp");
+    protected String doGet() {
+        return "order";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = session();
-        ModelAndView model = new ModelAndView("order");
+    protected String doPost(HttpServletRequest req, HttpServletResponse resp, Model model) {
         daoFactory.openConnection();
         boolean needRefresh = false;
 
-        if (session.getAttribute("user") != null) {
+        if (model.asMap().get("user") != null) {
             // get info from Ajax POST request (updateCart.js)
             String param = req.getParameter("action");
             if (param != null && (param.equals("makeOrder"))) {
@@ -67,7 +55,7 @@ public class OrderController {
                 OrderService orderService = daoFactory.getOrderService();
                 Order newOrder = orderService.createOrder(userId, cart.getProducts());
                 logger.debug("OrderServlet.POST: !!! new Order was created: " + newOrder);
-                model.addObject("newOrder", newOrder);
+                model.addAttribute("newOrder", newOrder);
 
                 // send JSON back with the new Order to show on order.jsp
                 if (newOrder != null) {
@@ -78,15 +66,17 @@ public class OrderController {
                         resp.setCharacterEncoding("UTF-8");
                         out.print(jsondata);
                         out.flush();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
                 cartService.deleteCart(Integer.valueOf(userId));
-                session.setAttribute("userCart", null);
+                model.addAttribute("userCart", null);
                 daoFactory.deleteCartService(cartService);
                 daoFactory.deleteOrderService(orderService);
             }
         }
         daoFactory.closeConnection();
-        return model;
+        return "order";
     }
 }

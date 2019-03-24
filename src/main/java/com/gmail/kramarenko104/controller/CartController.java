@@ -8,11 +8,11 @@ import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -28,53 +28,43 @@ public class CartController {
     private DaoFactory daoFactory;
     private static Logger logger = Logger.getLogger(CartController.class);
 
-    public CartController()
-    {
-        //daoFactory = DaoFactory.getSpecificDao();
-    }
-
-    public static HttpSession session() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true); // true == allow create
-    }
+    public CartController() {}
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView doGet() {
-        HttpSession session = session();
-        daoFactory.openConnection();
+    protected String doGet(Model model) {
 
-        if (session.getAttribute("user") != null) {
-            User currentUser = (User) session.getAttribute("user");
+        daoFactory.openConnection();
+        if (model.containsAttribute("user")) {
+            User currentUser = (User) model.asMap().get("user");
             logger.debug("CartServlet: Current user: " + currentUser.getName());
             int userId = currentUser.getId();
 
             Cart userCart = null;
-            if (session.getAttribute("userCart") == null) {
+            if (model.asMap().get("userCart") == null) {
                 CartService cartService = daoFactory.getCartService();
                 userCart = cartService.getCart(userId);
                 if (userCart == null) {
                     logger.debug("CartServlet: cart from DB == null! create new cart for userId: " + userId);
                     userCart = new Cart(userId);
                 }
-                session.setAttribute("userCart", userCart);
+                model.addAttribute("userCart", userCart);
                 daoFactory.deleteCartService(cartService);
             }
         }
         daoFactory.closeConnection();
-        ModelAndView model = new ModelAndView("WEB-INF/view/cart.jsp");
-        return model;
+        return "cart";
     }
 
+
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        HttpSession session = session();
+    protected String doPost(HttpServletRequest req, HttpServletResponse resp, Model model) throws IOException {
         daoFactory.openConnection();
         boolean needRefresh = false;
 
-        if (session.getAttribute("user") != null) {
-            User currentUser = (User) session.getAttribute("user");
+        if (model.containsAttribute("user")) {
+            User currentUser = (User) model.asMap().get("user");
             logger.debug("CartServlet: Current user: " + currentUser.getName());
-            int userId = currentUser.getId();
+            int userId = currentUser==null ? 0: currentUser.getId();
 
             // CHANGE CART
             CartService cartService = daoFactory.getCartService();
@@ -104,13 +94,13 @@ public class CartController {
             }
             //  REFRESH CART's characteristics if refresh need
             Cart userCart = null;
-            if (session.getAttribute("userCart") == null || needRefresh) {
+            if (model.asMap().get("userCart") == null || needRefresh) {
                 userCart = cartService.getCart(userId);
                 if (userCart == null) {
                     logger.debug("CartServlet: cart from DB == null! create the new cart for userId: " + userId);
                     userCart = new Cart(userId);
                 }
-                session.setAttribute("userCart", userCart);
+                model.addAttribute("userCart", userCart);
 
                 // send JSON with updated Cart back to cart.jsp
                 if (userCart != null) {
@@ -127,7 +117,11 @@ public class CartController {
             daoFactory.deleteCartService(cartService);
         }
         daoFactory.closeConnection();
-        ModelAndView model = new ModelAndView("WEB-INF/view/cart.jsp");
-        return model;
+        return "cart";
+    }
+
+    public static HttpSession session() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true); // true == allow create
     }
 }

@@ -1,21 +1,20 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.service.UserDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
+import com.gmail.kramarenko104.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
@@ -33,8 +32,6 @@ public class RegistrationController {
     private DaoFactory daoFactory;
 
     public RegistrationController() {
-
-        //daoFactory = DaoFactory.getSpecificDao();
     }
 
     public static HttpSession session() {
@@ -43,14 +40,12 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView doGet() {
-        return new ModelAndView("WEB-INF/view/registration.jsp");
+    protected String doGet() {
+        return "registration";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = session();
-        ModelAndView model = null;
+    protected String doPost(HttpServletRequest req, Model model) throws ServletException, IOException {
         daoFactory.openConnection();
 
         StringBuilder message = new StringBuilder();
@@ -58,6 +53,7 @@ public class RegistrationController {
         StringBuilder errorsMsg = new StringBuilder();
         boolean needRegistration = true;
         boolean userExist = false;
+        String viewToGo = "registration";
 
         String login = req.getParameter("login");
         String pass = req.getParameter("password");
@@ -66,11 +62,11 @@ public class RegistrationController {
         String address = req.getParameter("address");
         String comment = req.getParameter("comment");
 
-        if (session != null) {
+        if (model.asMap().get("session") != null) {
             if (!"".equals(login)) {
                 // check if user with this login/password is already registered
-                UserDao userDao = daoFactory.getUserService();
-                userExist = (userDao.getUserByLogin(login) != null);
+                UserService userService = daoFactory.getUserService();
+                userExist = (userService.getUserByLogin(login) != null);
 
                 // user with this login/password wasn't registered yet
                 if (!userExist) {
@@ -107,12 +103,12 @@ public class RegistrationController {
                         newUser.setPassword(pass);
                         newUser.setAddress(address);
                         newUser.setComment(comment);
-                        if (userDao.createUser(newUser)) {
-                            newUser = userDao.getUserByLogin(login);
+                        if (userService.createUser(newUser)) {
+                            newUser = userService.getUserByLogin(login);
                             logger.debug("RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
-                            session.setAttribute("user", newUser);
-                            session.setAttribute("userCart", new Cart(newUser.getId()));
+                            model.addAttribute("user", newUser);
+                            model.addAttribute("userCart", new Cart(newUser.getId()));
                             needRegistration = false;
                         } else {
                             message.append("<br><font color='red'><center>User wan't registered because of DB problems! Try a bit later.</font>");
@@ -132,35 +128,33 @@ public class RegistrationController {
                 else {
                     needRegistration = false;
                 }
-                daoFactory.deleteUserDao(userDao);
+                daoFactory.deleteUserService(userService);
             }
 
-            session.setAttribute("RegMessage", message.toString());
+            model.addAttribute("RegMessage", message.toString());
 
-            model = new ModelAndView("WEB-INF/view/registration.jsp");
             if (needRegistration) {
                 // save some entered fields not to force user enter them again
-                model.addObject("login", login);
-                model.addObject("name", name);
-                model.addObject("address", address);
-                model.addObject("comment", comment);
-                model.addObject("errorsMsg", errorsMsg);
-//                req.getRequestDispatcher("WEB-INF/view/registration.jsp").forward(req, resp);
-
+                model.addAttribute("login", login);
+                model.addAttribute("name", name);
+                model.addAttribute("address", address);
+                model.addAttribute("comment", comment);
+                model.addAttribute("errorsMsg", errorsMsg);
+                //req.getRequestDispatcher("WEB-INF/view/registration.jsp").forward(req, resp);
             } else {
                 // user with this login/password is already registered, send user to /login
                 if (userExist) {
                     logger.debug("RegisrtServlet: user was already registered before, send to login page");
-//                    resp.sendRedirect("./login");
-                    model = new ModelAndView("./login");
+                    //resp.sendRedirect("./login");
+                    viewToGo = "./login";
                 }
-                model.addObject("name", null);
-                model.addObject("address", null);
-                model.addObject("comment", null);
-                model.addObject("errorsMsg", null);
+                model.addAttribute("name", null);
+                model.addAttribute("address", null);
+                model.addAttribute("comment", null);
+                model.addAttribute("errorsMsg", null);
             }
         }
         daoFactory.closeConnection();
-        return model;
+        return viewToGo;
     }
 }

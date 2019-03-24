@@ -9,15 +9,11 @@ import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/login")
@@ -33,51 +29,42 @@ public class LoginController {
     private int attempt;
 
     public LoginController() {
-        //daoFactory = DaoFactory.getSpecificDao();
-    }
-
-    public static HttpSession session() {
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        return attr.getRequest().getSession(true); // true == allow create
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView doGet(ModelMap model) {
-        HttpSession session = session();
+    protected String doGet(Model model) {
         model.addAttribute("showLoginForm", true);
         model.addAttribute("message", null);
         model.addAttribute("attempt", null);
-        return new ModelAndView("forward:/WEB-INF/view/login.jsp");
+        return "login";
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(HttpServletRequest req, ModelMap model)  {
-        HttpSession session = session();
-        ModelAndView modelAndView = new ModelAndView("WEB-INF/view/login.jsp");
+    protected String doPost(HttpServletRequest req, Model model)  {
         daoFactory.openConnection();
         boolean showLoginForm = true;
         boolean accessGranted = false;
         StringBuilder msgText = new StringBuilder();
         boolean isAdmin = false;
         User currentUser = null;
+        String viewToGo = "login";
 
-        String viewToGo = "WEB-INF/view/login.jsp";
         String login = req.getParameter("login");
         String pass = req.getParameter("password");
 
-        if (session != null) {
-            attempt = (session.getAttribute("attempt") == null) ? 0 : (int) session.getAttribute("attempt");
+        if(model.asMap().get("session") != null) {
+            attempt = (model.asMap().get("attempt") == null) ? 0 : (int) model.asMap().get("attempt");
 
             // already logged in
-            if (session.getAttribute("user") != null) {
-                currentUser = (User) session.getAttribute("user");
+            if (model.asMap().get("user") != null) {
+                currentUser = (User) model.asMap().get("user");
                 accessGranted = true;
             } // not logged in yet
             else {
                 long waitTime = 0;
 
                 if ((login != null) && !("".equals(login))) {
-                    session.setAttribute("login", login);
+                    model.addAttribute("login", login);
                     UserService userService = daoFactory.getUserService();
                     currentUser = userService.getUserByLogin(login);
                     boolean exist = (currentUser != null);
@@ -90,19 +77,19 @@ public class LoginController {
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
-                            session.setAttribute("user", currentUser);
-                            session.setAttribute("login", null);
+                            model.addAttribute("user", currentUser);
+                            model.addAttribute("login", null);
                             logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
-                            if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)){
+                            if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
                                 isAdmin = true;
                             }
                         } else {
                             attempt++;
                             if (attempt >= MAX_LOGIN_ATTEMPTS) {
                                 if (attempt == MAX_LOGIN_ATTEMPTS) {
-                                    session.setAttribute("startTime", System.currentTimeMillis());
+                                    model.addAttribute("startTime", System.currentTimeMillis());
                                 }
-                                waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long)session.getAttribute("startTime" ))/ 1000;
+                                waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long) model.asMap().get("startTime")) / 1000;
                                 if (waitTime > 0) {
                                     msgText.append("<br><font size=3 color='red'><b> Attempts' limit is exceeded. Login form will be available in " + waitTime + " seconds</b></font>");
                                     showLoginForm = false;
@@ -129,13 +116,13 @@ public class LoginController {
         if (accessGranted) {
             CartService cartService = daoFactory.getCartService();
             showLoginForm = false;
-            Cart userCart = (Cart) session.getAttribute("userCart");
+            Cart userCart = (Cart) model.asMap().get("userCart");
             if (userCart == null) {
                 userCart = cartService.getCart(currentUser.getId());
                 if (userCart == null) {
                     userCart = new Cart(currentUser.getId());
                 }
-                session.setAttribute("userCart", userCart);
+                model.addAttribute("userCart", userCart);
             }
             if (userCart.getItemsCount() > 0) {
                 viewToGo = "./cart";
@@ -147,19 +134,17 @@ public class LoginController {
 
         daoFactory.closeConnection();
 
-        session.setAttribute("showLoginForm", showLoginForm);
-        session.setAttribute("message", msgText.toString());
-        session.setAttribute("attempt", attempt);
-        session.setAttribute("isAdmin", isAdmin);
+        model.addAttribute("showLoginForm", showLoginForm);
+        model.addAttribute("message", msgText.toString());
+        model.addAttribute("attempt", attempt);
+        model.addAttribute("isAdmin", isAdmin);
 
-        if ("WEB-INF/view/login.jsp".equals(viewToGo)){
-//            req.getRequestDispatcher(viewToGo).forward(req, resp);
-//            model = new ModelAndView("forward:login");
-            modelAndView = new ModelAndView("forward:login" + viewToGo, model);
+        if ("login".equals(viewToGo)){
+            //req.getRequestDispatcher(viewToGo).forward(req, resp);
+            return "login";
         } else {
-//            resp.sendRedirect(viewToGo);
-            modelAndView = new ModelAndView("redirect:" + viewToGo, model);
+            //resp.sendRedirect(viewToGo);
+            return "redirect:"+ viewToGo;
         }
-        return modelAndView;
     }
 }
