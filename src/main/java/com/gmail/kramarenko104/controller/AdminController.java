@@ -1,21 +1,18 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.dao.UserDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.User;
+import com.gmail.kramarenko104.service.UserService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import javax.servlet.ServletException;
+
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -27,7 +24,7 @@ public class AdminController {
     private static Logger logger = Logger.getLogger(AdminController.class);
 
     public AdminController() {
-        daoFactory = DaoFactory.getSpecificDao();
+        //daoFactory = DaoFactory.getSpecificDao();
     }
 
     public static HttpSession session() {
@@ -42,10 +39,10 @@ public class AdminController {
         ModelAndView model = new ModelAndView("admin");
         if (session != null) {
             daoFactory.openConnection();
-            UserDao userDao = daoFactory.getUserDao();
-            List<User> usersList = userDao.getAllUsers();
+            UserService userService = daoFactory.getUserService();
+            List<User> usersList = userService.getAllUsers();
             model.addObject("usersList", usersList);
-            daoFactory.deleteUserDao(userDao);
+            daoFactory.deleteUserService(userService);
             daoFactory.closeConnection();
         }
         return model;

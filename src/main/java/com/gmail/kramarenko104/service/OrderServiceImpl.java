@@ -1,22 +1,24 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.Product;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
 import java.sql.*;
 import java.util.Map;
 
-
-public class OrderDaoMySqlImpl implements OrderDao {
+@Service("orderService")
+public class OrderServiceImpl implements OrderService {
 
     private final static String CREATE_ORDER = "INSERT INTO orders (orderNumber, userId, productId, quantity, status) VALUES(?,?,?,?,?);";
     private final static String DELETE_ALL_ORDERS_BY_USERID = "DELETE FROM orders WHERE userId = ?;";
     private final static String GET_LAST_ORDER_NUMBER = "SELECT DISTINCT max(orderNumber) as lastOrderNumber FROM orders;";
     private final static String PROCESSED_ORDER = "ordered";
-    private static Logger logger = Logger.getLogger(OrderDaoMySqlImpl.class);
+    private static Logger logger = Logger.getLogger(OrderServiceImpl.class);
     private Connection conn;
 
-    public OrderDaoMySqlImpl(Connection conn) {
+    public OrderServiceImpl(Connection conn) {
         this.conn = conn;
     }
 

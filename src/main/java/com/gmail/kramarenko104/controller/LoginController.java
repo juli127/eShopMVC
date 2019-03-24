@@ -1,49 +1,59 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.dao.CartDao;
-import com.gmail.kramarenko104.dao.UserDao;
-import com.gmail.kramarenko104.dao.UserDaoMySqlImpl;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
+import com.gmail.kramarenko104.service.CartService;
+import com.gmail.kramarenko104.service.UserService;
+import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 @Controller
 @RequestMapping("/login")
-public class LoginServlet extends HttpServlet {
+public class LoginController {
 
-    private static Logger logger = Logger.getLogger(LoginServlet.class);
+    private static Logger logger = Logger.getLogger(LoginController.class);
     private static final int MAX_LOGIN_ATTEMPTS = 3;
     private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
     private static final String adminLog = "admin";
+
+    @Autowired
     private DaoFactory daoFactory;
     private int attempt;
 
-    public LoginServlet() throws ServletException, IOException {
-        daoFactory = DaoFactory.getSpecificDao();
+    public LoginController() {
+        //daoFactory = DaoFactory.getSpecificDao();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
-        session.setAttribute("showLoginForm", true);
-        session.setAttribute("message", null);
-        session.setAttribute("attempt", null);
-        req.getRequestDispatcher("WEB-INF/view/login.jsp").forward(req, resp);
+    public static HttpSession session() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true); // true == allow create
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+    @RequestMapping(method = RequestMethod.GET)
+    protected ModelAndView doGet(ModelMap model) {
+        HttpSession session = session();
+        model.addAttribute("showLoginForm", true);
+        model.addAttribute("message", null);
+        model.addAttribute("attempt", null);
+        return new ModelAndView("forward:/WEB-INF/view/login.jsp");
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    protected ModelAndView doPost(HttpServletRequest req, ModelMap model)  {
+        HttpSession session = session();
+        ModelAndView modelAndView = new ModelAndView("WEB-INF/view/login.jsp");
         daoFactory.openConnection();
         boolean showLoginForm = true;
         boolean accessGranted = false;
@@ -68,12 +78,12 @@ public class LoginServlet extends HttpServlet {
 
                 if ((login != null) && !("".equals(login))) {
                     session.setAttribute("login", login);
-                    UserDao userDao = daoFactory.getUserDao();
-                    currentUser = userDao.getUserByLogin(login);
+                    UserService userService = daoFactory.getUserService();
+                    currentUser = userService.getUserByLogin(login);
                     boolean exist = (currentUser != null);
 
                     if (exist) {
-                        String passVerif = UserDaoMySqlImpl.hashString(pass);
+                        String passVerif = UserServiceImpl.hashString(pass);
                         accessGranted = (currentUser.getPassword().equals(passVerif));
                         showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
 
@@ -83,7 +93,7 @@ public class LoginServlet extends HttpServlet {
                             session.setAttribute("user", currentUser);
                             session.setAttribute("login", null);
                             logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
-                            if (adminLog.equals(login) && userDao.getUserByLogin(adminLog).getPassword().equals(passVerif)){
+                            if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)){
                                 isAdmin = true;
                             }
                         } else {
@@ -109,7 +119,7 @@ public class LoginServlet extends HttpServlet {
                         showLoginForm = false;
                         msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
                     }
-                    daoFactory.deleteUserDao(userDao);
+                    daoFactory.deleteUserService(userService);
                 } else {
                     attempt = 0;
                 }
@@ -117,11 +127,11 @@ public class LoginServlet extends HttpServlet {
         }
         // for authorized user get the corresponding shopping Cart
         if (accessGranted) {
-            CartDao cartDao = daoFactory.getCartDao();
+            CartService cartService = daoFactory.getCartService();
             showLoginForm = false;
             Cart userCart = (Cart) session.getAttribute("userCart");
             if (userCart == null) {
-                userCart = cartDao.getCart(currentUser.getId());
+                userCart = cartService.getCart(currentUser.getId());
                 if (userCart == null) {
                     userCart = new Cart(currentUser.getId());
                 }
@@ -132,7 +142,7 @@ public class LoginServlet extends HttpServlet {
             } else {
                 viewToGo = "./product";
             }
-            daoFactory.deleteCartDao(cartDao);
+            daoFactory.deleteCartService(cartService);
         }
 
         daoFactory.closeConnection();
@@ -143,9 +153,13 @@ public class LoginServlet extends HttpServlet {
         session.setAttribute("isAdmin", isAdmin);
 
         if ("WEB-INF/view/login.jsp".equals(viewToGo)){
-            req.getRequestDispatcher(viewToGo).forward(req, resp);
+//            req.getRequestDispatcher(viewToGo).forward(req, resp);
+//            model = new ModelAndView("forward:login");
+            modelAndView = new ModelAndView("forward:login" + viewToGo, model);
         } else {
-            resp.sendRedirect(viewToGo);
+//            resp.sendRedirect(viewToGo);
+            modelAndView = new ModelAndView("redirect:" + viewToGo, model);
         }
+        return modelAndView;
     }
 }

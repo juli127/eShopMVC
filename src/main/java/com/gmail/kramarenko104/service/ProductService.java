@@ -1,9 +1,9 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.Product;
 import java.util.List;
 
-public interface ProductDao {
+public interface ProductService {
 
     // CRUD functionality
     boolean addProduct(Product product);

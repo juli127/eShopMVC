@@ -1,8 +1,11 @@
 package com.gmail.kramarenko104.model;
 
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Component("order")
 public class Order {
 
     private int orderNumber;

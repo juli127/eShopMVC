@@ -1,31 +1,34 @@
 package com.gmail.kramarenko104.factoryDao;
 
-import com.gmail.kramarenko104.dao.*;
+import com.gmail.kramarenko104.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-@Component
+@Component("daoFactory")
 public abstract class DaoFactory {
 
     @Autowired
-    private UserDaoMySqlImpl userDaoMySqlImpl;
+    private UserServiceImpl userService;
     @Autowired
-    private ProductDaoMySqlImpl productDaoMySqlImpl;
+    private ProductServiceImpl productService;
     @Autowired
-    private CartDaoMySqlImpl cartDaoMySqlImpl;
+    private CartServiceImpl cartService;
     @Autowired
-    private OrderDaoMySqlImpl orderDaoMySqlImpl;
-
+    private OrderServiceImpl orderService;
+    @Autowired
 	private Connection connection;
+
+	public void DaoFactory(){}
 
     public abstract void openConnection();
 
 	public static DaoFactory getSpecificDao(){
 		ResourceBundle config = ResourceBundle.getBundle("application");
 		DaoFactory daoFactory = null;
+
 		try {
 			daoFactory = (DaoFactory) Class.forName(config.getString("factoryClass")).newInstance();
 		} catch (InstantiationException e) {
@@ -42,6 +45,10 @@ public abstract class DaoFactory {
         this.connection = connection;
     }
 
+    public Connection getConnection() {
+        return connection;
+    }
+
     public void closeConnection(){
         try {
             if (connection != null)
@@ -51,80 +58,63 @@ public abstract class DaoFactory {
         }
     }
 
-    public UserDao getUserDao() {
-        userDaoMySqlImpl = new UserDaoMySqlImpl(connection);
-        return userDaoMySqlImpl;
+    public UserService getUserService() {
+        userService = new UserServiceImpl(connection);
+        return userService;
     }
 
-    public ProductDao getProductDao() {
-        productDaoMySqlImpl = new ProductDaoMySqlImpl(connection);
-        return productDaoMySqlImpl;
+    public ProductService getProductService() {
+        productService = new ProductServiceImpl(connection);
+        return productService;
     }
 
-    public CartDao getCartDao() {
-        cartDaoMySqlImpl = new CartDaoMySqlImpl(connection);
-        return cartDaoMySqlImpl;
+    public CartService getCartService() {
+        cartService = new CartServiceImpl(connection);
+        return cartService;
     }
 
-    public OrderDao getOrderDao() {
-        orderDaoMySqlImpl = new OrderDaoMySqlImpl(connection);
-        return orderDaoMySqlImpl;
+    public OrderService getOrderService() {
+        orderService = new OrderServiceImpl(connection);
+        return orderService;
     }
 
-
-    public UserDaoMySqlImpl getUserDaoMySqlImpl() {
-        return userDaoMySqlImpl;
+    public void setUserService(UserServiceImpl userService) {
+        this.userService = userService;
     }
 
-    public void setUserDaoMySqlImpl(UserDaoMySqlImpl userDaoMySqlImpl) {
-        this.userDaoMySqlImpl = userDaoMySqlImpl;
+    public void setProductService(ProductServiceImpl productService) {
+        this.productService = productService;
     }
 
-    public ProductDaoMySqlImpl getProductDaoMySqlImpl() {
-        return productDaoMySqlImpl;
+    public void setCartService(CartServiceImpl cartService) {
+        this.cartService = cartService;
     }
 
-    public void setProductDaoMySqlImpl(ProductDaoMySqlImpl productDaoMySqlImpl) {
-        this.productDaoMySqlImpl = productDaoMySqlImpl;
+    public void setOrderService(OrderServiceImpl orderService) {
+        this.orderService = orderService;
     }
 
-    public CartDaoMySqlImpl getCartDaoMySqlImpl() {
-        return cartDaoMySqlImpl;
-    }
-
-    public void setCartDaoMySqlImpl(CartDaoMySqlImpl cartDaoMySqlImpl) {
-        this.cartDaoMySqlImpl = cartDaoMySqlImpl;
-    }
-
-    public OrderDaoMySqlImpl getOrderDaoMySqlImpl() {
-        return orderDaoMySqlImpl;
-    }
-
-    public void setOrderDaoMySqlImpl(OrderDaoMySqlImpl orderDaoMySqlImpl) {
-        this.orderDaoMySqlImpl = orderDaoMySqlImpl;
-    }
-
-    public void deleteUserDao(UserDao userDao) {
-        if (userDao != null) {
-            userDao = null;
+    public void deleteUserService(UserService userService) {
+        if (userService != null) {
+            userService = null;
         }
     }
 
-    public void deleteProductDao(ProductDao productDao) {
-        if (productDao != null) {
-            productDao = null;
+    public void deleteProductService(ProductService productService) {
+        if (productService != null) {
+            productService = null;
         }
     }
 
-    public void deleteCartDao(CartDao cartDao) {
-        if (cartDao != null) {
-            cartDao = null;
+    public void deleteCartService(CartService cartService) {
+        if (cartService != null) {
+            cartService = null;
         }
     }
 
-    public void deleteOrderDao(OrderDao orderDao) {
-        if (orderDao != null) {
-            orderDao = null;
+    public void deleteOrderService(OrderService orderService) {
+        if (orderService != null) {
+            orderService = null;
         }
     }
 

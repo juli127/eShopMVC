@@ -4,11 +4,12 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class MySqlHikariDataSourceFactory extends DaoFactory {
+@Component("mySqlHikariDataSourceFactory")
+public class MySqlHikariDataSourceFactory extends DaoFactory{
     private static Logger logger = Logger.getLogger(MySqlHikariDataSourceFactory.class);
 
     @Autowired

@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104.model;
 
-import com.google.gson.Gson;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
+
 import java.util.Objects;
 
+@Component("product")
 public class Product {
 
     private static Logger logger = Logger.getLogger(Product.class);

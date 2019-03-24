@@ -1,5 +1,8 @@
 package com.gmail.kramarenko104.model;
 
+import org.springframework.stereotype.Component;
+
+@Component("user")
 public class User {
 
     private int id;
@@ -20,6 +23,7 @@ public class User {
     public String getLogin() {
         return login;
     }
+
     public void setLogin(String login) {
         this.login = login;
     }

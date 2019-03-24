@@ -1,14 +1,19 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import org.apache.log4j.Logger;
-import java.sql.*;
+import org.springframework.stereotype.Service;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class CartDaoMySqlImpl implements CartDao {
+@Service("cartService")
+public class CartServiceImpl implements CartService {
 
     private final static String ADD_TO_CART = "INSERT INTO carts (userId, productId, quantity) VALUES(?,?,?);";
     private final static String DELETE_CART = "DELETE FROM carts WHERE userId = ?;";
@@ -16,10 +21,10 @@ public class CartDaoMySqlImpl implements CartDao {
     private final static String UPDATE_CART = "UPDATE carts SET quantity = ? WHERE userId =? AND productId = ?;";
     private final static String GET_PRODUCTS_BY_USERID_AND_PRODUCTID = "SELECT * FROM carts WHERE userId =? AND productId = ?;";
     private final static String GET_ALL_PRODUCTS_FROM_CART = "SELECT products.*, carts.quantity FROM products INNER JOIN carts ON products.id = carts.productId WHERE carts.userId = ?;";
-    private static Logger logger = Logger.getLogger(CartDaoMySqlImpl.class);
+    private static Logger logger = Logger.getLogger(CartServiceImpl.class);
     private Connection conn;
 
-    public CartDaoMySqlImpl(Connection conn) {
+    public CartServiceImpl(Connection conn) {
         this.conn = conn;
     }
 

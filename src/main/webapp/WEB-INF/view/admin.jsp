@@ -1,6 +1,6 @@
 <%@ include file="includes/header.jsp" %>
 
-<c:set var="users" value="${sessionScope.usersList}" ></c:set>
+<c:set var="users" value="${usersList}"></c:set>
 
 <c:if test="${users != null}">
     <div id="info">All users:</div><br><br>

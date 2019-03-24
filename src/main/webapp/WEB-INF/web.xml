@@ -3,7 +3,6 @@
         "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
 <web-app>
-    <display-name></display-name>
 
     <filter>
         <filter-name>MyFilter</filter-name>
@@ -15,21 +14,48 @@
         <url-pattern>/admin</url-pattern>
     </filter-mapping>
 
+    <servlet>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring/mvc-dispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/static/*</url-pattern>
+        <servlet-name>mvc-dispatcher</servlet-name>
+        <url-pattern>/</url-pattern>
     </servlet-mapping>
 
-    <!--<servlet>-->
-        <!--<servlet-name>spring</servlet-name>-->
-        <!--<servlet-class>org.springframework.web.servlet.DispatcherServlet-->
-        <!--</servlet-class>-->
-        <!--<load-on-startup>1</load-on-startup>-->
-    <!--</servlet>-->
-
+    <!-- Creates the Spring Container shared by all Servlets and Filters -->
+    <!--<listener>-->
+        <!--<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>-->
+    <!--</listener>-->
+    <!---->
     <!--<servlet-mapping>-->
-        <!--<servlet-name>spring</servlet-name>-->
-        <!--<url-pattern>*.html</url-pattern>-->
+        <!--<servlet-name>default</servlet-name>-->
+        <!--<url-pattern>/static/*</url-pattern>-->
     <!--</servlet-mapping>-->
+
+    <!-- Spring MVC filters -->
+    <!--<filter>-->
+        <!--<filter-name>CharacterEncodingFilter</filter-name>-->
+        <!--<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>-->
+        <!--<init-param>-->
+            <!--<param-name>encoding</param-name>-->
+            <!--<param-value>UTF-8</param-value>-->
+        <!--</init-param>-->
+        <!--<init-param>-->
+            <!--<param-name>forceEncoding</param-name>-->
+            <!--<param-value>true</param-value>-->
+        <!--</init-param>-->
+    <!--</filter>-->
+
+    <!--<filter-mapping>-->
+        <!--<filter-name>CharacterEncodingFilter</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
 
 </web-app>

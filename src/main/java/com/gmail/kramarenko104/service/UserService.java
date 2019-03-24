@@ -1,10 +1,10 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.User;
 
 import java.util.List;
 
-public interface UserDao {
+public interface UserService {
 
     // CRUD functionality
     boolean createUser(User user);

@@ -1,7 +1,10 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.User;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -10,7 +13,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserDaoMySqlImpl implements UserDao {
+@Service(value = "userService")
+public class UserServiceImpl implements UserService {
 
     private static final String CREATE_USER = "INSERT INTO users(login, password, name, address, comment) VALUES(?,?,?,?,?);";
     private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?);";
@@ -18,10 +22,12 @@ public class UserDaoMySqlImpl implements UserDao {
     private final static String DELETE_USER = "DELETE FROM users WHERE id = ?;";
     private static final String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
     private static final String SALT = "34Ru9k";
-    private Connection conn;
-    private static Logger logger = Logger.getLogger(UserDaoMySqlImpl.class);
 
-    public UserDaoMySqlImpl(Connection conn) {
+    private Connection conn;
+    private static Logger logger = Logger.getLogger(UserServiceImpl.class);
+
+    @Autowired
+    public UserServiceImpl(Connection conn) {
         this.conn = conn;
     }
 

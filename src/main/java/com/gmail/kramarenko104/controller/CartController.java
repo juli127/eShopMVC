@@ -1,35 +1,46 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.dao.CartDao;
 import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
+import com.gmail.kramarenko104.service.CartService;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 
 @Controller
 @RequestMapping("/cart")
-public class CartServlet extends HttpServlet {
+public class CartController {
 
-    private static Logger logger = Logger.getLogger(CartServlet.class);
+    @Autowired
     private DaoFactory daoFactory;
+    private static Logger logger = Logger.getLogger(CartController.class);
 
-    public CartServlet() {
-        daoFactory = DaoFactory.getSpecificDao();
+    public CartController()
+    {
+        //daoFactory = DaoFactory.getSpecificDao();
     }
 
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+    public static HttpSession session() {
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        return attr.getRequest().getSession(true); // true == allow create
+    }
+
+    @RequestMapping(method = RequestMethod.GET)
+    protected ModelAndView doGet() {
+        HttpSession session = session();
         daoFactory.openConnection();
 
         if (session.getAttribute("user") != null) {
@@ -39,23 +50,24 @@ public class CartServlet extends HttpServlet {
 
             Cart userCart = null;
             if (session.getAttribute("userCart") == null) {
-                CartDao cartDao = daoFactory.getCartDao();
-                userCart = cartDao.getCart(userId);
+                CartService cartService = daoFactory.getCartService();
+                userCart = cartService.getCart(userId);
                 if (userCart == null) {
                     logger.debug("CartServlet: cart from DB == null! create new cart for userId: " + userId);
                     userCart = new Cart(userId);
                 }
                 session.setAttribute("userCart", userCart);
-                daoFactory.deleteCartDao(cartDao);
+                daoFactory.deleteCartService(cartService);
             }
         }
         daoFactory.closeConnection();
-        req.getRequestDispatcher("WEB-INF/view/cart.jsp").forward(req, resp);
+        ModelAndView model = new ModelAndView("WEB-INF/view/cart.jsp");
+        return model;
     }
 
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        HttpSession session = req.getSession();
+    @RequestMapping(method = RequestMethod.POST)
+    protected ModelAndView doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        HttpSession session = session();
         daoFactory.openConnection();
         boolean needRefresh = false;
 
@@ -65,7 +77,7 @@ public class CartServlet extends HttpServlet {
             int userId = currentUser.getId();
 
             // CHANGE CART
-            CartDao cartDao = daoFactory.getCartDao();
+            CartService cartService = daoFactory.getCartService();
             // get info from Ajax POST req (from updateCart.js)
             String param = req.getParameter("action");
             if (param != null && param.length() > 0) {
@@ -77,14 +89,14 @@ public class CartServlet extends HttpServlet {
                         productId = Integer.valueOf(req.getParameter("productId"));
                         quantity = Integer.valueOf(req.getParameter("quantity"));
                         logger.debug("CatServlet: userId: " + currentUser.getId() + ", productId: "+ productId + ", quantity: " + quantity);
-                        cartDao.addProduct(currentUser.getId(), productId, quantity);
+                        cartService.addProduct(currentUser.getId(), productId, quantity);
                         logger.debug("CartServlet: for user '" + currentUser.getName() + "' was added " + quantity + " of productId: " + productId);
                         break;
                     case "remove":
                         logger.debug("CartServlet: GOT PARAMETER 'remove' ");
                         productId = Integer.valueOf(req.getParameter("productId"));
                         quantity = Integer.valueOf(req.getParameter("quantity"));
-                        cartDao.removeProduct(currentUser.getId(), productId, quantity);
+                        cartService.removeProduct(currentUser.getId(), productId, quantity);
                         logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
                         break;
                 }
@@ -93,7 +105,7 @@ public class CartServlet extends HttpServlet {
             //  REFRESH CART's characteristics if refresh need
             Cart userCart = null;
             if (session.getAttribute("userCart") == null || needRefresh) {
-                userCart = cartDao.getCart(userId);
+                userCart = cartService.getCart(userId);
                 if (userCart == null) {
                     logger.debug("CartServlet: cart from DB == null! create the new cart for userId: " + userId);
                     userCart = new Cart(userId);
@@ -112,8 +124,10 @@ public class CartServlet extends HttpServlet {
                     }
                 }
             }
-            daoFactory.deleteCartDao(cartDao);
+            daoFactory.deleteCartService(cartService);
         }
         daoFactory.closeConnection();
+        ModelAndView model = new ModelAndView("WEB-INF/view/cart.jsp");
+        return model;
     }
 }

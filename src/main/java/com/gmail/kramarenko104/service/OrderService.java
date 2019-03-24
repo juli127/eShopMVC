@@ -1,11 +1,11 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.Product;
-import java.util.List;
+
 import java.util.Map;
 
-public interface OrderDao {
+public interface OrderService {
 
     boolean deleteAllOrders(int userId);
     Order createOrder(int userId, Map<Product, Integer> products);

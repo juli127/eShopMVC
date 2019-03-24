@@ -1,14 +1,17 @@
-package com.gmail.kramarenko104.dao;
+package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.model.Product;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDaoMySqlImpl implements ProductDao {
+@Service("productService")
+public class ProductServiceImpl implements ProductService {
 
-    private static Logger logger = Logger.getLogger(ProductDaoMySqlImpl.class);
+    private static Logger logger = Logger.getLogger(ProductServiceImpl.class);
     private final static String GET_ALL_PRODUCTS = "SELECT * FROM products;";
     private final static String GET_PRODUCT_BY_ID = "SELECT * FROM products WHERE id = ?;";
     private final static String GET_PRODUCTS_BY_CATEGORY = "SELECT * FROM products WHERE category = ?;";
@@ -16,7 +19,7 @@ public class ProductDaoMySqlImpl implements ProductDao {
     private Connection conn;
     private List<Product> allProductsList;
 
-    public ProductDaoMySqlImpl(Connection conn) {
+    public ProductServiceImpl(Connection conn) {
         this.conn = conn;
         allProductsList = new ArrayList<>();
     }
