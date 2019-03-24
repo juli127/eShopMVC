@@ -34,7 +34,7 @@
     <!--<bean id="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory"/>-->
     <!--<bean id="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory" parent="daoFactory"/>-->
 
-    <bean id="conn" name="conn" class="java.sql.Connection" abstract="true"
+    <bean id="conn" class="java.sql.Connection" abstract="true"
           factory-method="#{dataSource.openConnection()}" depends-on="dataSource" />
 
 

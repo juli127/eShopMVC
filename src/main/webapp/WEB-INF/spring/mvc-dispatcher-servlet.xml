@@ -12,17 +12,19 @@
          http://www.springframework.org/schema/tx
          http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
          http://www.springframework.org/schema/aop
-         http://www.springframework.org/schema/aop/spring-aop-4.0.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
-
-    <mvc:resources mapping="/static/**" location="/static/" />
+         http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+         http://www.springframework.org/schema/mvc
+         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <!-- Enables the Spring MVC @Controller programming model -->
     <mvc:annotation-driven />
 
-    <context:component-scan base-package="com.gmail.kramarenko104.controller" />
+    <context:component-scan base-package="com.gmail.kramarenko104.model" />
     <context:component-scan base-package="com.gmail.kramarenko104.factoryDao" />
     <context:component-scan base-package="com.gmail.kramarenko104.service" />
-    <context:component-scan base-package="com.gmail.kramarenko104.model" />
+    <context:component-scan base-package="com.gmail.kramarenko104.controller" />
+
+    <mvc:resources mapping="/static/**" location="/static/" />
 
     <!-- Views' location -->
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver"
