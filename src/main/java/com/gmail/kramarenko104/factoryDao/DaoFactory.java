@@ -1,24 +1,19 @@
 package com.gmail.kramarenko104.factoryDao;
 
-import com.gmail.kramarenko104.service.*;
+import com.gmail.kramarenko104.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-@Component("daoFactory")
+@Component
 public abstract class DaoFactory {
 
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
-    private ProductServiceImpl productService;
-    @Autowired
-    private CartServiceImpl cartService;
-    @Autowired
-    private OrderServiceImpl orderService;
-    @Autowired
+    private UserDaoImpl userDao;
+    private ProductDaoImpl productDao;
+    private CartDaoImpl cartDao;
+    private OrderDaoImpl orderDao;
 	private Connection connection;
 
 	public void DaoFactory(){}
@@ -41,8 +36,26 @@ public abstract class DaoFactory {
 		return daoFactory;
 	}
 
+    @Autowired
     public void setConnection(Connection connection){
         this.connection = connection;
+    }
+
+    @Autowired
+    public void setUserDao(UserDaoImpl userDao) {
+        this.userDao = userDao;
+    }
+    @Autowired
+    public void setProductDao(ProductDaoImpl productDao) {
+        this.productDao = productDao;
+    }
+    @Autowired
+    public void setCartDao(CartDaoImpl cartDao) {
+        this.cartDao = cartDao;
+    }
+    @Autowired
+    public void setOrderDao(OrderDaoImpl orderDao) {
+        this.orderDao = orderDao;
     }
 
     public Connection getConnection() {
@@ -58,61 +71,45 @@ public abstract class DaoFactory {
         }
     }
 
-    public UserService getUserService() {
-        userService = new UserServiceImpl(connection);
-        return userService;
+    public UserDao getUserDao() {
+        userDao = new UserDaoImpl(connection);
+        return userDao;
     }
 
-    public ProductService getProductService() {
-        productService = new ProductServiceImpl(connection);
-        return productService;
+    public ProductDao getProductDao() {
+        productDao = new ProductDaoImpl(connection);
+        return productDao;
     }
 
-    public CartService getCartService() {
-        cartService = new CartServiceImpl(connection);
-        return cartService;
+    public CartDao getCartDao() {
+        cartDao = new CartDaoImpl(connection);
+        return cartDao;
     }
 
-    public OrderService getOrderService() {
-        orderService = new OrderServiceImpl(connection);
-        return orderService;
+    public OrderDao getOrderDao() {
+        orderDao = new OrderDaoImpl(connection);
+        return orderDao;
     }
 
-    public void setUserService(UserServiceImpl userService) {
-        this.userService = userService;
-    }
-
-    public void setProductService(ProductServiceImpl productService) {
-        this.productService = productService;
-    }
-
-    public void setCartService(CartServiceImpl cartService) {
-        this.cartService = cartService;
-    }
-
-    public void setOrderService(OrderServiceImpl orderService) {
-        this.orderService = orderService;
-    }
-
-    public void deleteUserService(UserService userService) {
-        if (userService != null) {
-            userService = null;
+    public void deleteUserService(UserDao userDao) {
+        if (userDao != null) {
+            userDao = null;
         }
     }
 
-    public void deleteProductService(ProductService productService) {
-        if (productService != null) {
-            productService = null;
+    public void deleteProductService(ProductDao productDao) {
+        if (productDao != null) {
+            productDao = null;
         }
     }
 
-    public void deleteCartService(CartService cartService) {
-        if (cartService != null) {
-            cartService = null;
+    public void deleteCartService(CartDao cartDao) {
+        if (cartDao != null) {
+            cartDao = null;
         }
     }
 
-    public void deleteOrderService(OrderService orderService) {
+    public void deleteOrderService(OrderDao orderService) {
         if (orderService != null) {
             orderService = null;
         }

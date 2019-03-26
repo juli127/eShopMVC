@@ -1,11 +1,10 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.factoryDao.DaoFactory;
+import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartService;
 import com.gmail.kramarenko104.service.UserService;
-import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +23,9 @@ public class LoginController {
     private static final String adminLog = "admin";
 
     @Autowired
-    private DaoFactory daoFactory;
+    private UserService userService;
+    @Autowired
+    private CartService cartService;
     private int attempt;
 
     public LoginController() {
@@ -42,7 +43,6 @@ public class LoginController {
     protected String doPost(@RequestParam("login") String login,
                             @RequestParam("password") String pass,
                             Model model) {
-        daoFactory.openConnection();
         boolean showLoginForm = true;
         boolean accessGranted = false;
         StringBuilder msgText = new StringBuilder();
@@ -62,12 +62,11 @@ public class LoginController {
 
             if ((login != null) && !("".equals(login))) {
                 model.addAttribute("login", login);
-                UserService userService = daoFactory.getUserService();
                 currentUser = userService.getUserByLogin(login);
                 boolean exist = (currentUser != null);
 
                 if (exist) {
-                    String passVerif = UserServiceImpl.hashString(pass);
+                    String passVerif = UserDaoImpl.hashString(pass);
                     accessGranted = (currentUser.getPassword().equals(passVerif));
                     showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
 
@@ -103,7 +102,6 @@ public class LoginController {
                     showLoginForm = false;
                     msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
                 }
-                daoFactory.deleteUserService(userService);
             } else {
                 attempt = 0;
             }
@@ -111,7 +109,6 @@ public class LoginController {
 
         // for authorized user get the corresponding shopping Cart
         if (accessGranted) {
-            CartService cartService = daoFactory.getCartService();
             showLoginForm = false;
             Cart userCart = (Cart) model.asMap().get("userCart");
             if (userCart == null) {
@@ -126,10 +123,7 @@ public class LoginController {
             } else {
                 viewToGo = "/product";
             }
-            daoFactory.deleteCartService(cartService);
         }
-
-        daoFactory.closeConnection();
 
         model.addAttribute("showLoginForm", showLoginForm);
         model.addAttribute("message", msgText.toString());
@@ -137,16 +131,9 @@ public class LoginController {
         model.addAttribute("isAdmin", isAdmin);
 
         if ("login".equals(viewToGo)) {
-            //req.getRequestDispatcher(viewToGo).forward(req, resp);
             return "login";
         } else {
-            //resp.sendRedirect(viewToGo);
             return "redirect:" + viewToGo;
         }
     }
-//
-//    public static HttpSession session() {
-//        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-//        return attr.getRequest().getSession(true); // true == allow create
-//    }
 }

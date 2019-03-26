@@ -10,7 +10,7 @@ public class ForbiddenController {
     public ForbiddenController() {
     }
 
-    protected String doGet() {
+    public String doGet() {
         return "forbidden";
     }
 }

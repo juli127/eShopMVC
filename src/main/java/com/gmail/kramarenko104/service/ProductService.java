@@ -1,16 +1,38 @@
 package com.gmail.kramarenko104.service;
 
+import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.model.Product;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 
-public interface ProductService {
+@Service
+public class ProductService {
+
+    // validation of User object MUST be done here, NOT in UserDao.java !!!!
+    @Autowired
+    private ProductDaoImpl productDao;
 
     // CRUD functionality
-    boolean addProduct(Product product);
-    Product getProduct(int id);
-    boolean deleteProduct(int id);
+    public boolean addProduct(Product product){
+        return productDao.addProduct(product);
+    }
 
-    List<Product> getAllProducts();
-    List<Product> getProductsByCategory(int category);
+    public Product getProduct(int id){
+        return productDao.getProduct(id);
+    }
+
+    public boolean deleteProduct(int id){
+        return productDao.deleteProduct(id);
+    }
+
+    public List<Product> getAllProducts(){
+        return productDao.getAllProducts();
+    }
+
+    public List<Product> getProductsByCategory(int category){
+        return productDao.getProductsByCategory(category) ;
+    }
 
 }

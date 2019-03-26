@@ -1,6 +1,5 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.UserService;
@@ -11,7 +10,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -24,7 +22,7 @@ public class RegistrationController {
     private static Logger logger = Logger.getLogger(RegistrationController.class);
 
     @Autowired
-    private DaoFactory daoFactory;
+    private UserService userService;
 
     public RegistrationController() {
     }
@@ -43,8 +41,6 @@ public class RegistrationController {
                             @RequestParam("comment") String comment,
                             Model model) {
 
-        daoFactory.openConnection();
-
         StringBuilder message = new StringBuilder();
         Map<String, String> errors = new HashMap<>();
         StringBuilder errorsMsg = new StringBuilder();
@@ -54,7 +50,6 @@ public class RegistrationController {
 
         if (!"".equals(login)) {
             // check if user with this login/password is already registered
-            UserService userService = daoFactory.getUserService();
             userExist = (userService.getUserByLogin(login) != null);
 
             // user with this login/password wasn't registered yet
@@ -117,7 +112,6 @@ public class RegistrationController {
             else {
                 needRegistration = false;
             }
-            daoFactory.deleteUserService(userService);
         }
 
         model.addAttribute("RegMessage", message.toString());
@@ -143,7 +137,6 @@ public class RegistrationController {
             model.addAttribute("errorsMsg", null);
         }
 
-        daoFactory.closeConnection();
         return viewToGo;
     }
 }

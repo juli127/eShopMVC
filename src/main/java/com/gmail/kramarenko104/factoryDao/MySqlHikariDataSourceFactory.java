@@ -3,28 +3,50 @@ package com.gmail.kramarenko104.factoryDao;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@Component("mySqlHikariDataSourceFactory")
+//import javax.annotation.PostConstruct;
+
+//@Component("mySqlHikariDataSourceFactory")
 public class MySqlHikariDataSourceFactory extends DaoFactory{
     private static Logger logger = Logger.getLogger(MySqlHikariDataSourceFactory.class);
 
-    @Autowired
+//    @Autowired
     private HikariConfig hikariConfig;
-    @Autowired
+//    @Autowired
     private HikariDataSource dataSource;
 
-    public MySqlHikariDataSourceFactory(){}
+
+    Connection conn;
+
+        //    public MySqlHikariDataSourceFactory()
+//        @PostConstruct
+        public void init() {
+//        ResourceBundle rb = ResourceBundle.getBundle("hikari");
+//        HikariConfig config = new HikariConfig();
+//        config.setDriverClassName(rb.getString("datasource.driverClassName"));
+//        config.setJdbcUrl(rb.getString("datasource.jdbcUrl"));
+//        config.setUsername(rb.getString("datasource.user"));
+//        config.setPassword(rb.getString("datasource.password"));
+//        config.setMinimumIdle(Integer.valueOf(rb.getString("datasource.minimumIdle")));
+//        config.setMaximumPoolSize(Integer.valueOf(rb.getString("datasource.maximumPoolSize")));
+//        dataSource = new HikariDataSource(hikariConfig);
+            try {
+                conn = dataSource.getConnection();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        }
 
     @Override
     public void openConnection() {
         try {
             logger.debug("MySqlHikariDataSourceFactory.openConnection:  dataSource: " + dataSource);
             logger.debug("MySqlHikariDataSourceFactory.openConnection:  hikariConfig: " + hikariConfig);
-            Connection conn = dataSource.getConnection();
+            conn = dataSource.getConnection();
             super.setConnection(conn);
             logger.debug("Connection obtained");
         } catch (SQLException e) {

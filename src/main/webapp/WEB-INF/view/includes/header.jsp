@@ -1,7 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
-<jsp:output omit-xml-declaration="yes" />
 
 <c:set var="user" value="${user}"/>
 <c:set var="username" value="${user.name}"/>

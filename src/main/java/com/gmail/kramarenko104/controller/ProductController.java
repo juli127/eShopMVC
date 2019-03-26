@@ -1,6 +1,5 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
@@ -22,18 +21,16 @@ public class ProductController {
 
     private static Logger logger = Logger.getLogger(ProductController.class);
     @Autowired
-    private DaoFactory daoFactory;
+    private ProductService productService;
+    @Autowired
+    private CartService cartService;
 
     public ProductController() {
     }
 
     @RequestMapping(method = RequestMethod.GET)
     protected String doGet(@RequestParam("selectedCategory") String selectedCateg, Model model) {
-        logger.debug("---enter ProductController.doGet...");
-        daoFactory.openConnection();
 
-        // prepare products list depending on selected category
-        ProductService productService = daoFactory.getProductService();
         List<Product> products;
 
         // when form is opened at the first time, selectedCateg == null
@@ -45,7 +42,6 @@ public class ProductController {
         model.addAttribute("selectedCateg", selectedCateg);
         model.addAttribute("products", products);
         // products.forEach(e -> logger.debug(e));
-        daoFactory.deleteProductService(productService);
 
         // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
         if (model.asMap().get("user") == null) {
@@ -55,16 +51,13 @@ public class ProductController {
             Cart userCart = null;
             if (model.asMap().get("userCart") == null) {
                 int userId = currentUser.getId();
-                CartService cartService = daoFactory.getCartService();
                 userCart = cartService.getCart(userId);
                 if (userCart == null) {
                     userCart = new Cart(userId);
                 }
                 model.addAttribute("userCart", userCart);
-                daoFactory.deleteCartService(cartService);
             }
         }
-        daoFactory.closeConnection();
         return "products";
     }
 }

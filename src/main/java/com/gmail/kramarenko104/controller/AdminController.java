@@ -1,6 +1,5 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.factoryDao.DaoFactory;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.UserService;
 import org.apache.log4j.Logger;
@@ -17,22 +16,16 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private DaoFactory daoFactory;
+    private UserService userService;
     private static Logger logger = Logger.getLogger(AdminController.class);
 
     public AdminController() {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    protected String getAllUsers(Model model)  {
-        if (model.asMap().get("session") != null) {
-            daoFactory.openConnection();
-            UserService userService = daoFactory.getUserService();
-            List<User> usersList = userService.getAllUsers();
-            model.addAttribute("usersList", usersList);
-            daoFactory.deleteUserService(userService);
-            daoFactory.closeConnection();
-        }
+    public String getAllUsers(Model model)  {
+        List<User> usersList = userService.getAllUsers();
+        model.addAttribute("usersList", usersList);
         return "admin";
     }
 }

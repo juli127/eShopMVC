@@ -1,9 +1,9 @@
-package com.gmail.kramarenko104.service;
+package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +12,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service("cartService")
-public class CartServiceImpl implements CartService {
+@Repository
+public class CartDaoImpl implements CartDao {
 
     private final static String ADD_TO_CART = "INSERT INTO carts (userId, productId, quantity) VALUES(?,?,?);";
     private final static String DELETE_CART = "DELETE FROM carts WHERE userId = ?;";
@@ -21,12 +21,16 @@ public class CartServiceImpl implements CartService {
     private final static String UPDATE_CART = "UPDATE carts SET quantity = ? WHERE userId =? AND productId = ?;";
     private final static String GET_PRODUCTS_BY_USERID_AND_PRODUCTID = "SELECT * FROM carts WHERE userId =? AND productId = ?;";
     private final static String GET_ALL_PRODUCTS_FROM_CART = "SELECT products.*, carts.quantity FROM products INNER JOIN carts ON products.id = carts.productId WHERE carts.userId = ?;";
-    private static Logger logger = Logger.getLogger(CartServiceImpl.class);
+    private static Logger logger = Logger.getLogger(CartDaoImpl.class);
     private Connection conn;
 
-    public CartServiceImpl(Connection conn) {
+    public CartDaoImpl(Connection conn) {
         this.conn = conn;
     }
+
+    // https://habr.com/ru/post/111102/
+    //@Autowired
+    //private SessionFactory sessionFactory;
 
     @Override
     public Cart getCart(int userId) {
