@@ -12,15 +12,15 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDaoImpl productDao;
 
-    public boolean addProduct(Product product) {
-        return productDao.addProduct(product);
+    public int addProduct(Product product) {
+        return productDao.createProduct(product);
     }
 
     public Product getProduct(int id) {
         return productDao.getProduct(id);
     }
 
-    public boolean deleteProduct(int id) {
+    public int deleteProduct(int id) {
         return productDao.deleteProduct(id);
     }
 

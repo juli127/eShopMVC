@@ -56,20 +56,10 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getUserByLogin(String login) {
         session = sessionFactory.openSession();
+        @SuppressWarnings("unchecked")
         User user = (User) session.createQuery("select u from User u where u.login = :login").getResultList().get(0);
         session.delete("User", user);
         return user;
-    }
-
-    public static String hashString(String hash) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
-        return String.format("%032x", new BigInteger(md5.digest()));
     }
 
     @Override
@@ -82,5 +72,16 @@ public class UserDaoImpl implements UserDao {
 
     public boolean sessionIsOpen() {
         return sessionFactory.isOpen();
+    }
+
+    public static String hashString(String hash) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
+        return String.format("%032x", new BigInteger(md5.digest()));
     }
 }

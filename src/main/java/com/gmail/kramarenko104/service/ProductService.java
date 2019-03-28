@@ -5,11 +5,11 @@ import java.util.List;
 
 public interface ProductService {
 
-    boolean addProduct(Product product);
+    int addProduct(Product product);
 
     Product getProduct(int id);
 
-    boolean deleteProduct(int id);
+    int deleteProduct(int id);
 
     List<Product> getAllProducts();
 

@@ -1,20 +1,38 @@
 package com.gmail.kramarenko104.model;
 
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
-
+import javax.persistence.*;
 import java.util.Objects;
 
-@Component("product")
+/*
+  id INT AUTO_INCREMENT,
+  name VARCHAR(100) UNIQUE NOT NULL,
+  category INT,
+  price INT,
+  description VARCHAR(300),
+  image VARCHAR(100),
+  PRIMARY KEY (id),
+  FOREIGN KEY (category) REFERENCES categories(id)
+ */
+@Entity
+@Table(name="products")
 public class Product {
 
-    private static Logger logger = Logger.getLogger(Product.class);
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column (unique = true, nullable = false)
     private String name;
+    @Column (nullable = false)
     private int category;
+    @Column (nullable = false)
     private int price;
+    @Column
     private String description;
+    @Column
     private String image;
+
+    public Product() {
+    }
 
     public String getName() {
         return name;

@@ -5,13 +5,13 @@ import java.util.List;
 
 public interface ProductDao {
 
-    // CRUD functionality
-
-    boolean addProduct(Product product);
+    int createProduct(Product product);
 
     Product getProduct(int id);
 
-    boolean deleteProduct(int id);
+    int deleteProduct(int id);
+
+    int updateProduct(Product product);
 
     List<Product> getAllProducts();
 
