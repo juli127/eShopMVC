@@ -17,7 +17,7 @@
   </properties>
 
   <dependencies>
-
+      <!--SPRING dependencies +++++++++++++++++++++++++++++++++++++++++ -->
       <!-- https://mvnrepository.com/artifact/org.springframework/spring-core -->
       <dependency>
           <groupId>org.springframework</groupId>
@@ -30,6 +30,12 @@
           <groupId>org.springframework</groupId>
           <artifactId>spring-context</artifactId>
           <version>${springframework.version}</version>
+          <exclusions>
+              <exclusion>
+                  <groupId>commons-logging</groupId>
+                  <artifactId>commons-logging</artifactId>
+              </exclusion>
+          </exclusions>
       </dependency>
       <!-- https://mvnrepository.com/artifact/org.springframework/spring-beans -->
       <dependency>
@@ -38,11 +44,11 @@
           <version>${springframework.version}</version>
       </dependency>
       <!-- https://mvnrepository.com/artifact/org.springframework/spring-expression -->
-      <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-expression</artifactId>
-          <version>${springframework.version}</version>
-      </dependency>
+      <!--<dependency>-->
+          <!--<groupId>org.springframework</groupId>-->
+          <!--<artifactId>spring-expression</artifactId>-->
+          <!--<version>${springframework.version}</version>-->
+      <!--</dependency>-->
       <!-- https://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
       <dependency>
           <groupId>org.springframework</groupId>
@@ -60,14 +66,57 @@
           <artifactId>spring-jdbc</artifactId>
           <version>${springframework.version}</version>
       </dependency>
-
-
-      <!-- https://mvnrepository.com/artifact/commons-logging/commons-logging -->
       <dependency>
-          <groupId>commons-logging</groupId>
-          <artifactId>commons-logging</artifactId>
-          <version>1.2</version>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-orm</artifactId>
+          <version>5.0.7.RELEASE</version>
       </dependency>
+
+      <!--HIBERNATE dependencies +++++++++++++++++++++++++++++++++++++++++ -->
+      <!--<dependency>-->
+      <!--<groupId>org.hibernate.javax.persistence</groupId>-->
+      <!--<artifactId>hibernate-jpa-2.1-api</artifactId>-->
+      <!--<version>1.0.0.Final</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+      <!--<groupId>org.hibernate</groupId>-->
+      <!--<artifactId>hibernate-core</artifactId>-->
+      <!--<version>3.3.2.GA</version>-->
+      <!--</dependency>-->
+      <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-entitymanager</artifactId>
+          <version>5.3.1.Final</version>
+      </dependency>
+      <!--<dependency>-->
+      <!--<groupId>org.hibernate</groupId>-->
+      <!--<artifactId>hibernate-core</artifactId>-->
+      <!--<version>5.2.17.Final</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+      <!--<groupId>org.hibernate</groupId>-->
+      <!--<artifactId>hibernate-annotations</artifactId>-->
+      <!--<version>3.3.1.GA</version>-->
+      <!--</dependency>-->
+      <!--<dependency>-->
+      <!--<groupId>org.hibernate</groupId>-->
+      <!--<artifactId>hibernate-commons-annotations</artifactId>-->
+      <!--<version>3.3.0.ga</version>-->
+      <!--</dependency>-->
+      <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons-core &ndash;&gt;-->
+      <!--<dependency>-->
+      <!--<groupId>org.springframework.data</groupId>-->
+      <!--<artifactId>spring-data-commons-core</artifactId>-->
+      <!--<version>1.0.0.RELEASE</version>-->
+      <!--</dependency>-->
+
+      <!--OTHER dependencies +++++++++++++++++++++++++++++++++++++++++ -->
+      <!--&lt;!&ndash; https://mvnrepository.com/artifact/commons-logging/commons-logging &ndash;&gt;-->
+      <!--<dependency>-->
+          <!--<groupId>commons-logging</groupId>-->
+          <!--<artifactId>commons-logging</artifactId>-->
+          <!--<version>1.2</version>-->
+      <!--</dependency>-->
       
       <!-- https://mvnrepository.com/artifact/jstl/jstl -->
     <dependency>
@@ -82,12 +131,19 @@
       <version>3.1.0</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.13</version>
-    </dependency>
+      <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+      <dependency>
+          <groupId>mysql</groupId>
+          <artifactId>mysql-connector-java</artifactId>
+          <version>8.0.13</version>
+      </dependency>
+
+      <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-dbcp2 -->
+      <dependency>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-dbcp2</artifactId>
+          <version>2.6.0</version>
+      </dependency>
 
     <dependency>
       <groupId>log4j</groupId>
@@ -121,86 +177,52 @@
       <scope>test</scope>
     </dependency>
 
-      <dependency>
-          <groupId>org.codehaus.jackson</groupId>
-          <artifactId>jackson-mapper-asl</artifactId>
-          <version>1.9.13</version>
-      </dependency>
-
       <!--<dependency>-->
-          <!--<groupId>org.hibernate.javax.persistence</groupId>-->
-          <!--<artifactId>hibernate-jpa-2.1-api</artifactId>-->
-          <!--<version>1.0.0.Final</version>-->
+          <!--<groupId>org.codehaus.jackson</groupId>-->
+          <!--<artifactId>jackson-mapper-asl</artifactId>-->
+          <!--<version>1.9.13</version>-->
       <!--</dependency>-->
-      <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-core</artifactId>
-          <version>3.3.2.GA</version>
-      </dependency>
-      <dependency>
-          <groupId>org.hibernate</groupId>
-          <artifactId>hibernate-entitymanager</artifactId>
-          <version>5.3.1.Final</version>
-      </dependency>
-      <!--<dependency>-->
-          <!--<groupId>org.hibernate</groupId>-->
-          <!--<artifactId>hibernate-annotations</artifactId>-->
-          <!--<version>3.3.1.GA</version>-->
-      <!--</dependency>-->
-      <!--<dependency>-->
-          <!--<groupId>org.hibernate</groupId>-->
-          <!--<artifactId>hibernate-commons-annotations</artifactId>-->
-          <!--<version>3.3.0.ga</version>-->
-      <!--</dependency>-->
-      <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons-core &ndash;&gt;-->
-      <!--<dependency>-->
-          <!--<groupId>org.springframework.data</groupId>-->
-          <!--<artifactId>spring-data-commons-core</artifactId>-->
-          <!--<version>1.0.0.RELEASE</version>-->
-      <!--</dependency>-->
-
-
   </dependencies>
 
 
-  <build>
-    <finalName>eShopMVC</finalName>
-    <pluginManagement><!-- lock down plugins versions to avoid using Maven
-				defaults (may be moved to parent pom) -->
-      <plugins>
-        <plugin>
-          <artifactId>maven-clean-plugin</artifactId>
-          <version>3.1.0</version>
-        </plugin>
-        <!-- see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging -->
-        <plugin>
-          <artifactId>maven-resources-plugin</artifactId>
-          <version>3.0.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.8.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-war-plugin</artifactId>
-          <version>3.2.2</version>
-          <configuration>
-            <failOnMissingWebXml>false</failOnMissingWebXml>
-          </configuration>
-        </plugin>
-        <plugin>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>2.5.2</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-deploy-plugin</artifactId>
-          <version>2.8.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+  <!--<build>-->
+    <!--<finalName>eShopMVC</finalName>-->
+    <!--<pluginManagement>&lt;!&ndash; lock down plugins versions to avoid using Maven-->
+				<!--defaults (may be moved to parent pom) &ndash;&gt;-->
+      <!--<plugins>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-clean-plugin</artifactId>-->
+          <!--<version>3.1.0</version>-->
+        <!--</plugin>-->
+        <!--&lt;!&ndash; see http://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_war_packaging &ndash;&gt;-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-resources-plugin</artifactId>-->
+          <!--<version>3.0.2</version>-->
+        <!--</plugin>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-compiler-plugin</artifactId>-->
+          <!--<version>3.8.0</version>-->
+        <!--</plugin>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-surefire-plugin</artifactId>-->
+          <!--<version>2.22.1</version>-->
+        <!--</plugin>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-war-plugin</artifactId>-->
+          <!--<version>3.2.2</version>-->
+          <!--<configuration>-->
+            <!--<failOnMissingWebXml>false</failOnMissingWebXml>-->
+          <!--</configuration>-->
+        <!--</plugin>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-install-plugin</artifactId>-->
+          <!--<version>2.5.2</version>-->
+        <!--</plugin>-->
+        <!--<plugin>-->
+          <!--<artifactId>maven-deploy-plugin</artifactId>-->
+          <!--<version>2.8.2</version>-->
+        <!--</plugin>-->
+      <!--</plugins>-->
+    <!--</pluginManagement>-->
+  <!--</build>-->
 </project>

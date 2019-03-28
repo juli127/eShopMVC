@@ -6,6 +6,7 @@
 <c:set var="username" value="${user.name}"/>
 <c:set var="cart" value="${userCart}"/>
 <c:set var="itemsCount" value="${cart.itemsCount}"/>
+<c:set var="warning" value="${warning}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -53,11 +54,18 @@
 
     <div id="autoriz">
         <c:choose>
+            <c:when test="${warning.length() > 0}">
+                <font color=red>${warning}</font>
+            </c:when>
+            <c:otherwise>
+            <c:choose>
             <c:when test="${user != null && username.length() > 0}">
                 ${username}, your cart has <span id="itemsCountField">${itemsCount==null?0:itemsCount}</span> items
             </c:when>
             <c:otherwise>
             <font color=red>You should register or login before shopping or see your cart/order!</font>
+                </c:otherwise>
+            </c:choose>
             </c:otherwise>
         </c:choose>
     </div>
