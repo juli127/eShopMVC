@@ -1,39 +1,19 @@
 package com.gmail.kramarenko104.service;
 
-import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.model.Product;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import java.util.List;
 
-@Service
-public class ProductService {
+public interface ProductService {
 
-    @Autowired
-    private ProductDaoImpl productDao;
+    boolean addProduct(Product product);
 
-    // CRUD functionality
-    public boolean addProduct(Product product){
-        return productDao.addProduct(product);
-    }
+    Product getProduct(int id);
 
-    public Product getProduct(int id){
-        return productDao.getProduct(id);
-    }
+    boolean deleteProduct(int id);
 
-    public boolean deleteProduct(int id){
-        return productDao.deleteProduct(id);
-    }
+    List<Product> getAllProducts();
 
-    public List<Product> getAllProducts(){
-        return productDao.getAllProducts();
-    }
+    List<Product> getProductsByCategory(int category);
 
-    public List<Product> getProductsByCategory(int category){
-        return productDao.getProductsByCategory(category) ;
-    }
-
-    public boolean sessionIsOpen() {
-        return productDao.sessionIsOpen();
-    }
+    boolean sessionIsOpen();
 }
