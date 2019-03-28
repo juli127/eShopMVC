@@ -1,122 +1,63 @@
 package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.User;
-import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class UserDaoImpl implements UserDao {
 
-    private static final String CREATE_USER = "INSERT INTO users(login, password, name, address, comment) VALUES(?,?,?,?,?);";
-    private static final String GET_USER_BY_ID = "SELECT * FROM users WHERE id = ?);";
-    private static final String GET_ALL_USERS = "SELECT * FROM users;";
-    private static final String DELETE_USER = "DELETE FROM users WHERE id = ?;";
-    private static final String GET_USER_BY_LOGIN = "SELECT * FROM users WHERE login = ?";
     private static final String SALT = "34Ru9k";
+    private final SessionFactory sessionFactory;
+    private Session session;
 
-    private Connection conn;
-    private static Logger logger = Logger.getLogger(UserDaoImpl.class);
-
-    public UserDaoImpl(Connection conn) {
-        this.conn = conn;
-    }
-
-    public UserDaoImpl() {
+    @Autowired
+    public UserDaoImpl(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public boolean createUser(User user) {
-        try (PreparedStatement pst = conn.prepareStatement(CREATE_USER)) {
-            conn.setAutoCommit(false);
-            pst.setString(1, user.getLogin());
-            pst.setString(2, hashString(user.getPassword()));
-            pst.setString(3, user.getName());
-            pst.setString(4, user.getAddress());
-            pst.setString(5, user.getComment());
-            pst.executeUpdate();
-            conn.commit();
-            conn.setAutoCommit(true);
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                conn.rollback();
-            } catch (SQLException ex) {
-                ex.printStackTrace();
-            }
-        }
-        return false;
+    public int createUser(User user) {
+        session = sessionFactory.openSession();
+        Serializable id = session.save("User", user);
+        return (int) id;
+    }
+
+    @Override
+    public int updateUser(User user) {
+        session = sessionFactory.openSession();
+        session.update("User", user);
+        return (int) session.getIdentifier(session);
     }
 
     @Override
     public User getUser(int id) {
-        User user = null;
-        try (PreparedStatement pst = conn.prepareStatement(GET_USER_BY_ID)) {
-            pst.setInt(1, id);
-            ResultSet rs = pst.executeQuery();
-            if (rs.next()) {
-                fillUser(rs, "");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        session = sessionFactory.openSession();
+        User user = (User) session.get(User.class, id);
         return user;
     }
 
     @Override
     public List<User> getAllUsers() {
-        List<User> usersList = new ArrayList<>();
-        try (Statement statement = conn.createStatement();
-             ResultSet rs = statement.executeQuery(GET_ALL_USERS)) {
-            while (rs.next()) {
-                User user = fillUser(rs, "ignore");
-                usersList.add(user);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        session = sessionFactory.openSession();
+        @SuppressWarnings("unchecked")
+        List<User> usersList = session.createQuery("from User").list();
         return usersList;
     }
 
     @Override
     public User getUserByLogin(String login) {
-        ResultSet rs = null;
-        boolean exist = false;
-        User user = null;
-        try (PreparedStatement statement = conn.prepareStatement(GET_USER_BY_LOGIN)) {
-            statement.setString(1, login);
-            rs = statement.executeQuery();
-            if (rs.next()) {
-                user = fillUser(rs, "");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return user;
-    }
-
-    private User fillUser(ResultSet rs, String pass) throws SQLException {
-        User user = new User();
-        String login = rs.getString("login");
-        if (login != null) {
-            user.setId(rs.getInt("id"));
-            user.setLogin(login);
-            if ("ignore".equals(pass)) {
-                user.setPassword("");
-            } else {
-                user.setPassword(rs.getString("password"));
-            }
-            user.setName(rs.getString("name"));
-            user.setAddress(rs.getString("address"));
-            user.setComment(rs.getString("comment"));
-        }
+        session = sessionFactory.openSession();
+        User user = (User) session.createQuery("select u from User u where u.login = :login").getResultList().get(0);
+        session.delete("User", user);
         return user;
     }
 
@@ -132,14 +73,14 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean deleteUser(int id) {
-        try (PreparedStatement pst = conn.prepareStatement(DELETE_USER)) {
-            pst.setInt(1, id);
-            pst.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
+    public int deleteUser(int id) {
+        session = sessionFactory.openSession();
+        User user = session.load(User.class, id);
+        session.delete("User", user);
+        return (int) session.getIdentifier(user);
+    }
+
+    public boolean sessionIsOpen() {
+        return sessionFactory.isOpen();
     }
 }

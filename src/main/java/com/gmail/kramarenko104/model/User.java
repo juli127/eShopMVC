@@ -1,16 +1,40 @@
 package com.gmail.kramarenko104.model;
 
-import org.springframework.stereotype.Component;
+import javax.persistence.*;
 
-@Component("user")
+/*
+  id INT AUTO_INCREMENT,
+  login VARCHAR(40) UNIQUE NOT NULL,
+  password VARCHAR(80) NOT NULL,
+  name VARCHAR(30),
+  address VARCHAR(50),
+  comment VARCHAR(100),
+  PRIMARY KEY (id)
+ */
+@Entity
+@Table(name = "users")
 public class User {
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @Column (unique = true, nullable = false)
     private String login;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column
     private String address;
+
+    @Column
     private String comment;
+
+    public User() {
+    }
 
     public int getId() {
         return id;
