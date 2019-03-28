@@ -25,15 +25,15 @@
               p:poolName="${hikari.poolName}"
         />
         <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
-        c:configuration-ref="hikariConfig"/>
+              c:configuration-ref="hikariConfig"/>
 
         <!--DBCP +++++++++++++++++++++++++++-->
         <!--<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" -->
-              <!--destroy-method="close"-->
-              <!--p:driverClassName="${db.driverClassName}"-->
-              <!--p:url="${db.url}"-->
-              <!--p:username="${db.user}"-->
-              <!--p:password="${db.password}"-->
+        <!--destroy-method="close"-->
+        <!--p:driverClassName="${db.driverClassName}"-->
+        <!--p:url="${db.url}"-->
+        <!--p:username="${db.user}"-->
+        <!--p:password="${db.password}"-->
         <!--/>-->
 
         <!--SesssionFactory +++++++++++++++++++++++++++-->
@@ -43,9 +43,24 @@
                 <props>
                     <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                     <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                    <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
                 </props>
             </property>
+            <property name="annotatedClasses">
+                <list>
+                    <value>com.gmail.kramarenko104.service.ProductServiceImpl</value>
+                    <value>com.gmail.kramarenko104.service.UserServiceImpl</value>
+                    <value>com.gmail.kramarenko104.service.OrderServiceImpl</value>
+                    <value>com.gmail.kramarenko104.service.CartServiceImpl</value>
+                    <value>com.gmail.kramarenko104.dao.ProductDaoImpl</value>
+                    <value>com.gmail.kramarenko104.dao.UserDaoImpl</value>
+                    <value>com.gmail.kramarenko104.dao.OrderDaoImpl</value>
+                    <value>com.gmail.kramarenko104.dao.CartDaoImpl</value>
+                </list>
+            </property>
         </bean>
+
+
     </beans>
 
 </beans>
