@@ -4,13 +4,11 @@ import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class UserService {
 
-    // validation of User object MUST be done here, NOT in UserDao.java !!!!
     @Autowired
     private UserDaoImpl userDao;
 
@@ -32,5 +30,9 @@ public class UserService {
 
     public List<User> getAllUsers(){
         return userDao.getAllUsers();
+    }
+
+    public boolean sessionIsOpen(){
+        return userDao.sessionIsOpen();
     }
 }

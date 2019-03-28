@@ -34,4 +34,7 @@ public class CartService {
         cartDao.deleteCart(userId);
     }
 
+    public boolean sessionIsOpen() {
+        return cartDao.sessionIsOpen();
+    }
 }

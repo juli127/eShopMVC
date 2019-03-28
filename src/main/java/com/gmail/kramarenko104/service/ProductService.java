@@ -4,13 +4,11 @@ import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
 public class ProductService {
 
-    // validation of User object MUST be done here, NOT in UserDao.java !!!!
     @Autowired
     private ProductDaoImpl productDao;
 
@@ -35,4 +33,7 @@ public class ProductService {
         return productDao.getProductsByCategory(category) ;
     }
 
+    public boolean sessionIsOpen() {
+        return productDao.sessionIsOpen();
+    }
 }
