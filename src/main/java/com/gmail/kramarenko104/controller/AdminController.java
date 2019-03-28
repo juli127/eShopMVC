@@ -1,8 +1,7 @@
 package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.service.UserService;
-import org.apache.log4j.Logger;
+import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,11 +13,10 @@ import java.util.List;
 @RequestMapping("/admin")
 public class AdminController {
 
-    private static Logger logger = Logger.getLogger(AdminController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     public AdminController() {
     }

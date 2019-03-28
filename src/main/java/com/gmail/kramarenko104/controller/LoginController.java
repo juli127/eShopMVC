@@ -3,8 +3,8 @@ package com.gmail.kramarenko104.controller;
 import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.service.CartService;
-import com.gmail.kramarenko104.service.UserService;
+import com.gmail.kramarenko104.service.CartServiceImpl;
+import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,9 +25,10 @@ public class LoginController {
     private int attempt;
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
+
     @Autowired
-    private CartService cartService;
+    private CartServiceImpl cartService;
 
     public LoginController() {
     }

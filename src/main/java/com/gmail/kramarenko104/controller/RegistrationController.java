@@ -2,7 +2,7 @@ package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.service.UserService;
+import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,7 +24,7 @@ public class RegistrationController {
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userService;
 
     public RegistrationController() {
     }
@@ -90,16 +90,15 @@ public class RegistrationController {
                         newUser.setPassword(pass);
                         newUser.setAddress(address);
                         newUser.setComment(comment);
-                        if (userService.createUser(newUser)) {
-                            newUser = userService.getUserByLogin(login);
-                            logger.debug("RegisrtServlet: new user was created: " + newUser);
-                            message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
-                            model.addAttribute("user", newUser);
-                            model.addAttribute("userCart", new Cart(newUser.getId()));
-                            needRegistration = false;
-                        } else {
-                            message.append("<br><font color='red'><center>User wan't registered because of DB problems! Try a bit later.</font>");
-                        }
+                        int newUserId = userService.createUser(newUser);
+                        newUser.setId(newUserId);
+                        newUser = userService.getUserByLogin(login);
+                        logger.debug("RegisrtServlet: new user was created: " + newUser);
+                        message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
+                        model.addAttribute("user", newUser);
+                        model.addAttribute("userCart", new Cart(newUser.getId()));
+                        needRegistration = false;
+
                     }
                     // some fields on registration form are filled in wrong way
                     else {

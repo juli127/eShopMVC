@@ -2,8 +2,8 @@ package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Order;
-import com.gmail.kramarenko104.service.CartService;
-import com.gmail.kramarenko104.service.OrderService;
+import com.gmail.kramarenko104.service.CartServiceImpl;
+import com.gmail.kramarenko104.service.OrderServiceImpl;
 import com.google.gson.Gson;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,10 @@ public class OrderController {
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
-    private OrderService orderService;
+    private OrderServiceImpl orderService;
+
     @Autowired
-    private CartService cartService;
+    private CartServiceImpl cartService;
 
     public OrderController() {
     }

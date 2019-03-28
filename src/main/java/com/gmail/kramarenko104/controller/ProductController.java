@@ -3,8 +3,8 @@ package com.gmail.kramarenko104.controller;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.service.CartService;
-import com.gmail.kramarenko104.service.ProductService;
+import com.gmail.kramarenko104.service.CartServiceImpl;
+import com.gmail.kramarenko104.service.ProductServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,9 +23,9 @@ public class ProductController {
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
-    private ProductService productService;
+    private ProductServiceImpl productService;
     @Autowired
-    private CartService cartService;
+    private CartServiceImpl cartService;
 
     public ProductController() {
     }
