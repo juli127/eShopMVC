@@ -5,7 +5,7 @@
 
     <c:if test="${itemsCount > 0}">
         <div id="cart_content">
-        <table id="cart" border=1>
+        <table id="myTable" border=1>
                 <tr id="tableTitle">
                     <td>Product's name</td>
                     <td>Price</td>

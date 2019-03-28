@@ -98,7 +98,6 @@ public class RegistrationController {
                         model.addAttribute("user", newUser);
                         model.addAttribute("userCart", new Cart(newUser.getId()));
                         needRegistration = false;
-
                     }
                     // some fields on registration form are filled in wrong way
                     else {
@@ -127,7 +126,7 @@ public class RegistrationController {
             } else {
                 // user with this login/password is already registered, send user to /login
                 if (userExist) {
-                    logger.debug("RegisrtServlet: user was already registered before, send to login page");
+                    logger.debug("RegisrtServlet: user was already registered before, send user to login page");
                     viewToGo = "redirect:/login";
                 } else {
                     // it's the new fresh-registered user, send user to /products

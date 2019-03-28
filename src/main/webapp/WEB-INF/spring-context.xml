@@ -22,8 +22,8 @@
               p:minimumIdle="${hikari.minimumIdle}"
               p:maximumPoolSize="${hikari.maximumPoolSize}"
               p:idleTimeout="${hikari.idleTimeout}"
-              p:poolName="${hikari.poolName}"
-        />
+              p:poolName="${hikari.poolName}"/>
+
         <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
               c:configuration-ref="hikariConfig"/>
 
@@ -48,10 +48,6 @@
             </property>
             <property name="annotatedClasses">
                 <list>
-                    <value>com.gmail.kramarenko104.service.ProductServiceImpl</value>
-                    <value>com.gmail.kramarenko104.service.UserServiceImpl</value>
-                    <value>com.gmail.kramarenko104.service.OrderServiceImpl</value>
-                    <value>com.gmail.kramarenko104.service.CartServiceImpl</value>
                     <value>com.gmail.kramarenko104.dao.ProductDaoImpl</value>
                     <value>com.gmail.kramarenko104.dao.UserDaoImpl</value>
                     <value>com.gmail.kramarenko104.dao.OrderDaoImpl</value>
@@ -59,6 +55,11 @@
                 </list>
             </property>
         </bean>
+
+        <!--Hibernate TransactionManager +++++++++++++++++++++++++++-->
+        <bean id="transationManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+              p:sessionFactory="sessionFactory"/>
+
 
 
     </beans>
