@@ -23,6 +23,7 @@ public class ProductDaoImpl implements ProductDao {
     public int createProduct(Product product) {
         session = sessionFactory.openSession();
         Serializable id = session.save("Product", product);
+        session.close();
         return (int) id;
     }
 
@@ -30,13 +31,16 @@ public class ProductDaoImpl implements ProductDao {
     public int updateProduct(Product product) {
         session = sessionFactory.openSession();
         session.update("Product", product);
-        return (int) session.getIdentifier(session);
+        int id = (int) session.getIdentifier(session);
+        session.close();
+        return id;
     }
 
     @Override
     public Product getProduct(int productId) {
         session = sessionFactory.openSession();
         Product product = (Product) session.get(Product.class, productId);
+        session.close();
         return product;
     }
 
@@ -45,6 +49,7 @@ public class ProductDaoImpl implements ProductDao {
         session = sessionFactory.openSession();
         @SuppressWarnings("unchecked")
         List<Product> productsList = session.createQuery("from Product").list();
+        session.close();
         return productsList;
     }
 
@@ -54,6 +59,7 @@ public class ProductDaoImpl implements ProductDao {
         session = sessionFactory.openSession();
         @SuppressWarnings("unchecked")
         List<Product> productsList = session.createQuery("select p from Product p where p.category = :category").getResultList();
+        session.close();
         return productsList;
     }
 
@@ -62,7 +68,9 @@ public class ProductDaoImpl implements ProductDao {
         session = sessionFactory.openSession();
         Product product = session.load(Product.class, productId);
         session.delete("Product", product);
-        return (int) session.getIdentifier(product);
+        int id = (int) session.getIdentifier(product);
+        session.close();
+        return id;
     }
 
     public boolean sessionIsOpen() {

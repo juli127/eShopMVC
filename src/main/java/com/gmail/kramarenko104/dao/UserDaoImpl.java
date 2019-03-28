@@ -28,6 +28,7 @@ public class UserDaoImpl implements UserDao {
     public int createUser(User user) {
         session = sessionFactory.openSession();
         Serializable id = session.save("User", user);
+        session.close();
         return (int) id;
     }
 
@@ -35,13 +36,16 @@ public class UserDaoImpl implements UserDao {
     public int updateUser(User user) {
         session = sessionFactory.openSession();
         session.update("User", user);
-        return (int) session.getIdentifier(session);
+        int sessionId = (int) session.getIdentifier(session);
+        session.close();
+        return sessionId;
     }
 
     @Override
     public User getUser(int id) {
         session = sessionFactory.openSession();
         User user = (User) session.get(User.class, id);
+        session.close();
         return user;
     }
 
@@ -50,6 +54,7 @@ public class UserDaoImpl implements UserDao {
         session = sessionFactory.openSession();
         @SuppressWarnings("unchecked")
         List<User> usersList = session.createQuery("from User").list();
+        session.close();
         return usersList;
     }
 
@@ -59,6 +64,7 @@ public class UserDaoImpl implements UserDao {
         @SuppressWarnings("unchecked")
         User user = (User) session.createQuery("select u from User u where u.login = :login").getResultList().get(0);
         session.delete("User", user);
+        session.close();
         return user;
     }
 
@@ -67,7 +73,9 @@ public class UserDaoImpl implements UserDao {
         session = sessionFactory.openSession();
         User user = session.load(User.class, id);
         session.delete("User", user);
-        return (int) session.getIdentifier(user);
+        int sessionId = (int) session.getIdentifier(user);
+        session.close();
+        return sessionId;
     }
 
     public boolean sessionIsOpen() {
