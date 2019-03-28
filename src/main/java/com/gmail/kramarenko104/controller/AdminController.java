@@ -8,24 +8,29 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 import java.util.List;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
+    private static Logger logger = Logger.getLogger(AdminController.class);
+    private static final String DB_WARNING = "Check your connection to DB!";
+
     @Autowired
     private UserService userService;
-    private static Logger logger = Logger.getLogger(AdminController.class);
 
     public AdminController() {
     }
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String getAllUsers(Model model)  {
-        List<User> usersList = userService.getAllUsers();
-        model.addAttribute("usersList", usersList);
+    public String getAllUsers(Model model) {
+        if (userService.sessionIsOpen()) {
+            List<User> usersList = userService.getAllUsers();
+            model.addAttribute("usersList", usersList);
+        } else { // connection to DB is closed
+            model.addAttribute("warning", DB_WARNING);
+        }
         return "admin";
     }
 }

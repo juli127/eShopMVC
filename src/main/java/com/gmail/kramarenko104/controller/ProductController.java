@@ -20,6 +20,8 @@ import java.util.List;
 public class ProductController {
 
     private static Logger logger = Logger.getLogger(ProductController.class);
+    private static final String DB_WARNING = "Check your connection to DB!";
+
     @Autowired
     private ProductService productService;
     @Autowired
@@ -31,32 +33,37 @@ public class ProductController {
     @RequestMapping(method = RequestMethod.GET)
     protected String doGet(@RequestParam("selectedCategory") String selectedCateg, Model model) {
 
-        List<Product> products;
+        // connection to DB is open
+        if (productService.sessionIsOpen()) {
+            List<Product> products;
 
-        // when form is opened at the first time, selectedCateg == null
-        if (selectedCateg != null) {
-            products = productService.getProductsByCategory(Integer.parseInt(selectedCateg));
-        } else {
-            products = productService.getAllProducts();
-        }
-        model.addAttribute("selectedCateg", selectedCateg);
-        model.addAttribute("products", products);
-        // products.forEach(e -> logger.debug(e));
-
-        // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
-        if (model.asMap().get("user") == null) {
-            model.addAttribute("userCart", null);
-        } else {
-            User currentUser = (User) model.asMap().get("user");
-            Cart userCart = null;
-            if (model.asMap().get("userCart") == null) {
-                int userId = currentUser.getId();
-                userCart = cartService.getCart(userId);
-                if (userCart == null) {
-                    userCart = new Cart(userId);
-                }
-                model.addAttribute("userCart", userCart);
+            // when form is opened at the first time, selectedCateg == null
+            if (selectedCateg != null) {
+                products = productService.getProductsByCategory(Integer.parseInt(selectedCateg));
+            } else {
+                products = productService.getAllProducts();
             }
+            model.addAttribute("selectedCateg", selectedCateg);
+            model.addAttribute("products", products);
+            // products.forEach(e -> logger.debug(e));
+
+            // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
+            if (model.asMap().get("user") == null) {
+                model.addAttribute("userCart", null);
+            } else {
+                User currentUser = (User) model.asMap().get("user");
+                Cart userCart = null;
+                if (model.asMap().get("userCart") == null) {
+                    int userId = currentUser.getId();
+                    userCart = cartService.getCart(userId);
+                    if (userCart == null) {
+                        userCart = new Cart(userId);
+                    }
+                    model.addAttribute("userCart", userCart);
+                }
+            }
+        } else { // connection to DB is closed
+            model.addAttribute("warning", DB_WARNING);
         }
         return "products";
     }
