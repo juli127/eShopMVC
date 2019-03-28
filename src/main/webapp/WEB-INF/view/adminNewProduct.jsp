@@ -18,7 +18,7 @@
             </tr>
             <tr>
                 <td>Price: </td>
-                <td><input type='text' name='price' value='' required/></td>
+                <td><input type='number' name='price' value='' required/></td>
             </tr><br>
             <tr>
                 <td>Description: </td>
