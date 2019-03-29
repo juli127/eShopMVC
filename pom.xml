@@ -125,8 +125,8 @@
           <!--<artifactId>commons-logging</artifactId>-->
           <!--<version>1.2</version>-->
       <!--</dependency>-->
-      
-      <!-- https://mvnrepository.com/artifact/jstl/jstl -->
+
+      <!-- Servlet API, JSTL +++++++++++++++++++++++++++++++++++++++++ -->
     <dependency>
       <groupId>jstl</groupId>
       <artifactId>jstl</artifactId>
@@ -138,6 +138,8 @@
       <artifactId>javax.servlet-api</artifactId>
       <version>3.1.0</version>
     </dependency>
+
+      <!-- MySQL, DBCP, GSON, LOGGING +++++++++++++++++++++++++++++++++++++++++ -->
 
       <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
       <dependency>

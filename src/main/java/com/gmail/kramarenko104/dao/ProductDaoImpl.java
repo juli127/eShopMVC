@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ProductDaoImpl implements ProductDao {
         this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
     @Override
     public int createProduct(Product product) {
         session = sessionFactory.openSession();
@@ -27,6 +29,7 @@ public class ProductDaoImpl implements ProductDao {
         return (int) id;
     }
 
+    @Transactional
     @Override
     public int updateProduct(Product product) {
         session = sessionFactory.openSession();
@@ -36,6 +39,7 @@ public class ProductDaoImpl implements ProductDao {
         return id;
     }
 
+    @Transactional
     @Override
     public Product getProduct(int productId) {
         session = sessionFactory.openSession();
@@ -44,6 +48,7 @@ public class ProductDaoImpl implements ProductDao {
         return product;
     }
 
+    @Transactional
     @Override
     public List<Product> getAllProducts() {
         session = sessionFactory.openSession();
@@ -53,7 +58,7 @@ public class ProductDaoImpl implements ProductDao {
         return productsList;
     }
 
-
+    @Transactional
     @Override
     public List<Product> getProductsByCategory(int category) {
         session = sessionFactory.openSession();
@@ -63,6 +68,7 @@ public class ProductDaoImpl implements ProductDao {
         return productsList;
     }
 
+    @Transactional
     @Override
     public int deleteProduct(int productId) {
         session = sessionFactory.openSession();

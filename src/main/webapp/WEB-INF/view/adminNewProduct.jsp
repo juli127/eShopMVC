@@ -1,8 +1,9 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ include file="includes/header.jsp" %>
 
 <center>
     <h2>Enter the new product's characteristics:</h2>
-    <form action='./admin/products' method='post'>
+    <form action='./admin/products/add' method='post'>
         <table id="myTableFormatting" border=0>
             <tr>
                 <td>Name: </td>
@@ -26,7 +27,7 @@
             </tr><br>
             <tr>
                 <td>Image: </td>
-                <td><input type='text' name='image' value='' placeholder="file name"/></td>
+                <td><input type='text' name='image' value='' placeholder="file name from /webapp/static/images"/></td>
             </tr><br>
 
             <td></td>

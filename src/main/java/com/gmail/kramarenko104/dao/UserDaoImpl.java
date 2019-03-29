@@ -5,6 +5,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -24,6 +25,7 @@ public class UserDaoImpl implements UserDao {
         this.sessionFactory = sessionFactory;
     }
 
+    @Transactional
     @Override
     public int createUser(User user) {
         session = sessionFactory.openSession();
@@ -32,6 +34,7 @@ public class UserDaoImpl implements UserDao {
         return (int) id;
     }
 
+    @Transactional
     @Override
     public int updateUser(User user) {
         session = sessionFactory.openSession();
@@ -41,6 +44,7 @@ public class UserDaoImpl implements UserDao {
         return sessionId;
     }
 
+    @Transactional
     @Override
     public User getUser(int id) {
         session = sessionFactory.openSession();
@@ -49,6 +53,7 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    @Transactional
     @Override
     public List<User> getAllUsers() {
         session = sessionFactory.openSession();
@@ -58,6 +63,7 @@ public class UserDaoImpl implements UserDao {
         return usersList;
     }
 
+    @Transactional
     @Override
     public User getUserByLogin(String login) {
         session = sessionFactory.openSession();
@@ -68,6 +74,7 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    @Transactional
     @Override
     public int deleteUser(int id) {
         session = sessionFactory.openSession();

@@ -4,6 +4,7 @@ import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import java.util.List;
 public class AdminController {
 
     private static final String DB_WARNING = "Check your connection to DB!";
+    private static Logger logger = Logger.getLogger(AdminController.class);
 
     @Autowired
     private UserServiceImpl userService;
@@ -49,7 +51,7 @@ public class AdminController {
         return "admin";
     }
 
-    @RequestMapping(value = "/products", method = RequestMethod.POST)
+    @RequestMapping(value = "/products/add", method = RequestMethod.POST)
     public String addNewProduct(@RequestParam("name") String name,
                                 @RequestParam("category") String category,
                                 @RequestParam("price") String price,
@@ -61,8 +63,10 @@ public class AdminController {
             newProduct.setName(name);
             int categoryInt = ("dress".equals(category) ? 1 : ("shoes".equals(category) ? 2 : 3));
             newProduct.setCategory(categoryInt);
+            newProduct.setPrice(Integer.valueOf(price));
             newProduct.setDescription(description);
             newProduct.setImage(image);
+            logger.debug("adminServlet.addNewProduct: got from form new product: " + newProduct);
             productService.addProduct(newProduct);
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
