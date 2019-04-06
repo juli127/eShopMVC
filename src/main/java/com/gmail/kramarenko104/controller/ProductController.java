@@ -31,7 +31,7 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected String doGet(@RequestParam("selectedCategory") String selectedCateg, Model model) {
+    protected String getProducts(@RequestParam("selectedCategory") String selectedCateg, Model model) {
 
         // connection to DB is open
         if (productService.sessionIsOpen()) {

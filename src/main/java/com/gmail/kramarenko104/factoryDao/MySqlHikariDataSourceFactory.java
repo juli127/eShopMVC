@@ -10,20 +10,20 @@ import java.sql.SQLException;
 //import javax.annotation.PostConstruct;
 
 //@Component("mySqlHikariDataSourceFactory")
-public class MySqlHikariDataSourceFactory extends DaoFactory{
+public class MySqlHikariDataSourceFactory extends DaoFactory {
     private static Logger logger = Logger.getLogger(MySqlHikariDataSourceFactory.class);
 
-//    @Autowired
+    //    @Autowired
     private HikariConfig hikariConfig;
-//    @Autowired
+    //    @Autowired
     private HikariDataSource dataSource;
 
 
     Connection conn;
 
-        //    public MySqlHikariDataSourceFactory()
+    //    public MySqlHikariDataSourceFactory()
 //        @PostConstruct
-        public void init() {
+    public void init() {
 //        ResourceBundle rb = ResourceBundle.getBundle("hikari");
 //        HikariConfig config = new HikariConfig();
 //        config.setDriverClassName(rb.getString("datasource.driverClassName"));
@@ -33,13 +33,13 @@ public class MySqlHikariDataSourceFactory extends DaoFactory{
 //        config.setMinimumIdle(Integer.valueOf(rb.getString("datasource.minimumIdle")));
 //        config.setMaximumPoolSize(Integer.valueOf(rb.getString("datasource.maximumPoolSize")));
 //        dataSource = new HikariDataSource(hikariConfig);
-            try {
-                conn = dataSource.getConnection();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
+        try {
+            conn = dataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+    }
 
     @Override
     public void openConnection() {
@@ -55,8 +55,13 @@ public class MySqlHikariDataSourceFactory extends DaoFactory{
     }
 
     @Override
-    public void closeConnection() {
-        super.closeConnection();
-        logger.debug("Connection closed");
+    public void close() {
+        try {
+            if (conn != null)
+                conn.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        logger.debug("All resources closed");
     }
 }

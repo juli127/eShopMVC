@@ -2,7 +2,6 @@ package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.Product;
-
 import java.util.Map;
 
 public interface OrderDao {

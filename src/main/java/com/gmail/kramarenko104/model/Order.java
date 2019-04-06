@@ -1,18 +1,65 @@
 package com.gmail.kramarenko104.model;
 
-import org.springframework.stereotype.Component;
-
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component("order")
+/*
+  id INT AUTO_INCREMENT,
+  orderNumber INT,
+  status VARCHAR(100),
+  userId INT,
+  productId INT,
+  quantity INT,
+  PRIMARY KEY (id),
+  FOREIGN KEY (userId) REFERENCES users(id),
+  FOREIGN KEY (productId) REFERENCES products(id)
+ */
+@Entity
+@Table(name = "orders")
 public class Order {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column (nullable = false)
     private int orderNumber;
+    @Column (nullable = false)
     private int userId;
+    @Column
+    private String status;
+    @Column (nullable = false)
+    private int productId;
+    @Column (nullable = false)
+    private int quantity;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getProductId() {
+        return productId;
+    }
+
+    public void setProductId(int productId) {
+        this.productId = productId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    ////////////////////////////////
     private int itemsCount;
     private int totalSum;
-    private String status;
     private Map<Product, Integer> products;
 
     public Order() {

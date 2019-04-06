@@ -18,19 +18,19 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column (unique = true, nullable = false)
+    @Column (unique = true, nullable = false, columnDefinition = "varchar(40)")
     private String login;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(80)")
     private String password;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(30)")
     private String name;
 
-    @Column
+    @Column(columnDefinition = "varchar(50)")
     private String address;
 
-    @Column
+    @Column(columnDefinition = "varchar(100)")
     private String comment;
 
     public User() {

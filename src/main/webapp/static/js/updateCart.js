@@ -161,3 +161,21 @@ function makeOrder(userId) {
         }
     });
 }
+
+// admin.jsp
+function  deleteProduct(productId) {
+    $.ajax({
+        type: "POST",
+        url: "./admin/products/delete",
+        data: {
+            'action': 'deleteProduct',
+            'productId': productId
+        },
+        dataType: 'json',
+        success: function (response) {
+        },
+        error: function (e) {
+            console.log(e.message);
+        }
+    });
+}

@@ -20,31 +20,30 @@
           p:poolName="springHikariCP"
     />
 
-    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" depends-on="hikariConfig"
-          c:configuration-ref="hikariConfig"/>
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"  c:configuration-ref="hikariConfig"/>
 
-    <bean id="daoFactory" class="com.gmail.kramarenko104.factoryDao.DaoFactory"
-          abstract="true" factory-method="getSpecificDao" depends-on="dataSource"
-          p:userService-ref="userService"
-          p:productService-ref="productService"
-          p:cartService-ref="cartService"
-          p:orderService-ref="orderService"
-    />
+    <!--<bean id="daoFactory" class="com.gmail.kramarenko104.factoryDao.DaoFactory"-->
+          <!--abstract="true" factory-method="getSpecificDao" depends-on="dataSource" />-->
+          <!--&lt;!&ndash;p:userDao-ref="userDao"&ndash;&gt;-->
+          <!--&lt;!&ndash;p:productDao-ref="productDao"&ndash;&gt;-->
+          <!--&lt;!&ndash;p:cartDao-ref="cartDao"&ndash;&gt;-->
+          <!--&lt;!&ndash;p:orderDao-ref="orderDao"&ndash;&gt;-->
+    <!--&lt;!&ndash;/>&ndash;&gt;-->
 
-    <bean id="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory" parent="daoFactory"/>
+    <!--<bean id="mySqlHikariDataSourceFactory" class="com.gmail.kramarenko104.factoryDao.MySqlHikariDataSourceFactory" parent="daoFactory"/>-->
 
-    <bean id="conn" class="java.sql.Connection" abstract="true"
+    <bean id="connection" class="java.sql.Connection" abstract="true"
           factory-method="#{dataSource.openConnection()}" depends-on="dataSource"/>
 
 
-    <bean id="userService" class="com.gmail.kramarenko104.service.UserServiceImpl" depends-on="dataSource"
-          c:conn="#{dataSource.getConnection()}"/>
-    <bean id="productService" class="com.gmail.kramarenko104.service.ProductServiceImpl" depends-on="dataSource"
-          c:conn="#{dataSource.getConnection()}"/>
-    <bean id="cartService" class="com.gmail.kramarenko104.service.CartServiceImpl" depends-on="dataSource"
-          c:conn="#{dataSource.getConnection()}"/>
-    <bean id="orderService" class="com.gmail.kramarenko104.service.OrderServiceImpl" depends-on="dataSource"
-          c:conn="#{dataSource.getConnection()}"/>
+    <!--<bean id="userDao" class="com.gmail.kramarenko104.dao.UserDaoImpl" depends-on="dataSource"-->
+          <!--c:conn="#{dataSource.getConnection()}"/>-->
+    <!--<bean id="productDao" class="com.gmail.kramarenko104.dao.ProductDaoImpl" depends-on="dataSource"-->
+          <!--c:conn="#{dataSource.getConnection()}"/>-->
+    <!--<bean id="cartDao" class="com.gmail.kramarenko104.dao.CartDaoImpl" depends-on="dataSource"-->
+          <!--c:conn="#{dataSource.getConnection()}"/>-->
+    <!--<bean id="orderDao" class="com.gmail.kramarenko104.dao.OrderDaoImpl" depends-on="dataSource"-->
+          <!--c:conn="#{dataSource.getConnection()}"/>-->
 
 
     <bean id="user" class="com.gmail.kramarenko104.model.User" scope="session"/>
@@ -58,7 +57,7 @@
             />
         </p:products>
     </bean>
-    <bean id="order" class="com.gmail.kramarenko104.model.Order" scope="session" p:totalSum="0" p:itemsCount="0">
+    <bean id="order" class="com.gmail.kramarenko104.model.Order" p:totalSum="0" p:itemsCount="0" scope="session">
         <p:products>
             <map>
                 <entry key="<null/>" value="0"/>

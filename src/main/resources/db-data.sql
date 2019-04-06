@@ -1,11 +1,14 @@
+ -- pasw: admin
    INSERT INTO users (login, password, name, address, comment)
-   VALUES('admin','admin', 'Alexander', 'Odessa', 'dont call');
+   VALUES('admin','1e8949373cf0dc044b49c9dd3ddd1835', 'Alexander', 'Odessa', 'dont call');
 
+-- pasw: A2345678
    INSERT INTO users (login, password, name, address, comment)
-   VALUES('lex@gmail.com','A2345678', 'Alex', 'Kiev', 'call before delivery');
+   VALUES('lex@gmail.com','-5039f9f6cecff39cf359c1de1fbc2b7f', 'Alex', 'Kiev', 'call before delivery');
 
+-- pasw: 1111111
    INSERT INTO users (login, password, name, address, comment)
-   VALUES('mash198@ukr.net','1111111', 'Maria', 'Odessa', 'dont call');
+   VALUES('mash198@ukr.net','53df562cd13c57455c2c1bbe1854458f', 'Maria', 'Odessa', 'dont call');
 
 INSERT INTO categories (name) VALUES('dresses');
 INSERT INTO categories (name) VALUES('shoes');
@@ -40,6 +43,6 @@ VALUES('Nora Naviano Imressive dusty blue',1, 3450, 'Blue evening dress with an 
 
 
 
-INSERT INTO carts (userId, productId, quantity) VALUES(4, 2, 1);
-INSERT INTO carts (userId, productId, quantity) VALUES(4, 1, 1);
-INSERT INTO carts (userId, productId, quantity) VALUES(5, 3, 2);
+INSERT INTO carts (userId, productId, quantity) VALUES(1, 2, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(1, 1, 1);
+INSERT INTO carts (userId, productId, quantity) VALUES(2, 3, 2);

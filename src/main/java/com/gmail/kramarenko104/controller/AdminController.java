@@ -7,10 +7,10 @@ import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -29,35 +29,27 @@ public class AdminController {
     public AdminController() {
     }
 
-    @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public String getAllUsers(Model model) {
+    @RequestMapping(method = RequestMethod.GET)
+    public ModelAndView getAllInfo() {
+        ModelAndView model = new ModelAndView("admin");
         if (userService.sessionIsOpen()) {
             List<User> usersList = userService.getAllUsers();
-            model.addAttribute("usersList", usersList);
-        } else { // connection to DB is closed
-            model.addAttribute("warning", DB_WARNING);
-        }
-        return "admin";
-    }
-
-    @RequestMapping(value = "/products", method = RequestMethod.GET)
-    public String getAllProducts(Model model) {
-        if (productService.sessionIsOpen()) {
             List<Product> productsList = productService.getAllProducts();
-            model.addAttribute("productsList", productsList);
+            model.addObject("productsList", productsList);
+            model.addObject("usersList", usersList);
         } else { // connection to DB is closed
-            model.addAttribute("warning", DB_WARNING);
+            model.addObject("warning", DB_WARNING);
         }
-        return "admin";
+        return model;
     }
 
     @RequestMapping(value = "/products/add", method = RequestMethod.POST)
-    public String addNewProduct(@RequestParam("name") String name,
-                                @RequestParam("category") String category,
-                                @RequestParam("price") String price,
-                                @RequestParam("description") String description,
-                                @RequestParam("image") String image,
-                                Model model) {
+    public ModelAndView addNewProduct(@RequestParam("name") String name,
+                                      @RequestParam("category") String category,
+                                      @RequestParam("price") String price,
+                                      @RequestParam("description") String description,
+                                      @RequestParam("image") String image) {
+        ModelAndView model = new ModelAndView("admin");
         if (productService.sessionIsOpen()) {
             Product newProduct = new Product();
             newProduct.setName(name);
@@ -69,8 +61,19 @@ public class AdminController {
             logger.debug("adminServlet.addNewProduct: got from form new product: " + newProduct);
             productService.addProduct(newProduct);
         } else { // connection to DB is closed
-            model.addAttribute("warning", DB_WARNING);
+            model.addObject("warning", DB_WARNING);
         }
-        return "admin";
+        return model;
+    }
+
+    @RequestMapping(value = "/products/delete", method = RequestMethod.POST)
+    public ModelAndView deleteProduct(@RequestParam int productId) {
+        ModelAndView model = new ModelAndView("admin");
+        if (productService.sessionIsOpen()) {
+                productService.deleteProduct(productId);
+        } else { // connection to DB is closed
+            model.addObject("warning", DB_WARNING);
+        }
+        return model;
     }
 }

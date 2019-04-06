@@ -45,8 +45,8 @@ public class MySqlJDBCDaoFactory extends DaoFactory {
     }
 
     @Override
-    public void closeConnection() {
-        super.closeConnection();
-        logger.debug("Connection closed");
+    public void close() {
+        super.close();
+        logger.debug("All resources closed");
     }
 }

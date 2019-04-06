@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java"  %>
+<%@ page contentType="text/html; charset=UTF-8" language="java"  pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page isELIgnored="false" %>
 
@@ -7,6 +7,8 @@
 <c:set var="cart" value="${userCart}"/>
 <c:set var="itemsCount" value="${cart.itemsCount}"/>
 <c:set var="warning" value="${warning}"/>
+<c:set var="users" value="${sessionScope.usersList}" ></c:set>
+<c:set var="products" value="${sessionScope.productsList}"></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -14,6 +16,7 @@
 <head>
     <meta name="keywords" content=""/>
     <meta name="description" content=""/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <link href="static/css/style.css" rel="stylesheet" type="text/css" media="screen"/>
 </head>

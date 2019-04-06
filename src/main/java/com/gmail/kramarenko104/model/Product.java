@@ -20,15 +20,15 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column (unique = true, nullable = false)
+    @Column (unique = true, nullable = false, columnDefinition = "varchar(100)")
     private String name;
     @Column (nullable = false)
     private int category;
     @Column (nullable = false)
     private int price;
-    @Column
+    @Column(columnDefinition = "varchar(300)")
     private String description;
-    @Column
+    @Column(columnDefinition = "varchar(100)")
     private String image;
 
     public Product() {

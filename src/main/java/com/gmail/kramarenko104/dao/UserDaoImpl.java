@@ -5,7 +5,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -14,14 +17,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Repository
+@EnableTransactionManagement
 public class UserDaoImpl implements UserDao {
 
     private static final String SALT = "34Ru9k";
     private final SessionFactory sessionFactory;
+    private final String ENTITY_NAME = "User";
     private Session session;
+    private TransactionTemplate transactionTemplate;
 
     @Autowired
-    public UserDaoImpl(SessionFactory sessionFactory) {
+    public UserDaoImpl(SessionFactory sessionFactory)  {
         this.sessionFactory = sessionFactory;
     }
 
@@ -29,7 +35,8 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int createUser(User user) {
         session = sessionFactory.openSession();
-        Serializable id = session.save("User", user);
+        Serializable id = session.save(ENTITY_NAME, user);
+        session.flush();
         session.close();
         return (int) id;
     }
@@ -38,13 +45,14 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int updateUser(User user) {
         session = sessionFactory.openSession();
-        session.update("User", user);
-        int sessionId = (int) session.getIdentifier(session);
+        session.update(ENTITY_NAME, user);
+        session.flush();
+        int identifier = (int) session.getIdentifier(session);
         session.close();
-        return sessionId;
+        return identifier;
     }
 
-    @Transactional
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public User getUser(int id) {
         session = sessionFactory.openSession();
@@ -53,23 +61,23 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    @Transactional
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public List<User> getAllUsers() {
         session = sessionFactory.openSession();
         @SuppressWarnings("unchecked")
-        List<User> usersList = session.createQuery("from User").list();
+        List<User> usersList = session.createQuery("from " + ENTITY_NAME).list();
         session.close();
         return usersList;
     }
 
-    @Transactional
+    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public User getUserByLogin(String login) {
         session = sessionFactory.openSession();
+        String sqlStr = "select u from " + ENTITY_NAME+ " u where u.login = :login";
         @SuppressWarnings("unchecked")
-        User user = (User) session.createQuery("select u from User u where u.login = :login").getResultList().get(0);
-        session.delete("User", user);
+        User user = (User) session.createQuery(sqlStr).getResultList().get(0);
         session.close();
         return user;
     }
@@ -78,11 +86,12 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int deleteUser(int id) {
         session = sessionFactory.openSession();
-        User user = session.load(User.class, id);
-        session.delete("User", user);
-        int sessionId = (int) session.getIdentifier(user);
+        User user = session.get(User.class, id);
+        session.delete(ENTITY_NAME, user);
+        session.flush();
+        int identifier = (int) session.getIdentifier(user);
         session.close();
-        return sessionId;
+        return identifier;
     }
 
     public boolean sessionIsOpen() {

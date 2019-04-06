@@ -25,13 +25,16 @@
 <br><line/><br>
 
 <c:if test="${products != null}">
-    <div id="info">All products:</div><br><br>
+    <div id="info">All products:</div>
+    <a href="/admin/products/add">Add new product</a>
+    <br>
     <table id="myTable" border=1>
         <tr id="tableTitle">
             <td>Name</td>
             <td>Category</td>
             <td>Price</td>
             <td>Image</td>
+            <td></td>
         </tr>
 
         <c:forEach var="product" items="${products}">
@@ -40,11 +43,12 @@
                 <td><c:out value="${product.category}"/></td>
                 <td><c:out value="${product.price}"/></td>
                 <td><c:out value="${product.image}"/></td>
+                <td><a href="/admin/products/delete?${product.id}">delete</a></td>
             </tr>
         </c:forEach>
     </table>
 </c:if>
 <br>
-<a href="adminNewProduct.jsp">Add new product</a>
+
 
 <%@ include file="includes/footer.jsp" %>

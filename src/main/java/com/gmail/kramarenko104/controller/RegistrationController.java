@@ -91,12 +91,18 @@ public class RegistrationController {
                         newUser.setAddress(address);
                         newUser.setComment(comment);
                         int newUserId = userService.createUser(newUser);
-                        newUser.setId(newUserId);
-                        newUser = userService.getUserByLogin(login);
-                        logger.debug("RegisrtServlet: new user was created: " + newUser);
-                        message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
-                        model.addAttribute("user", newUser);
-                        model.addAttribute("userCart", new Cart(newUser.getId()));
+//                        newUser = userService.getUserByLogin(login);
+                        if (newUserId > 0) {
+                            newUser.setId(newUserId);
+                            logger.debug("RegisrtServlet: new user was created: " + newUser);
+                            message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
+                            model.addAttribute("user", newUser);
+                            model.addAttribute("userCart", new Cart(newUser.getId()));
+                        } else {
+                            logger.debug("RegisrtServlet: new user was NOT created: got newUserId == " + newUserId);
+                            model.addAttribute("user", null);
+                            model.addAttribute("userCart", null);
+                        }
                         needRegistration = false;
                     }
                     // some fields on registration form are filled in wrong way

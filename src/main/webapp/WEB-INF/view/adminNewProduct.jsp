@@ -1,9 +1,8 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ include file="includes/header.jsp" %>
 
 <center>
-    <h2>Enter the new product's characteristics:</h2>
     <form action='./admin/products/add' method='post'>
+        <h4><div id="infoGreen"> Enter the new product's characteristics:</div></h4>
         <table id="myTableFormatting" border=0>
             <tr>
                 <td>Name: </td>
@@ -12,7 +11,7 @@
             <tr>
                 <td>Category: </td>
                 <td><select name="category">
-                    <option value="dress" selected>please select:</option>
+                    <option value="dress" selected>dress</option>
                     <option value="shoes">shoes</option>
                     <option value="accessories">accessories</option>
                 </select></td><br>
@@ -23,7 +22,7 @@
             </tr><br>
             <tr>
                 <td>Description: </td>
-                <td><input type='textarea' name='description' value=''/></td>
+                <td><input type='textarea' name='description' value='' maxlength="300"/></td>
             </tr><br>
             <tr>
                 <td>Image: </td>
@@ -34,6 +33,7 @@
             <td align='right'><div id="myButtonsFormatting"><input type='submit' value='Submit'/></div></td>
             </tr>
         </table>
+        <input type="text" name="action" value="addProduct" hidden="true"/>
     </form>
 </center>
 
