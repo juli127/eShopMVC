@@ -31,16 +31,16 @@ public class AdminController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getAllInfo() {
-        ModelAndView model = new ModelAndView("admin");
+        ModelAndView modelAndView = new ModelAndView("admin");
         if (userService.sessionIsOpen()) {
             List<User> usersList = userService.getAllUsers();
             List<Product> productsList = productService.getAllProducts();
-            model.addObject("productsList", productsList);
-            model.addObject("usersList", usersList);
+            modelAndView.addObject("productsList", productsList);
+            modelAndView.addObject("usersList", usersList);
         } else { // connection to DB is closed
-            model.addObject("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return model;
+        return modelAndView;
     }
 
     @RequestMapping(value = "/products/add", method = RequestMethod.POST)
@@ -49,7 +49,7 @@ public class AdminController {
                                       @RequestParam("price") String price,
                                       @RequestParam("description") String description,
                                       @RequestParam("image") String image) {
-        ModelAndView model = new ModelAndView("admin");
+        ModelAndView modelAndView = new ModelAndView("admin");
         if (productService.sessionIsOpen()) {
             Product newProduct = new Product();
             newProduct.setName(name);
@@ -61,19 +61,19 @@ public class AdminController {
             logger.debug("adminServlet.addNewProduct: got from form new product: " + newProduct);
             productService.addProduct(newProduct);
         } else { // connection to DB is closed
-            model.addObject("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return model;
+        return modelAndView;
     }
 
     @RequestMapping(value = "/products/delete", method = RequestMethod.POST)
     public ModelAndView deleteProduct(@RequestParam int productId) {
-        ModelAndView model = new ModelAndView("admin");
+        ModelAndView modelAndView = new ModelAndView("admin");
         if (productService.sessionIsOpen()) {
                 productService.deleteProduct(productId);
         } else { // connection to DB is closed
-            model.addObject("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return model;
+        return modelAndView;
     }
 }

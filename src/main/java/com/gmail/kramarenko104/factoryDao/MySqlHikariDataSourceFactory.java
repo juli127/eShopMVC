@@ -41,20 +41,20 @@ public class MySqlHikariDataSourceFactory extends DaoFactory {
 
     }
 
-    @Override
+   // @Override
     public void openConnection() {
         try {
             logger.debug("MySqlHikariDataSourceFactory.openConnection:  dataSource: " + dataSource);
             logger.debug("MySqlHikariDataSourceFactory.openConnection:  hikariConfig: " + hikariConfig);
             conn = dataSource.getConnection();
-            super.setConnection(conn);
+//            super.setConnection(conn);
             logger.debug("Connection obtained");
         } catch (SQLException e) {
             logger.debug("Connection failed. SQLException: " + e.getMessage());
         }
     }
 
-    @Override
+  //  @Override
     public void close() {
         try {
             if (conn != null)

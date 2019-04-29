@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <!--CONTEXT  ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <context:component-scan base-package="com.gmail.kramarenko104"/>
+    <context:property-placeholder location="classpath:application.properties"/>
+    <context:annotation-config/>
+
+    <!--=========================================-->
+    <!-- 1) JDBC configuration +++++++++++++++++++++++++++-->
+    <!--<bean  name="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">-->
+    <!--destroy-method="close">-->
+    <!--<property name="url" value="{db.url}" />-->
+    <!--<property name="driverClassName" value="${db.driverClassName}" />-->
+    <!--<property name="username" value="${db.user}" />-->
+    <!--<property name="password" value="${db.password}" />-->
+    <!--<property name="poolProperties" ref="jdbcPoolProperties"/>-->
+    <!--</bean>-->
+
+    <!--<bean id="jdbcPoolProperties" class="org.apache.tomcat.jdbc.pool.PoolProperties">-->
+    <!--<property name="initialSize" value="10" />-->
+    <!--<property name="maxIdle" value="10" />-->
+    <!--</bean>-->
+
+    <!--<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">-->
+    <!--<property name="dataSource" ref="dataSource" />-->
+    <!--</bean>-->
+
+    <!-- 2) DBCP configuration +++++++++++++++++++++++++++-->
+    <!--<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource"-->
+    <!--destroy-method="close"-->
+    <!--p:driverClassName="${db.driverClassName}"-->
+    <!--p:url="${db.url}"-->
+    <!--p:username="${db.user}"-->
+    <!--p:password="${db.password}"-->
+    <!--/>-->
+
+    <!--  3) HIKARI configuration +++++++++++++++++++++++++++-->
+    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig"
+          p:driverClassName="${db.driverClassName}"
+          p:jdbcUrl="${db.url}"
+          p:username="${db.user}"
+          p:password="${db.password}"
+          p:minimumIdle="${hibernate.hikari.minimumIdle}"
+          p:maximumPoolSize="${hibernate.hikari.maximumPoolSize}"
+          p:idleTimeout="${hibernate.hikari.idleTimeout}"
+          p:poolName="${hibernate.hikari.poolName}"/>
+
+     <!--1 HIKARI connection pool +++++++++++++++++++++++++++-->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"
+    c:configuration-ref="hikariConfig"/>
+
+    <!--==============================-->
+    <!--<jdbc:initialize-database>-->
+    <!--<jdbc:script location="classpath:db-schema.sql"/>-->
+    <!--<jdbc:script location="classpath:db-data.sql"/>-->
+    <!--</jdbc:initialize-database>-->
+
+    <!--Hibernate ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" depends-on="dataSource">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="packagesToScan" value="com.gmail.kramarenko104.model"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">${hibernate.dialect}</prop>
+                <prop key="hibernate.show_sql">${hibernate.show_sql}</prop>
+                <prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>
+            </props>
+        </property>
+        <!--<property name="annotatedClasses">-->
+            <!--<list>-->
+                <!--<value>com.gmail.kramarenko104.model.User</value>-->
+                <!--<value>com.gmail.kramarenko104.model.Product</value>-->
+                <!--<value>com.gmail.kramarenko104.model.Cart</value>-->
+                <!--<value>com.gmail.kramarenko104.model.Order </value>-->
+            <!--</list>-->
+        <!--</property>-->
+    </bean>
+
+    <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--<bean id="transationManager" class="org.springframework.orm.jpa.JpaTransactionManager"-->
+          <!--p:entityManagerFactory="entityManagerFactory"/>-->
+    <bean id="transationManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"
+          depends-on="sessionFactory"
+          p:sessionFactory="sessionFactory"/>
+    <tx:annotation-driven transaction-manager="transationManager"/>
+
+
+    <!--Persistence ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--<bean id="persistenceExceptionTranslation" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>-->
+    <!--<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"-->
+          <!--p:showSql="true"-->
+          <!--p:generateDdl="true"-->
+          <!--p:database="MYSQL"-->
+    <!--/>-->
+
+    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"-->
+          <!--p:dataSource-ref="dataSource"-->
+          <!--p:packagesToScan="com.gmail.kramarenko104.model"-->
+          <!--p:jpaVendorAdapter-ref="jpaVendorAdapter"-->
+    <!--/>-->
+
+    <!--DAO Implementations ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <!--<bean id="userDao" class="com.gmail.kramarenko104.repository.UserJpaRepositoryImpl"/> -->
+    <bean id="userDao" class="com.gmail.kramarenko104.dao.UserDaoImpl" depends-on="sessionFactory"/>
+    <bean id="productDao" class="com.gmail.kramarenko104.dao.ProductDaoImpl" depends-on="sessionFactory"/>
+    <bean id="cartDao" class="com.gmail.kramarenko104.dao.CartDaoImpl" depends-on="sessionFactory"/>
+    <bean id="orderDao" class="com.gmail.kramarenko104.dao.OrderDaoImpl" depends-on="sessionFactory"/>
+
+
+</beans>

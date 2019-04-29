@@ -42,59 +42,55 @@ public class DaoFactory {
 //        this.connection = connection;
 //    }
 
-    @Autowired
-    public void setUserDao(UserDaoImpl userDao) {
-        this.userDao = userDao;
-    }
-
-    @Autowired
-    public void setProductDao(ProductDaoImpl productDao) {
-        this.productDao = productDao;
-    }
-
-    @Autowired
-    public void setCartDao(CartDaoImpl cartDao) {
-        this.cartDao = cartDao;
-    }
-
-    @Autowired
-    public void setOrderDao(OrderDaoImpl orderDao) {
-        this.orderDao = orderDao;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
-
-//    public Connection getConnection() {
-//        return connection;
+//    @Autowired
+//    public void setUserDao(UserDaoImpl userDao) {
+//        this.userDao = userDao;
 //    }
-
+//
+//    @Autowired
+//    public void setProductDao(ProductDaoImpl productDao) {
+//        this.productDao = productDao;
+//    }
+//
+//    @Autowired
+//    public void setCartDao(CartDaoImpl cartDao) {
+//        this.cartDao = cartDao;
+//    }
+//
+//    @Autowired
+//    public void setOrderDao(OrderDaoImpl orderDao) {
+//        this.orderDao = orderDao;
+//    }
+//
+//    public SessionFactory getSessionFactory() {
+//        return sessionFactory;
+//    }
+//
     public void close() {
         if (sessionFactory != null) {
             sessionFactory.close();
         }
     }
 
-    public UserDao getUserDao() {
-        userDao = new UserDaoImpl(sessionFactory);
-        return userDao;
-    }
-
-    public ProductDao getProductDao() {
-        productDao = new ProductDaoImpl(sessionFactory);
-        return productDao;
-    }
-
-    public CartDao getCartDao() {
-        cartDao = new CartDaoImpl(sessionFactory);
-        return cartDao;
-    }
-
-    public OrderDao getOrderDao() {
-        orderDao = new OrderDaoImpl(sessionFactory);
-        return orderDao;
-    }
+//    public UserDao getUserDao() {
+//        userDao = new UserDaoImpl(sessionFactory);
+//        return userDao;
+//    }
+//
+//    public ProductDao getProductDao() {
+//        productDao = new ProductDaoImpl(sessionFactory);
+//        return productDao;
+//    }
+//
+//    public CartDao getCartDao() {
+//        cartDao = new CartDaoImpl(sessionFactory);
+//        return cartDao;
+//    }
+//
+//    public OrderDao getOrderDao() {
+//        orderDao = new OrderDaoImpl(sessionFactory);
+//        return orderDao;
+//    }
 
     public void deleteUserService(UserDao userDao) {
         if (userDao != null) {

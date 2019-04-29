@@ -16,4 +16,6 @@ public interface UserDao {
     int deleteUser(int id);
 
     List<User> getAllUsers();
+
+    boolean sessionIsOpen();
 }

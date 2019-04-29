@@ -3,12 +3,13 @@ package com.gmail.kramarenko104.dao;
 import com.gmail.kramarenko104.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionTemplate;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -20,16 +21,24 @@ import java.util.List;
 @EnableTransactionManagement
 public class UserDaoImpl implements UserDao {
 
-    private static final String SALT = "34Ru9k";
-    private final SessionFactory sessionFactory;
-    private final String ENTITY_NAME = "User";
-    private Session session;
-    private TransactionTemplate transactionTemplate;
-
     @Autowired
-    public UserDaoImpl(SessionFactory sessionFactory)  {
-        this.sessionFactory = sessionFactory;
+    private SessionFactory sessionFactory;
+    private final static String ENTITY_NAME = "User";
+    private final static String SALT = "34Ru9k";
+    private final static String GET_ALL_USERS = "select u from " + ENTITY_NAME + " u";
+    private final static String GET_USER_BY_LOGIN = "select u from " + ENTITY_NAME + " u where u.login = :login";
+    private final static Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
+    private Session session;
+
+    public UserDaoImpl()  {
     }
+
+//    @Autowired
+//    public void setSessionFactory(SessionFactory sessionFactory)  {
+//        this.sessionFactory = sessionFactory;
+////        StandardServiceRegistry registry = new StandardServiceRegistryBuilder().configure().build();
+//
+//    }
 
     @Transactional
     @Override
@@ -47,7 +56,7 @@ public class UserDaoImpl implements UserDao {
         session = sessionFactory.openSession();
         session.update(ENTITY_NAME, user);
         session.flush();
-        int identifier = (int) session.getIdentifier(session);
+        int identifier = (int) session.getIdentifier(user);
         session.close();
         return identifier;
     }
@@ -63,21 +72,20 @@ public class UserDaoImpl implements UserDao {
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
+    @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
         session = sessionFactory.openSession();
-        @SuppressWarnings("unchecked")
-        List<User> usersList = session.createQuery("from " + ENTITY_NAME).list();
+        List<User> usersList = session.createQuery(GET_ALL_USERS).list();
         session.close();
         return usersList;
     }
 
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
+    @SuppressWarnings("unchecked")
     public User getUserByLogin(String login) {
         session = sessionFactory.openSession();
-        String sqlStr = "select u from " + ENTITY_NAME+ " u where u.login = :login";
-        @SuppressWarnings("unchecked")
-        User user = (User) session.createQuery(sqlStr).getResultList().get(0);
+        User user = (User) session.createQuery(GET_USER_BY_LOGIN).getResultList().get(0);
         session.close();
         return user;
     }
@@ -86,14 +94,18 @@ public class UserDaoImpl implements UserDao {
     @Override
     public int deleteUser(int id) {
         session = sessionFactory.openSession();
+        int identifier = -1;
         User user = session.get(User.class, id);
-        session.delete(ENTITY_NAME, user);
-        session.flush();
-        int identifier = (int) session.getIdentifier(user);
+        if (user != null) {
+            session.delete(ENTITY_NAME, user);
+            session.flush();
+            identifier = (int) session.getIdentifier(user);
+        }
         session.close();
         return identifier;
     }
 
+    @Override
     public boolean sessionIsOpen() {
         return sessionFactory.isOpen();
     }

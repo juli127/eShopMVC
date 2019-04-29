@@ -5,7 +5,8 @@ import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequestMapping({"/", "/products"})
 public class ProductController {
 
-    private static Logger logger = Logger.getLogger(ProductController.class);
+    private static Logger logger = LoggerFactory.getLogger(ProductController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired

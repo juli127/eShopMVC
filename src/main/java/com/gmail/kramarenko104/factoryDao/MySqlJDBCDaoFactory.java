@@ -33,18 +33,18 @@ public class MySqlJDBCDaoFactory extends DaoFactory {
                 .append("&password=").append(config.getString("password")).toString();
     }
 
-    @Override
+    //@Override
     public void openConnection() {
         try {
             Connection conn = DriverManager.getConnection(connStr);
-            super.setConnection(conn);
+           // super.setConnection(conn);
             logger.debug("Connection obtained");
         } catch (SQLException e) {
             logger.debug("Connection failed. SQLException: " + e.getMessage());
         }
     }
 
-    @Override
+    //@Override
     public void close() {
         super.close();
         logger.debug("All resources closed");

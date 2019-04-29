@@ -11,31 +11,23 @@ import javax.persistence.*;
   comment VARCHAR(100),
   PRIMARY KEY (id)
  */
+
 @Entity
-@Table(name = "users")
+@Table(name = "users_test")
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private int id;
-
-    @Column (unique = true, nullable = false, columnDefinition = "varchar(40)")
     private String login;
-
-    @Column(nullable = false, columnDefinition = "varchar(80)")
     private String password;
-
-    @Column(nullable = false, columnDefinition = "varchar(30)")
     private String name;
-
-    @Column(columnDefinition = "varchar(50)")
     private String address;
-
-    @Column(columnDefinition = "varchar(100)")
     private String comment;
 
     public User() {
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -44,6 +36,7 @@ public class User {
         this.id = id;
     }
 
+    @Column (unique = true, nullable = false, updatable = false, columnDefinition = "varchar(40)")
     public String getLogin() {
         return login;
     }
@@ -52,6 +45,7 @@ public class User {
         this.login = login;
     }
 
+    @Column(nullable = false, columnDefinition = "varchar(30)")
     public String getName() {
         return name;
     }
@@ -60,6 +54,7 @@ public class User {
         this.name = name;
     }
 
+    @Column(nullable = false, columnDefinition = "varchar(80)")
     public String getPassword() {
         return password;
     }
@@ -68,6 +63,7 @@ public class User {
         this.password = password;
     }
 
+    @Column(columnDefinition = "varchar(50)")
     public String getAddress() {
         return address;
     }
@@ -76,6 +72,7 @@ public class User {
         this.address = address;
     }
 
+    @Column(columnDefinition = "varchar(100)")
     public String getComment() {
         return comment;
     }

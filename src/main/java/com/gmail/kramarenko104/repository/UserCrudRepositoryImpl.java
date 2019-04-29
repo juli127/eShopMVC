@@ -65,7 +65,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     public User getUserByLogin(String login) {
 //        SqlParameterSource namedParameters = new MapSqlParameterSource("login", login);
-        return (User) entityManager.createQuery(GET_USER_BY_LOGIN).getSingleResult();
+        return (User) entityManager.createQuery(GET_USER_BY_LOGIN).setParameter("login", login).getSingleResult();
     }
 
     @Override

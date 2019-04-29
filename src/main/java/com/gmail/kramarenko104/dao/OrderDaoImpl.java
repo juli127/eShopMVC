@@ -2,55 +2,61 @@ package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.Product;
-import org.apache.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.List;
 import java.util.Map;
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
 
-    private final static String CREATE_ORDER = "INSERT INTO orders (orderNumber, userId, productId, quantity, status) VALUES(?,?,?,?,?);";
-    private final static String DELETE_ALL_ORDERS_BY_USERID = "DELETE FROM orders WHERE userId = ?;";
-    private final static String GET_LAST_ORDER_NUMBER = "SELECT DISTINCT max(orderNumber) as lastOrderNumber FROM orders;";
+    private final static String ENTITY_NAME = "Order";
+    private final static String CREATE_ORDER = "insert into " + ENTITY_NAME + " (orderNumber, userId, productId, quantity, status) VALUES(?,?,?,?,?)";
+    private final static String DELETE_ALL_ORDERS_BY_USERID = "delete from " + ENTITY_NAME + " o where o.userId = :userId";
+    private final static String GET_ALL_ORDERS_BY_USERID = "select o from " + ENTITY_NAME + " o where o.userId = :userId";
+    private final static String GET_LAST_ORDER_NUMBER = "select distinct max(o.orderNumber) as lastOrderNumber from " + ENTITY_NAME + " o";
     private final static String PROCESSED_ORDER = "ordered";
-    private static Logger logger = Logger.getLogger(OrderDaoImpl.class);
-    private final SessionFactory sessionFactory;
-    private Session session;
+    private final static Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);
 
     @Autowired
-    public OrderDaoImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
+    private SessionFactory sessionFactory;
+    private Session session;
+
+
+    public OrderDaoImpl() {
     }
 
+//    @Autowired
+//    public OrderDaoImpl(SessionFactory sessionFactory) {
+//        this.sessionFactory = sessionFactory;
+//    }
+
     @Override
-    public Order createOrder(int orderNumber, int userId, Map<Product, Integer> products) {
+    public Order createOrderForUser(int orderNumber, int userId, Map<Product, Integer> products) {
         // create the new order
         int totalSum = 0;
         int itemsCount = 0;
         session = sessionFactory.openSession();
+
         for (Map.Entry<Product, Integer> entry : products.entrySet()) {
             itemsCount += entry.getValue();
             totalSum += entry.getValue() * entry.getKey().getPrice();
-            try (PreparedStatement pst = conn.prepareStatement(CREATE_ORDER)) {
-                session.beginTransaction();
-                pst.setInt(1, orderNumber);
-                pst.setInt(2, userId);
-                pst.setInt(3, entry.getKey().getId()); // productId
-                pst.setInt(4, entry.getValue()); // quantity
-                pst.setString(5, PROCESSED_ORDER);
-                pst.executeUpdate();
-                session.getTransaction().commit();
-            } catch (SQLException e) {
-                e.printStackTrace();
-                session.getTransaction().rollback();
-            }
+
+            session.beginTransaction();
+            session.createNativeQuery(CREATE_ORDER)
+                    .setParameter("orderNumber", orderNumber)
+                    .setParameter("userId", userId)
+                    .setParameter("productId", entry.getKey().getId())
+                    .setParameter("quantity", entry.getValue())
+                    .setParameter("status", PROCESSED_ORDER)
+                    .executeUpdate();
+            session.getTransaction().commit();
+            session.close();
         }
         // and return this new order with calculated itemsCount and totalSum back to show on view
         Order newOrder = new Order();
@@ -60,9 +66,21 @@ public class OrderDaoImpl implements OrderDao {
         newOrder.setProducts(products);
         newOrder.setTotalSum(totalSum);
         newOrder.setItemsCount(itemsCount);
-        logger.debug("OrderDAO.createOrder:...new Order was created with orderNumber = " + orderNumber);
-        session.close();
+        logger.debug("OrderDAO.createOrderForUser:...new Order was created with orderNumber = " + orderNumber);
         return newOrder;
+    }
+
+    @Override
+    public List<Order> getAllOrdersForUser(int userId) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        List<Order> resultList =  session.createQuery(GET_ALL_ORDERS_BY_USERID)
+                .setParameter("userId", userId)
+                .getResultList();
+        logger.debug("OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
+        session.getTransaction().commit();
+        session.close();
+        return resultList;
     }
 
     @Override
@@ -72,29 +90,22 @@ public class OrderDaoImpl implements OrderDao {
         int lastOrderNumber = 0;
         ResultSet rs = null;
         session = sessionFactory.openSession();
-        try (Statement pst = conn.createStatement()) {
-            rs = pst.executeQuery(GET_LAST_ORDER_NUMBER);
-            while (rs.next()) {
-                lastOrderNumber = rs.getInt("lastOrderNumber");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        session.beginTransaction();
+        lastOrderNumber = (int) session.createQuery(GET_LAST_ORDER_NUMBER)
+                .getSingleResult();
+        session.getTransaction().commit();
         session.close();
         return ++lastOrderNumber;
     }
 
     @Override
-    public boolean deleteAllOrders(int userId) {
-        session = sessionFactory.openSession();
-        try (PreparedStatement pst = conn.prepareStatement(DELETE_ALL_ORDERS_BY_USERID)) {
-            pst.setInt(1, userId);
-            pst.executeUpdate();
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public void deleteAllOrdersForUser(int userId) {
+        Session session = sessionFactory.openSession();
+        session.beginTransaction();
+        session.createQuery(DELETE_ALL_ORDERS_BY_USERID)
+                .setParameter("userId", userId)
+                .executeUpdate();
+        session.getTransaction().commit();
         session.close();
-        return false;
     }
 }

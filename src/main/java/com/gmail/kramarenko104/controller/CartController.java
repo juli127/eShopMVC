@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/cart")
@@ -25,22 +26,23 @@ public class CartController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String doGet(Model model) {
+    public ModelAndView doGet() {
+        ModelAndView modelAndView = new ModelAndView("cart");
         if (cartService.sessionIsOpen()) {
-            if (model.asMap().get("user") != null) {
-                User currentUser = (User) model.asMap().get("user");
+            if (modelAndView.getModelMap().get("user") != null) {
+                User currentUser = (User) modelAndView.getModelMap().get("user");
                 logger.debug("CartServlet: Current user: " + currentUser.getName());
                 int userId = currentUser.getId();
 
-                if (model.asMap().get("userCart") == null) {
+                if (modelAndView.getModelMap().get("userCart") == null) {
                     Cart userCart = cartService.getCart(userId);
-                    model.addAttribute("userCart", userCart);
+                    modelAndView.addObject("userCart", userCart);
                 }
             }
         } else {
-            model.addAttribute("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return "cart";
+        return modelAndView;
     }
 
 

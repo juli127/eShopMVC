@@ -13,31 +13,37 @@ import java.util.Objects;
   PRIMARY KEY (id),
   FOREIGN KEY (category) REFERENCES categories(id)
  */
+
 @Entity
-@Table(name="products")
+@Table(name="products_test")
 public class Product {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column (unique = true, nullable = false, columnDefinition = "varchar(100)")
     private String name;
-    @Column (nullable = false)
     private int category;
-    @Column (nullable = false)
     private int price;
-    @Column(columnDefinition = "varchar(300)")
     private String description;
-    @Column(columnDefinition = "varchar(100)")
     private String image;
 
     public Product() {
     }
 
+    public Product(int id, String name, int category, int price, String description, String image) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.description = description;
+        this.image = image;
+    }
+
+    @Column(unique = true, nullable = false, columnDefinition = "varchar(100)")
     public String getName() {
         return name;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -46,6 +52,7 @@ public class Product {
         this.id = id;
     }
 
+    @Column(columnDefinition = "varchar(300)")
     public String getDescription() {
         return description;
     }
@@ -54,6 +61,7 @@ public class Product {
         this.description = description;
     }
 
+    @Column (nullable = false)
     public int getCategory() {
         return category;
     }
@@ -66,6 +74,7 @@ public class Product {
         this.name = name;
     }
 
+    @Column (nullable = false)
     public int getPrice() {
         return price;
     }
@@ -74,6 +83,7 @@ public class Product {
         this.price = price;
     }
 
+    @Column (columnDefinition = "varchar(100)")
     public String getImage() {
         return image;
     }

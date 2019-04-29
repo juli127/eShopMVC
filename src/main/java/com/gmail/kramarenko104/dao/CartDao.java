@@ -10,6 +10,6 @@ public interface CartDao {
 
     void removeProduct(int userId, int productId, int quantity);
 
-    void deleteCart(int userId);
+    int deleteCart(int userId);
 
 }
