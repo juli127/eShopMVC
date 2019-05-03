@@ -11,10 +11,10 @@
                     <div class="productName" id="productName"><c:out value="${product.name}"/></div>
                     <div id="price"><c:out value="${product.price}"/> UAH</div>
                     <div class="productDescription">
-                        <input type='button' onclick="minus('${product.id}')" value='-' />
-                        <span id='pq${product.id}'>1</span>
-                        <input type='button' onclick="plus('${product.id}')" value='+' />
-                        <input type='button' onclick="buy('${user.id}', '${product.id}')" value='Buy'/>
+                        <input type='button' onclick="minus('${product.productId}')" value='-' />
+                        <span id='pq${product.productId}'>1</span>
+                        <input type='button' onclick="plus('${product.productId}')" value='+' />
+                        <input type='button' onclick="buy('${user.id}', '${product.productId}')" value='Buy'/>
                     </div>
                 </td>
             </table>

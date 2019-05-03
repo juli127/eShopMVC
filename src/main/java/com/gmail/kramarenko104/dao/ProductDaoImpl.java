@@ -1,21 +1,25 @@
 package com.gmail.kramarenko104.dao;
 
+import com.gmail.kramarenko104.factoryDao.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Product;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import java.io.Serializable;
 import java.util.List;
 
 @Repository
+@DynamicUpdate
 //@EnableTransactionManagement
 public class ProductDaoImpl implements ProductDao {
 
-    @Autowired
+//    @Autowired
     private SessionFactory sessionFactory;
     private final static String ENTITY_NAME = "Product";
     private final static Logger logger = LoggerFactory.getLogger(ProductDaoImpl.class);
@@ -27,40 +31,39 @@ public class ProductDaoImpl implements ProductDao {
 //    }
 
     public ProductDaoImpl() {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
 //    @Transactional
     @Override
-    public int createProduct(Product product) {
+    public long createProduct(Product product) {
         session = sessionFactory.openSession();
-        session.beginTransaction();
+        Transaction tx = session.beginTransaction();
         Serializable id = session.save(ENTITY_NAME, product);
         session.flush();
-        session.getTransaction().commit();
+        tx.commit();
         session.close();
-        return (int) id;
+        return (long) id;
     }
 
 //    @Transactional
     @Override
-    public int updateProduct(Product product) {
+    public long updateProduct(Product product) {
         session = sessionFactory.openSession();
-        session.beginTransaction();
+        Transaction tx = session.beginTransaction();
         session.update(ENTITY_NAME, product);
         session.flush();
-        int identifier = (int) session.getIdentifier(session);
-        session.getTransaction().commit();
+        long identifier = (int) session.getIdentifier(session);
+        tx.commit();
         session.close();
         return identifier;
     }
 
 //    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
-    public Product getProduct(int productId) {
+    public Product getProduct(long productId) {
         session = sessionFactory.openSession();
-        session.beginTransaction();
         Product product = (Product) session.get(Product.class, productId);
-        session.getTransaction().commit();
         session.close();
         return product;
     }
@@ -70,11 +73,8 @@ public class ProductDaoImpl implements ProductDao {
     @SuppressWarnings("unchecked")
     public List<Product> getAllProducts() {
         session = sessionFactory.openSession();
-        session.beginTransaction();
-        String hqlString = "select p from " + ENTITY_NAME + " p";
-        Query query = session.createQuery(hqlString);
+        Query query = session.createQuery("select p from " + ENTITY_NAME + " p");
         List<Product> productsList = query.list();
-        session.getTransaction().commit();
         session.close();
         return productsList;
     }
@@ -84,32 +84,32 @@ public class ProductDaoImpl implements ProductDao {
     @SuppressWarnings("unchecked")
     public List<Product> getProductsByCategory(int category) {
         session = sessionFactory.openSession();
-        session.beginTransaction();
         Query query = session.createQuery("select p from " + ENTITY_NAME + " p where p.category = :category");
-        List<Product> productsList = query.setParameter("category", category ).getResultList();
-        session.getTransaction().commit();
+        List<Product> productsList = query
+                .setParameter("category", category )
+                .getResultList();
         session.close();
         return productsList;
     }
 
 //    @Transactional
     @Override
-    public int deleteProduct(int productId) {
+    public long deleteProduct(long productId) {
         session = sessionFactory.openSession();
-        int identifier = -1;
-        session.beginTransaction();
+        long identifier = -1;
+        Transaction tx = session.beginTransaction();
         Product product = session.get(Product.class, productId);
         if (product != null) {
             session.delete(ENTITY_NAME, product);
             session.flush();
             identifier = (int) session.getIdentifier(product);
         }
-        session.getTransaction().commit();
+        tx.commit();
         session.close();
         return identifier;
     }
 
-    public boolean sessionIsOpen() {
-        return sessionFactory.isOpen();
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

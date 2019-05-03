@@ -1,10 +1,9 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
-import java.util.Objects;
 
 /*
-  id INT AUTO_INCREMENT,
+  productId BIGINT AUTO_INCREMENT,
   name VARCHAR(100) UNIQUE NOT NULL,
   category INT,
   price INT,
@@ -15,44 +14,41 @@ import java.util.Objects;
  */
 
 @Entity
-@Table(name="products_test")
+@Table(name = "products_test")
+@Access(value=AccessType.FIELD)
 public class Product {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(unique = true, nullable = false, updatable = false)
+    private long productId;
+
+    @Column(unique = true, nullable = false, columnDefinition = "varchar(100)")
     private String name;
+
+    @Column(nullable = false)
     private int category;
+
+    @Column(nullable = false)
     private int price;
+
+    @Column(columnDefinition = "varchar(300)")
     private String description;
+
+    @Column(columnDefinition = "varchar(100)")
     private String image;
 
     public Product() {
     }
 
-    public Product(int id, String name, int category, int price, String description, String image) {
-        this.id = id;
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.description = description;
-        this.image = image;
+    public long getProductId() {
+        return productId;
     }
 
-    @Column(unique = true, nullable = false, columnDefinition = "varchar(100)")
-    public String getName() {
-        return name;
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Column(columnDefinition = "varchar(300)")
     public String getDescription() {
         return description;
     }
@@ -61,7 +57,6 @@ public class Product {
         this.description = description;
     }
 
-    @Column (nullable = false)
     public int getCategory() {
         return category;
     }
@@ -70,11 +65,14 @@ public class Product {
         this.category = category;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
 
-    @Column (nullable = false)
     public int getPrice() {
         return price;
     }
@@ -83,7 +81,6 @@ public class Product {
         this.price = price;
     }
 
-    @Column (columnDefinition = "varchar(100)")
     public String getImage() {
         return image;
     }
@@ -93,25 +90,33 @@ public class Product {
     }
 
     @Override
+    public String toString() {
+        return "{\"productId\":" + productId + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Product)) return false;
+
         Product product = (Product) o;
-        return getId() == product.getId() &&
-                getCategory() == product.getCategory() &&
-                getPrice() == product.getPrice() &&
-                Objects.equals(getName(), product.getName()) &&
-                Objects.equals(getDescription(), product.getDescription()) &&
-                Objects.equals(getImage(), product.getImage());
+
+        if (productId != product.productId) return false;
+        if (category != product.category) return false;
+        if (price != product.price) return false;
+        if (!name.equals(product.name)) return false;
+        if (description != null ? !description.equals(product.description) : product.description != null) return false;
+        return image != null ? image.equals(product.image) : product.image == null;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getCategory(), getPrice(), getDescription(), getImage());
-    }
-
-    @Override
-    public String toString() {
-        return "{\"productId\":" + id + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
+        int result = (int) productId;
+        result = 31 * result + name.hashCode();
+        result = 31 * result + category;
+        result = 31 * result + price;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        result = 31 * result + (image != null ? image.hashCode() : 0);
+        return result;
     }
 }

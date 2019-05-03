@@ -6,9 +6,9 @@ import java.util.Map;
 
 /*
 entity 'carts_test':
-  id INT AUTO_INCREMENT,
-  userId INT,
-  productId INT, // taken from Map<Product, Integer> products
+  cartId BIGINT AUTO_INCREMENT,
+  userId BIGINT,
+  productId BIGINT, // taken from Map<Product, Integer> products
   quantity INT,  // taken from Map<Product, Integer> products
   PRIMARY KEY (id),
   FOREIGN KEY (userId) REFERENCES users(id),
@@ -17,36 +17,57 @@ entity 'carts_test':
 
 @Entity
 @Table(name = "carts_test")
+@Access(value=AccessType.FIELD)
 public class Cart {
 
-    private int id;
-    private int userId;
-    private Map<Product, Integer> products;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (nullable = false, updatable = false)
+    private long cartId;
+
+    @Column (nullable = false, updatable = false)
+    private long userId;
 
     @Transient
     private int itemsCount;
+
     @Transient
     private int totalSum;
 
-//////////////
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "cart_products", joinColumns = @JoinColumn(name = "cartId") )
+    @MapKeyJoinColumn(name = "productId")
+    @Column(name="quantity")
+    private Map<Product, Integer> products;
+
     public Cart() {
     }
 
-    public Cart(int userId) {
+    public Cart(long userId) {
         this.userId = userId;
         itemsCount = 0;
         totalSum = 0;
         products = new HashMap<>();
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
-        return id;
+    public long getCartId() {
+        return cartId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public Map<Product, Integer> getProducts() {
+        return products;
+    }
+
+    public void setProducts(Map<Product, Integer> products) {
+        this.products = products;
     }
 
     public int getItemsCount() {
@@ -65,50 +86,6 @@ public class Cart {
         this.totalSum = totalSum;
     }
 
-    @Column (unique = true, nullable = false)
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-
-//    HOW  Map<Product, Integer> products should transfer Product -> field 'productId', Integer -> field 'quantity' ????
-    @JoinColumns({
-            @JoinColumn(name = "productId", table = "products_test", referencedColumnName = "id"),
-            @JoinColumn(name = "quantity")})
-    @OneToOne(cascade=CascadeType.ALL, fetch=FetchType.LAZY, mappedBy = "cart")
-    public Map<Product, Integer> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Map<Product, Integer> products) {
-        this.products = products;
-    }
-
-//    @Column (nullable = false)
-//    private int productId;
-//
-//    @Column (nullable = false)
-//    private int quantity;
-
-//    public int getProductId() {
-//        return productId;
-//    }
-//
-//    public void setProductId(int productId) {
-//        this.productId = productId;
-//    }
-//
-//    public int getQuantity() {
-//        return quantity;
-//    }
-//
-//    public void setQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
-
     @Override
     public String toString() {
         return "Cart{" +
@@ -116,5 +93,28 @@ public class Cart {
                 ", itemsCount:" + itemsCount +
                 ", totalSum:" + totalSum +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cart)) return false;
+
+        Cart cart = (Cart) o;
+
+        if (cartId != cart.cartId) return false;
+        if (userId != cart.userId) return false;
+        if (itemsCount != cart.itemsCount) return false;
+        if (totalSum != cart.totalSum) return false;
+        return products.equals(cart.products);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) cartId;
+        result = 31 * result + itemsCount;
+        result = 31 * result + totalSum;
+        result = 31 * result + products.hashCode();
+        return result;
     }
 }

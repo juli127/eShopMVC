@@ -3,9 +3,9 @@ USE eshopdb;
 
 CREATE TABLE IF NOT EXISTS users_test(
   id INT AUTO_INCREMENT,
-  login VARCHAR(40) UNIQUE NOT NULL,
-  password VARCHAR(80) NOT NULL,
-  name VARCHAR(30),
+  login VARCHAR(30) UNIQUE NOT NULL,
+  password VARCHAR(30) NOT NULL,
+  name VARCHAR(50),
   address VARCHAR(50),
   comment VARCHAR(100),
   PRIMARY KEY (id)

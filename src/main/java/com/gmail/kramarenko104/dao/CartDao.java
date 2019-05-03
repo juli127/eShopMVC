@@ -4,12 +4,12 @@ import com.gmail.kramarenko104.model.Cart;
 
 public interface CartDao {
 
-    Cart getCart(int userId);
+    Cart getCart(long userId);
 
-    void addProduct(int userId, int productId, int quantity);
+    void addProduct(long userId, long productId, int quantity);
 
-    void removeProduct(int userId, int productId, int quantity);
+    void removeProduct(long userId, long productId, int quantity);
 
-    int deleteCart(int userId);
+    long deleteCart(long userId);
 
 }

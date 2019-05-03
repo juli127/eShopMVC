@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface OrderService {
 
-    boolean deleteAllOrders(int userId);
+    void deleteAllOrders(long userId);
 
-    Order createOrder(int userId, Map<Product, Integer> products);
+    Order createOrder(long userId, Map<Product, Integer> products);
 }

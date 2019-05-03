@@ -1,24 +1,20 @@
 package com.gmail.kramarenko104.repository;
 
 import com.gmail.kramarenko104.model.User;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@Repository
-@EnableJpaRepositories(basePackages = "com.gmail.kramarenko104.repository")
-@EnableTransactionManagement
+//@Repository
+//@EnableJpaRepositories(basePackages = "com.gmail.kramarenko104.repository")
+//@EnableTransactionManagement
 public class UserJpaRepositoryImpl {
 
     private static final String SALT = "34Ru9k";
@@ -26,7 +22,7 @@ public class UserJpaRepositoryImpl {
     private static final String GET_ALL_USERS = "select u from User u ";
     private TransactionTemplate transactionTemplate;
 
-    @PersistenceContext
+//    @PersistenceContext
     private EntityManager entityManager;
 
 //    @Autowired
@@ -39,9 +35,9 @@ public class UserJpaRepositoryImpl {
 
 //    @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int createUser(User user) {
+    public long createUser(User user) {
         entityManager.persist(user);
-        return getUserByLogin(user.getLogin()).getId();
+        return getUserByLogin(user.getLogin()).getUserId();
     }
 
 //    @Override

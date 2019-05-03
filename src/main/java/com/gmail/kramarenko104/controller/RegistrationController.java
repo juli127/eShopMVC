@@ -3,14 +3,14 @@ package com.gmail.kramarenko104.controller;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.UserServiceImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 @RequestMapping("/registration")
 public class RegistrationController {
 
-    private static Logger logger = Logger.getLogger(RegistrationController.class);
+    private static Logger logger = LoggerFactory.getLogger(RegistrationController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
@@ -45,7 +45,7 @@ public class RegistrationController {
 
         String viewToGo = "registration";
 
-        if (userService.sessionIsOpen()) {
+        if (userService.openSession() != null) {
             boolean needRegistration = true;
             boolean userExist = false;
             StringBuilder message = new StringBuilder();
@@ -90,14 +90,14 @@ public class RegistrationController {
                         newUser.setPassword(pass);
                         newUser.setAddress(address);
                         newUser.setComment(comment);
-                        int newUserId = userService.createUser(newUser);
+                        long newUserId = userService.createUser(newUser);
 //                        newUser = userService.getUserByLogin(login);
                         if (newUserId > 0) {
-                            newUser.setId(newUserId);
+                            newUser.setUserId(newUserId);
                             logger.debug("RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
                             model.addAttribute("user", newUser);
-                            model.addAttribute("userCart", new Cart(newUser.getId()));
+                            model.addAttribute("userCart", new Cart(newUser.getUserId()));
                         } else {
                             logger.debug("RegisrtServlet: new user was NOT created: got newUserId == " + newUserId);
                             model.addAttribute("user", null);
@@ -143,6 +143,7 @@ public class RegistrationController {
                 model.addAttribute("comment", null);
                 model.addAttribute("errorsMsg", null);
             }
+            userService.closeSession();
         } else {
             model.addAttribute("warning", DB_WARNING);
         }

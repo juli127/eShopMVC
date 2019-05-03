@@ -9,6 +9,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 public class HibernateSessionFactoryUtil {
+
     private static SessionFactory sessionFactory;
 
     private HibernateSessionFactoryUtil() {}
@@ -21,14 +22,13 @@ public class HibernateSessionFactoryUtil {
                 configuration.addAnnotatedClass(Order.class);
                 configuration.addAnnotatedClass(Cart.class);
                 configuration.addAnnotatedClass(Product.class);
-                System.out.println(">>>>>>>  configuration: " + configuration.getClass().getName());
                 StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());
                 sessionFactory = configuration.buildSessionFactory(builder.build());
-
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }
         }
+        System.out.println("+++++++++++++++  HibernateSessionFactoryUtil:  return sessionFactory  = " + sessionFactory);
         return sessionFactory;
     }
 }

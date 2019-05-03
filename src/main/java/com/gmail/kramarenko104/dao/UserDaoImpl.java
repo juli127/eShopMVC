@@ -1,15 +1,18 @@
 package com.gmail.kramarenko104.dao;
 
+import com.gmail.kramarenko104.factoryDao.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.User;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -18,10 +21,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Repository
-@EnableTransactionManagement
+@DynamicUpdate
+//@EnableTransactionManagement
 public class UserDaoImpl implements UserDao {
 
-    @Autowired
+//    @Autowired
     private SessionFactory sessionFactory;
     private final static String ENTITY_NAME = "User";
     private final static String SALT = "34Ru9k";
@@ -31,6 +35,7 @@ public class UserDaoImpl implements UserDao {
     private Session session;
 
     public UserDaoImpl()  {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
 //    @Autowired
@@ -40,37 +45,43 @@ public class UserDaoImpl implements UserDao {
 //
 //    }
 
-    @Transactional
+//    @Transactional
     @Override
-    public int createUser(User user) {
+    public long createUser(User user) {
         session = sessionFactory.openSession();
-        Serializable id = session.save(ENTITY_NAME, user);
+        Transaction tx = session.beginTransaction();
+        User criptUser = user;
+        criptUser.setPassword(hashString(user.getPassword()));
+        Serializable id = session.save(ENTITY_NAME, criptUser);
         session.flush();
+        tx.commit();
         session.close();
-        return (int) id;
+        return (long) id;
     }
 
-    @Transactional
+//    @Transactional
     @Override
-    public int updateUser(User user) {
+    public long updateUser(User user) {
         session = sessionFactory.openSession();
+        Transaction tx = session.beginTransaction();
         session.update(ENTITY_NAME, user);
         session.flush();
-        int identifier = (int) session.getIdentifier(user);
+        long identifier = (long) session.getIdentifier(user);
+        tx.commit();
         session.close();
         return identifier;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
-    public User getUser(int id) {
+    public User getUser(long id) {
         session = sessionFactory.openSession();
         User user = (User) session.get(User.class, id);
         session.close();
         return user;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
     public List<User> getAllUsers() {
@@ -80,34 +91,34 @@ public class UserDaoImpl implements UserDao {
         return usersList;
     }
 
-    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
+//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
     public User getUserByLogin(String login) {
         session = sessionFactory.openSession();
-        User user = (User) session.createQuery(GET_USER_BY_LOGIN).getResultList().get(0);
+//        User user = (User) session.createQuery(GET_USER_BY_LOGIN).getResultList().get(0);
+        Criteria userCriteria = session.createCriteria(User.class);
+        userCriteria.add(Restrictions.eq("login", login));
+        User user = (User) userCriteria.uniqueResult();
         session.close();
         return user;
     }
 
     @Transactional
     @Override
-    public int deleteUser(int id) {
+    public long deleteUser(long id) {
         session = sessionFactory.openSession();
-        int identifier = -1;
+        Transaction tx = session.beginTransaction();
+        long identifier = -1;
         User user = session.get(User.class, id);
         if (user != null) {
             session.delete(ENTITY_NAME, user);
             session.flush();
-            identifier = (int) session.getIdentifier(user);
+            identifier = (long) session.getIdentifier(user);
         }
+        tx.commit();
         session.close();
         return identifier;
-    }
-
-    @Override
-    public boolean sessionIsOpen() {
-        return sessionFactory.isOpen();
     }
 
     public static String hashString(String hash) {
@@ -119,5 +130,9 @@ public class UserDaoImpl implements UserDao {
         }
         md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
         return String.format("%032x", new BigInteger(md5.digest()));
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
     }
 }

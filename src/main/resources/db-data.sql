@@ -32,7 +32,7 @@ VALUES('Nora Naviano Imressive dusty blue',1, 3450, 'Blue evening dress with an 
   INSERT INTO products_test (name, category, price, description, image)
   VALUES('Rene Caovilla',2, 3750, 'Evening shoes Rene Caovilla, black velvet with rhinestones.', 'Rene_Caovilla_4300.jpg');
 
-  INSERT INTO products (name, category, price, description, image)
+  INSERT INTO products_test (name, category, price, description, image)
   VALUES('Lady bag Parfois 163918-BU',3, 1429, 'Portugal, size 28 x 29 x 13 см', 'parfois_163918-BU.jpg');
 
  INSERT INTO products_test (name, category, price, description, image)
@@ -47,4 +47,4 @@ INSERT INTO carts_test (userId, productId, quantity) VALUES(1, 2, 1);
 INSERT INTO carts_test (userId, productId, quantity) VALUES(1, 1, 1);
 INSERT INTO carts_test (userId, productId, quantity) VALUES(2, 3, 2);
 
--- from command line:   mysql -u databaseUser -p < db-data.sql
+-- run script from command line:   mysql -u databaseUser -p < db-data.sql

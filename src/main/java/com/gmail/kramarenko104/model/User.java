@@ -3,10 +3,10 @@ package com.gmail.kramarenko104.model;
 import javax.persistence.*;
 
 /*
-  id INT AUTO_INCREMENT,
-  login VARCHAR(40) UNIQUE NOT NULL,
-  password VARCHAR(80) NOT NULL,
-  name VARCHAR(30),
+  userId BIGINT AUTO_INCREMENT,
+  login VARCHAR(30) UNIQUE NOT NULL,
+  password VARCHAR(50) NOT NULL,
+  name VARCHAR(50),
   address VARCHAR(50),
   comment VARCHAR(100),
   PRIMARY KEY (id)
@@ -14,29 +14,40 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users_test")
+@Access(value=AccessType.FIELD)
 public class User {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "userId", unique = true, nullable = false, updatable = false)
+    private long userId;
+
+    @Column (unique = true, nullable = false, updatable = false, columnDefinition = "varchar(30)")
     private String login;
+
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private String password;
+
+    @Column(nullable = false, columnDefinition = "varchar(50)")
     private String name;
+
+    @Column(columnDefinition = "varchar(50)")
     private String address;
+
+    @Column(columnDefinition = "varchar(100)")
     private String comment;
 
     public User() {
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
-        return id;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    @Column (unique = true, nullable = false, updatable = false, columnDefinition = "varchar(40)")
     public String getLogin() {
         return login;
     }
@@ -45,7 +56,6 @@ public class User {
         this.login = login;
     }
 
-    @Column(nullable = false, columnDefinition = "varchar(30)")
     public String getName() {
         return name;
     }
@@ -54,7 +64,6 @@ public class User {
         this.name = name;
     }
 
-    @Column(nullable = false, columnDefinition = "varchar(80)")
     public String getPassword() {
         return password;
     }
@@ -63,7 +72,6 @@ public class User {
         this.password = password;
     }
 
-    @Column(columnDefinition = "varchar(50)")
     public String getAddress() {
         return address;
     }
@@ -72,7 +80,6 @@ public class User {
         this.address = address;
     }
 
-    @Column(columnDefinition = "varchar(100)")
     public String getComment() {
         return comment;
     }
@@ -91,4 +98,29 @@ public class User {
                 ']';
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (userId != user.userId) return false;
+        if (!login.equals(user.login)) return false;
+        if (!password.equals(user.password)) return false;
+        if (!name.equals(user.name)) return false;
+        if (address != null ? !address.equals(user.address) : user.address != null) return false;
+        return comment != null ? comment.equals(user.comment) : user.comment == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) userId;
+        result = 31 * result + login.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + name.hashCode();
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (comment != null ? comment.hashCode() : 0);
+        return result;
+    }
 }

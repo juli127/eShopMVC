@@ -2,10 +2,8 @@ package com.gmail.kramarenko104.factoryDao;
 
 import com.gmail.kramarenko104.dao.*;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
-@Component
+//@Component
 public class DaoFactory {
 
     private UserDaoImpl userDao;
@@ -14,7 +12,7 @@ public class DaoFactory {
     private OrderDaoImpl orderDao;
     private SessionFactory sessionFactory;
 
-    @Autowired
+//    @Autowired
     public void DaoFactory(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }

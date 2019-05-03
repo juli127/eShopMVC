@@ -49,7 +49,7 @@
     <bean id="user" class="com.gmail.kramarenko104.model.User" scope="session"/>
     <bean id="product" class="com.gmail.kramarenko104.model.Product" scope="prototype"/>
     <bean id="cart" class="com.gmail.kramarenko104.model.Cart"
-          c:userId="#{user.id}" p:totalSum="0" p:itemsCount="0" depends-on="user" scope="session">
+          c:userId="#{user.userId}" p:totalSum="0" p:itemsCount="0" depends-on="user" scope="session">
         <p:products>
             <map>
                 <entry key="<null/>" value="0"/>

@@ -2,7 +2,9 @@ package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.dao.CartDaoImpl;
 import com.gmail.kramarenko104.model.Cart;
-import org.apache.log4j.Logger;
+import org.hibernate.Session;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +13,13 @@ public class CartServiceImpl implements CartService {
 
     @Autowired
     private CartDaoImpl cartDao;
-    private static Logger logger = Logger.getLogger(CartService.class);
+    private static Logger logger = LoggerFactory.getLogger(CartService.class);
 
-    public Cart getCart(int userId){
+    public void setCartDao(CartDaoImpl cartDao){
+        this.cartDao = cartDao;
+    }
+
+    public Cart getCart(long userId){
         Cart userCart = cartDao.getCart(userId);
         if (userCart == null) {
             logger.debug("CartServlet: cart from DB == null! create new cart for userId: " + userId);
@@ -22,19 +28,27 @@ public class CartServiceImpl implements CartService {
         return userCart;
     }
 
-    public void addProduct(int userId, int productId, int quantity) {
+    public void addProduct(long userId, long productId, int quantity) {
         cartDao.addProduct(userId, productId, quantity);
     }
 
-    public void removeProduct(int userId, int productId, int quantity){
+    public void removeProduct(long userId, long productId, int quantity){
         cartDao.removeProduct(userId, productId, quantity);
     }
 
-    public void deleteCart(int userId){
+    public void deleteCart(long userId){
         cartDao.deleteCart(userId);
     }
 
-    public boolean sessionIsOpen() {
-        return cartDao.sessionIsOpen();
+    public Session openSession() {
+        return cartDao.getSessionFactory().openSession();
+    }
+
+    public void closeSession(){
+        cartDao.getSessionFactory().getCurrentSession().close();
+    }
+
+    public void addCart(Cart cart) {
+        cartDao.addCart(cart);
     }
 }

@@ -8,11 +8,11 @@ import java.util.Map;
 
 public interface OrderDao {
 
-    Order createOrderForUser(int orderId, int userId, Map<Product, Integer> products);
+    Order createOrderForUser(long orderId, long userId, Map<Product, Integer> products);
 
-    List<Order> getAllOrdersForUser(int userId);
+    List<Order> getAllOrdersForUser(long userId);
 
-    void deleteAllOrdersForUser(int userId);
+    void deleteAllOrdersForUser(long userId);
 
-    int getNewOrderId();
+    long getNewOrderId();
 }

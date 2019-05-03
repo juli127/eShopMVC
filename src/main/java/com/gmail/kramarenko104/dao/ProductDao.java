@@ -5,13 +5,13 @@ import java.util.List;
 
 public interface ProductDao {
 
-    int createProduct(Product product);
+    long createProduct(Product product);
 
-    Product getProduct(int id);
+    Product getProduct(long id);
 
-    int deleteProduct(int id);
+    long deleteProduct(long id);
 
-    int updateProduct(Product product);
+    long updateProduct(Product product);
 
     List<Product> getAllProducts();
 

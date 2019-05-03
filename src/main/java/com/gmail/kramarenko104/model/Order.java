@@ -6,87 +6,80 @@ import java.util.Map;
 
 /*
 entity 'orders_test':
-  id INT AUTO_INCREMENT,
-  orderNumber INT,
+  orderId BIGINT AUTO_INCREMENT,
+  orderNumber BIGINT,
   status VARCHAR(100),
-  userId INT,
-  productId INT,
+  userId BIGINT,
+  productId BIGINT,
   quantity INT,
   PRIMARY KEY (id),
   FOREIGN KEY (userId) REFERENCES users(id),
   FOREIGN KEY (productId) REFERENCES products(id)
  */
 
-@Entity
+//@Entity
 @Table(name = "orders_test")
+@Access(value=AccessType.FIELD)
 public class Order {
 
-    private int id;
-    private int orderNumber;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (nullable = false, updatable = false)
+    private long orderId;
+
+    @Column (nullable = false, updatable = false)
+    private long userId;
+
+    @Column (nullable = false, updatable = false)
+    private long orderNumber;
+
+    @Column
     private String status;
-    private int userId;
 
     @Transient
     private int itemsCount;
+
     @Transient
     private int totalSum;
 
-//    HOW  Map<Product, Integer> products should transfer Product -> field 'productId', Integer -> field 'quantity' ????
-//    @ElementCollection
-    @OneToMany(mappedBy = "order")
-    @MapKey(name = "id")
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "orderId") )
+    @MapKeyJoinColumn(name = "productId")
+    @Column(name="quantity")
     private Map<Product, Integer> products;
 
-    ////////////////////////////////
     public Order() {
         itemsCount = 0;
         totalSum = 0;
         products = new HashMap<>();
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public int getId() {
-        return id;
+    public long getOrderId() {
+        return orderId;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Column (nullable = false)
-    public int getOrderNumber() {
+    public long getOrderNumber() {
         return orderNumber;
     }
 
-    public void setOrderNumber(int orderNumber) {
+    public void setOrderNumber(long orderNumber) {
         this.orderNumber = orderNumber;
     }
 
-    public int getTotalSum() {
-        return totalSum;
-    }
-
-    public void setTotalSum(int totalSum) {
-        this.totalSum = totalSum;
-    }
-
-    @Column (nullable = false)
-    public int getUserId() {
+    public long getUserId() {
         return userId;
     }
 
-    @Column
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
     public String getStatus() {
         return status;
     }
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public Map<Product, Integer> getProducts() {
@@ -97,6 +90,14 @@ public class Order {
         this.products = products;
     }
 
+    public int getTotalSum() {
+        return totalSum;
+    }
+
+    public void setTotalSum(int totalSum) {
+        this.totalSum = totalSum;
+    }
+
     public int getItemsCount() {
         return itemsCount;
     }
@@ -104,29 +105,6 @@ public class Order {
     public void setItemsCount(int itemsCount) {
         this.itemsCount = itemsCount;
     }
-
-
-    //    @Column (nullable = false)
-//    private int productId;
-//
-//    @Column (nullable = false)
-//    private int quantity;
-
-    //    public int getProductId() {
-//        return productId;
-//    }
-//
-//    public void setProductId(int productId) {
-//        this.productId = productId;
-//    }
-//
-//    public int getQuantity() {
-//        return quantity;
-//    }
-//
-//    public void setQuantity(int quantity) {
-//        this.quantity = quantity;
-//    }
 
     @Override
     public String toString() {
@@ -137,5 +115,33 @@ public class Order {
                 ", totalSum=" + totalSum +
                 ", products=" + products +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+
+        Order order = (Order) o;
+
+        if (orderId != order.orderId) return false;
+        if (orderNumber != order.orderNumber) return false;
+        if (userId != order.userId) return false;
+        if (itemsCount != order.itemsCount) return false;
+        if (totalSum != order.totalSum) return false;
+        if (!status.equals(order.status)) return false;
+        return products.equals(order.products);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) orderId;
+        result = 31 * result + (int) orderNumber;
+        result = 31 * result + status.hashCode();
+        result = 31 * result + (int) userId;
+        result = 31 * result + itemsCount;
+        result = 31 * result + totalSum;
+        result = 31 * result + products.hashCode();
+        return result;
     }
 }

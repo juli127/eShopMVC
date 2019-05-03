@@ -37,12 +37,12 @@ public class OrderController {
 
     @RequestMapping(method = RequestMethod.POST, produces = "text/json")
     public String doPost(@RequestParam("action") String action,
-                         @RequestParam("userId") int userId,
+                         @RequestParam("userId") long userId,
                          Model model) {
 
         String jsondata = null;
 
-        if (cartService.sessionIsOpen()) {
+        if (cartService.openSession() != null) {
             if (model.asMap().get("user") != null) {
                 // get info from Ajax POST request (updateCart.js)
                 if (action != null && (action.equals("makeOrder"))) {
@@ -62,10 +62,11 @@ public class OrderController {
                         jsondata = new Gson().toJson(newOrder);
                         logger.debug("OrderServlet: send JSON data to cart.jsp ---->" + jsondata);
                     }
-                    cartService.deleteCart(Integer.valueOf(userId));
+                    cartService.deleteCart(Long.valueOf(userId));
                     model.addAttribute("userCart", null);
                 }
             }
+            cartService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

@@ -1,21 +1,19 @@
 package com.gmail.kramarenko104.repository;
 
 import com.gmail.kramarenko104.model.User;
-import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@Repository
+//@Repository
 @EnableTransactionManagement
 public class UserCrudRepositoryImpl implements UserCrudRepository {
 
@@ -24,7 +22,7 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
     private static final String GET_ALL_USERS = "select u from User u ";
     private TransactionTemplate transactionTemplate;
 
-    @PersistenceContext
+//    @PersistenceContext
     EntityManager entityManager;
 
 //    @Autowired
@@ -37,21 +35,21 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int createUser(User user) {
+    public long createUser(User user) {
         entityManager.persist(user);
-        return getUserByLogin(user.getLogin()).getId();
+        return getUserByLogin(user.getLogin()).getUserId();
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int updateUser(User user) {
+    public long updateUser(User user) {
         entityManager.merge(user);
-        return 1;
+        return 1L;
     }
 
     @Override
     @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
-    public User getUser(int id) {
+    public User getUser(long id) {
         return entityManager.find(User.class, id);
     }
 
@@ -70,9 +68,9 @@ public class UserCrudRepositoryImpl implements UserCrudRepository {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public int deleteUser(int id) {
+    public long deleteUser(long id) {
         entityManager.remove(getUser(id));
-        return 1;
+        return 1L;
     }
 
     public boolean sessionIsOpen() {

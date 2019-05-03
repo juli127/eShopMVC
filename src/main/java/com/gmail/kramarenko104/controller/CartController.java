@@ -4,7 +4,8 @@ import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.google.gson.Gson;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/cart")
 public class CartController {
 
-    private static Logger logger = Logger.getLogger(CartController.class);
+    private static Logger logger = LoggerFactory.getLogger(CartController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
 
     @Autowired
@@ -28,17 +29,18 @@ public class CartController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView doGet() {
         ModelAndView modelAndView = new ModelAndView("cart");
-        if (cartService.sessionIsOpen()) {
+        if (cartService.openSession() != null) {
             if (modelAndView.getModelMap().get("user") != null) {
                 User currentUser = (User) modelAndView.getModelMap().get("user");
                 logger.debug("CartServlet: Current user: " + currentUser.getName());
-                int userId = currentUser.getId();
+                long userId = currentUser.getUserId();
 
                 if (modelAndView.getModelMap().get("userCart") == null) {
                     Cart userCart = cartService.getCart(userId);
                     modelAndView.addObject("userCart", userCart);
                 }
             }
+            cartService.closeSession();
         } else {
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -56,11 +58,11 @@ public class CartController {
 
         String jsonResp = null;
 
-        if (cartService.sessionIsOpen()) {
+        if (cartService.openSession() != null) {
             if (model.asMap().get("user") != null) {
                 User currentUser = (User) model.asMap().get("user");
                 logger.debug("CartServlet: Current user: " + currentUser.getName());
-                int userId = currentUser.getId();
+                long userId = currentUser.getUserId();
 
                 // CHANGE CART
                 // get info from Ajax POST req (from updateCart.js)
@@ -69,13 +71,13 @@ public class CartController {
                     switch (action) {
                         case "add":
                             logger.debug("CatServlet: GOT PARAMETER 'add'....");
-                            logger.debug("CatServlet: userId: " + currentUser.getId() + ", productId: " + productId + ", quantity: " + quantity);
-                            cartService.addProduct(currentUser.getId(), productId, quantity);
+                            logger.debug("CatServlet: userId: " + currentUser.getUserId() + ", productId: " + productId + ", quantity: " + quantity);
+                            cartService.addProduct(currentUser.getUserId(), productId, quantity);
                             logger.debug("CartServlet: for user '" + currentUser.getName() + "' was added " + quantity + " of productId: " + productId);
                             break;
                         case "remove":
                             logger.debug("CartServlet: GOT PARAMETER 'remove' ");
-                            cartService.removeProduct(currentUser.getId(), productId, quantity);
+                            cartService.removeProduct(currentUser.getUserId(), productId, quantity);
                             logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
                             break;
                     }
@@ -91,6 +93,7 @@ public class CartController {
                     logger.debug("CartServlet: send JSON data to cart.jsp ---->" + jsondata);
                 }
             }
+            cartService.closeSession();
         } else { // session to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

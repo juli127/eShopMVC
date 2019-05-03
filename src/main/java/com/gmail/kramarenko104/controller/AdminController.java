@@ -4,7 +4,8 @@ import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ import java.util.List;
 public class AdminController {
 
     private static final String DB_WARNING = "Check your connection to DB!";
-    private static Logger logger = Logger.getLogger(AdminController.class);
+    private static Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired
     private UserServiceImpl userService;
@@ -32,11 +33,12 @@ public class AdminController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getAllInfo() {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (userService.sessionIsOpen()) {
+        if (userService.openSession() != null) {
             List<User> usersList = userService.getAllUsers();
             List<Product> productsList = productService.getAllProducts();
             modelAndView.addObject("productsList", productsList);
             modelAndView.addObject("usersList", usersList);
+            userService.closeSession();
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -50,7 +52,7 @@ public class AdminController {
                                       @RequestParam("description") String description,
                                       @RequestParam("image") String image) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (productService.sessionIsOpen()) {
+        if (productService.openSession() != null) {
             Product newProduct = new Product();
             newProduct.setName(name);
             int categoryInt = ("dress".equals(category) ? 1 : ("shoes".equals(category) ? 2 : 3));
@@ -60,6 +62,7 @@ public class AdminController {
             newProduct.setImage(image);
             logger.debug("adminServlet.addNewProduct: got from form new product: " + newProduct);
             productService.addProduct(newProduct);
+            productService.closeSession();
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -69,8 +72,9 @@ public class AdminController {
     @RequestMapping(value = "/products/delete", method = RequestMethod.POST)
     public ModelAndView deleteProduct(@RequestParam int productId) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (productService.sessionIsOpen()) {
-                productService.deleteProduct(productId);
+        if (productService.openSession() != null) {
+            productService.deleteProduct(productId);
+            productService.closeSession();
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }

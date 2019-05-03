@@ -32,10 +32,10 @@ public class ProductController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected String getProducts(@RequestParam("selectedCategory") String selectedCateg, Model model) {
+    protected String getProducts(@RequestParam(value = "selectedCategory", required=false)  String selectedCateg, Model model) {
 
         // connection to DB is open
-        if (productService.sessionIsOpen()) {
+        if (productService.openSession() != null) {
             List<Product> products;
 
             // when form is opened at the first time, selectedCateg == null
@@ -55,7 +55,7 @@ public class ProductController {
                 User currentUser = (User) model.asMap().get("user");
                 Cart userCart = null;
                 if (model.asMap().get("userCart") == null) {
-                    int userId = currentUser.getId();
+                    long userId = currentUser.getUserId();
                     userCart = cartService.getCart(userId);
                     if (userCart == null) {
                         userCart = new Cart(userId);
@@ -63,6 +63,7 @@ public class ProductController {
                     model.addAttribute("userCart", userCart);
                 }
             }
+            productService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

@@ -5,15 +5,14 @@ import java.util.List;
 
 public interface ProductService {
 
-    int addProduct(Product product);
+    long addProduct(Product product);
 
-    Product getProduct(int id);
+    Product getProduct(long id);
 
-    int deleteProduct(int id);
+    long deleteProduct(long id);
 
     List<Product> getAllProducts();
 
     List<Product> getProductsByCategory(int category);
 
-    boolean sessionIsOpen();
 }

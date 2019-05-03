@@ -2,6 +2,7 @@ package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.model.Product;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -12,15 +13,15 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDaoImpl productDao;
 
-    public int addProduct(Product product) {
+    public long addProduct(Product product) {
         return productDao.createProduct(product);
     }
 
-    public Product getProduct(int id) {
+    public Product getProduct(long id) {
         return productDao.getProduct(id);
     }
 
-    public int deleteProduct(int id) {
+    public long deleteProduct(long id) {
         return productDao.deleteProduct(id);
     }
 
@@ -32,7 +33,15 @@ public class ProductServiceImpl implements ProductService {
         return productDao.getProductsByCategory(category);
     }
 
-    public boolean sessionIsOpen() {
-        return productDao.sessionIsOpen();
+    public Session openSession() {
+        return productDao.getSessionFactory().openSession();
+    }
+
+    public void closeSession(){
+        productDao.getSessionFactory().getCurrentSession().close();
+    }
+
+    public void setProductDao(ProductDaoImpl productDao) {
+        this.productDao = productDao;
     }
 }

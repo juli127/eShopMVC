@@ -5,7 +5,8 @@ import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/login")
 public class LoginController {
 
-    private static Logger logger = Logger.getLogger(LoginController.class);
+    private static Logger logger = LoggerFactory.getLogger(LoginController.class);
     private static final int MAX_LOGIN_ATTEMPTS = 3;
     private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
     private static final String DB_WARNING = "Check your connection to DB!";
@@ -48,7 +49,7 @@ public class LoginController {
         String viewToGo = "login";
 
         // Connection to DB is open
-        if (userService.sessionIsOpen()) {
+        if (userService.openSession() != null) {
             boolean showLoginForm = true;
             boolean accessGranted = false;
             StringBuilder msgText = new StringBuilder();
@@ -116,9 +117,9 @@ public class LoginController {
                 showLoginForm = false;
                 Cart userCart = (Cart) model.asMap().get("userCart");
                 if (userCart == null) {
-                    userCart = cartService.getCart(currentUser.getId());
+                    userCart = cartService.getCart(currentUser.getUserId());
                     if (userCart == null) {
-                        userCart = new Cart(currentUser.getId());
+                        userCart = new Cart(currentUser.getUserId());
                     }
                     model.addAttribute("userCart", userCart);
                 }
@@ -132,7 +133,7 @@ public class LoginController {
             model.addAttribute("message", msgText.toString());
             model.addAttribute("attempt", attempt);
             model.addAttribute("isAdmin", isAdmin);
-
+            userService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

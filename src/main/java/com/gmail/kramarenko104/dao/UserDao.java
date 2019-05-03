@@ -5,17 +5,16 @@ import java.util.List;
 
 public interface UserDao {
 
-    int createUser(User user);
+    long createUser(User user);
 
-    User getUser(int id);
+    User getUser(long id);
 
     User getUserByLogin(String login);
 
-    int updateUser(User user);
+    long updateUser(User user);
 
-    int deleteUser(int id);
+    long deleteUser(long id);
 
     List<User> getAllUsers();
 
-    boolean sessionIsOpen();
 }
