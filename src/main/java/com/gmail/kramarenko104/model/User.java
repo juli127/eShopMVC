@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
+import java.util.List;
 
 /*
   userId BIGINT AUTO_INCREMENT,
@@ -13,13 +14,12 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "users_test")
+@Table(name = "users")
 @Access(value=AccessType.FIELD)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "userId", unique = true, nullable = false, updatable = false)
     private long userId;
 
     @Column (unique = true, nullable = false, updatable = false, columnDefinition = "varchar(30)")
@@ -37,15 +37,28 @@ public class User {
     @Column(columnDefinition = "varchar(100)")
     private String comment;
 
-    public User() {
+    @OneToOne (mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    private Cart cart;
+
+    @OneToMany (mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<Order> orders;
+
+    public List<Order> getOrders() {
+        return orders;
     }
 
-    public long getUserId() {
-        return userId;
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+    public User() {
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public String getLogin() {
@@ -88,39 +101,19 @@ public class User {
         this.comment = comment;
     }
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
     @Override
     public String toString() {
         return "User[" +
                 "login='" + login + '\'' +
-                ", name='" + name + '\'' +
-                ", address='" + address + '\'' +
-                ", comment='" + comment + '\'' +
-                ']';
+                ", name='" + name + ']';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (userId != user.userId) return false;
-        if (!login.equals(user.login)) return false;
-        if (!password.equals(user.password)) return false;
-        if (!name.equals(user.name)) return false;
-        if (address != null ? !address.equals(user.address) : user.address != null) return false;
-        return comment != null ? comment.equals(user.comment) : user.comment == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) userId;
-        result = 31 * result + login.hashCode();
-        result = 31 * result + password.hashCode();
-        result = 31 * result + name.hashCode();
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + (comment != null ? comment.hashCode() : 0);
-        return result;
-    }
 }

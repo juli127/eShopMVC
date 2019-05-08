@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,23 +18,23 @@ entity 'orders_test':
   FOREIGN KEY (productId) REFERENCES products(id)
  */
 
-//@Entity
-@Table(name = "orders_test")
-@Access(value=AccessType.FIELD)
+@Entity
+@Table(name = "orders")
+@Access(value = AccessType.FIELD)
 public class Order {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column (nullable = false, updatable = false)
     private long orderId;
 
-    @Column (nullable = false, updatable = false)
-    private long userId;
-
-    @Column (nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     private long orderNumber;
 
-    @Column
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "userId", nullable = false, updatable = false)
+    private User user;
+
+    @Column(columnDefinition = "varchar(20)")
     private String status;
 
     @Transient
@@ -42,10 +43,11 @@ public class Order {
     @Transient
     private int totalSum;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @CollectionTable(name = "order_products", joinColumns = @JoinColumn(name = "orderId") )
-    @MapKeyJoinColumn(name = "productId")
-    @Column(name="quantity")
+    @ElementCollection
+    @CollectionTable(name = "orders_products", joinColumns = @JoinColumn(name = "orderId"))
+    @MapKeyJoinColumn(name = "productId", updatable = false)
+    @Column(name = "quantity")
+    @OrderColumn (name = "orderId")
     private Map<Product, Integer> products;
 
     public Order() {
@@ -54,8 +56,20 @@ public class Order {
         products = new HashMap<>();
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public long getOrderId() {
         return orderId;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 
     public long getOrderNumber() {
@@ -64,14 +78,6 @@ public class Order {
 
     public void setOrderNumber(long orderNumber) {
         this.orderNumber = orderNumber;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
     }
 
     public String getStatus() {
@@ -110,38 +116,10 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "orderNumber=" + orderNumber +
-                ", userId=" + userId +
+                ", user=" + user +
                 ", itemsCount=" + itemsCount +
                 ", totalSum=" + totalSum +
-                ", products=" + products +
-                '}';
+                ", products=[" + Arrays.asList(products) + "]}";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Order)) return false;
-
-        Order order = (Order) o;
-
-        if (orderId != order.orderId) return false;
-        if (orderNumber != order.orderNumber) return false;
-        if (userId != order.userId) return false;
-        if (itemsCount != order.itemsCount) return false;
-        if (totalSum != order.totalSum) return false;
-        if (!status.equals(order.status)) return false;
-        return products.equals(order.products);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) orderId;
-        result = 31 * result + (int) orderNumber;
-        result = 31 * result + status.hashCode();
-        result = 31 * result + (int) userId;
-        result = 31 * result + itemsCount;
-        result = 31 * result + totalSum;
-        result = 31 * result + products.hashCode();
-        return result;
-    }
 }

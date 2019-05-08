@@ -14,13 +14,12 @@ import javax.persistence.*;
  */
 
 @Entity
-@Table(name = "products_test")
+@Table(name = "products")
 @Access(value=AccessType.FIELD)
 public class Product {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true, nullable = false, updatable = false)
     private long productId;
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(100)")
@@ -38,6 +37,7 @@ public class Product {
     @Column(columnDefinition = "varchar(100)")
     private String image;
 
+
     public Product() {
     }
 
@@ -45,7 +45,7 @@ public class Product {
         return productId;
     }
 
-    public void setProductId(Long productId) {
+    public void setProductId(long productId) {
         this.productId = productId;
     }
 
@@ -94,29 +94,4 @@ public class Product {
         return "{\"productId\":" + productId + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Product)) return false;
-
-        Product product = (Product) o;
-
-        if (productId != product.productId) return false;
-        if (category != product.category) return false;
-        if (price != product.price) return false;
-        if (!name.equals(product.name)) return false;
-        if (description != null ? !description.equals(product.description) : product.description != null) return false;
-        return image != null ? image.equals(product.image) : product.image == null;
-    }
-
-    @Override
-    public int hashCode() {
-        int result = (int) productId;
-        result = 31 * result + name.hashCode();
-        result = 31 * result + category;
-        result = 31 * result + price;
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (image != null ? image.hashCode() : 0);
-        return result;
-    }
 }
