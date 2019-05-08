@@ -153,11 +153,7 @@
         <artifactId>hibernate-commons-annotations</artifactId>
         <version>5.1.5.RELEASE</version>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-commons-annotations</artifactId>-->
-        <!--<version>3.3.0.ga</version>-->
-        <!--</dependency>-->
+
         <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.springframework.data/spring-data-commons-core &ndash;&gt;-->
         <!--<dependency>-->
         <!--<groupId>org.springframework.data</groupId>-->
@@ -260,6 +256,11 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-annotations</artifactId>
+            <version>3.3.1.GA</version>
         </dependency>
 
         <!--<dependency>-->

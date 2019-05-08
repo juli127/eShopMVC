@@ -8,7 +8,8 @@
 
         <!-- Database connection settings -->
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</property>
+        <!--<property name="connection.url">jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</property>-->
+        <property name="connection.url">jdbc:mysql://localhost:3306/testdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</property>
         <property name="connection.username">julia</property>
         <property name="connection.password">julia</property>
 
@@ -33,7 +34,7 @@
         <mapping class="com.gmail.kramarenko104.model.User"/>
         <mapping class="com.gmail.kramarenko104.model.Product"/>
         <mapping class="com.gmail.kramarenko104.model.Cart"/>
-        <!--<mapping class="com.gmail.kramarenko104.model.Order"/>-->
+        <mapping class="com.gmail.kramarenko104.model.Order"/>
 
     </session-factory>
 </hibernate-configuration>
