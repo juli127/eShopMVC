@@ -1,8 +1,10 @@
 package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.UserServiceImpl;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +28,11 @@ public class RegistrationController {
     @Autowired
     private UserServiceImpl userService;
 
+    //@Autowired
+    private SessionFactory sessionFactory;
+
     public RegistrationController() {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -45,7 +51,7 @@ public class RegistrationController {
 
         String viewToGo = "registration";
 
-        if (userService.openSession() != null) {
+        if (sessionFactory != null) {
             boolean needRegistration = true;
             boolean userExist = false;
             StringBuilder message = new StringBuilder();
@@ -91,13 +97,14 @@ public class RegistrationController {
                         newUser.setAddress(address);
                         newUser.setComment(comment);
                         long newUserId = userService.createUser(newUser);
-//                        newUser = userService.getUserByLogin(login);
                         if (newUserId > 0) {
-                            newUser.setUserId(newUserId);
+                            newUser = userService.getUser(newUserId);
                             logger.debug("RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
                             model.addAttribute("user", newUser);
-                            model.addAttribute("userCart", new Cart(newUser.getUserId()));
+                            Cart newCart = new Cart();
+                            newCart.setUser(newUser);
+                            model.addAttribute("userCart", newCart);
                         } else {
                             logger.debug("RegisrtServlet: new user was NOT created: got newUserId == " + newUserId);
                             model.addAttribute("user", null);
@@ -143,7 +150,6 @@ public class RegistrationController {
                 model.addAttribute("comment", null);
                 model.addAttribute("errorsMsg", null);
             }
-            userService.closeSession();
         } else {
             model.addAttribute("warning", DB_WARNING);
         }

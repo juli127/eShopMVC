@@ -3,15 +3,16 @@ package com.gmail.kramarenko104;
 import com.gmail.kramarenko104.dao.CartDaoImpl;
 import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.dao.UserDaoImpl;
-import com.gmail.kramarenko104.model.Cart;
-import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 public class RunApp {
 
@@ -85,38 +86,62 @@ public class RunApp {
     }
 }
 
+
 class Mytest {
+
+    private final static String SALT = "34Ru9k";
+    private final static String ENTITY_NAME = "User";
 
     @Autowired
     UserServiceImpl userService;
+
+    public static String hashString(String hash) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
+        return String.format("%032x", new BigInteger(md5.digest()));
+    }
 
     public void test(){
 //        ClassLoader classLoader = getClass().getClassLoader();
 //        String configFile = new File(classLoader.getResource("hikari.properties").getFile()).getAbsolutePath();
 //        System.out.println(configFile);
 
-//        Session session = HibernateUtil.getSessionFactory().openSession();
-//        session.beginTransaction();
-
+//        SessionFactory sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+//        Session session = sessionFactory.openSession();
         System.out.println("--------start---------");
+//        List<User> usersList = new ArrayList<>();
+
+        UserDaoImpl userDao = new UserDaoImpl();
+        UserServiceImpl userService = new UserServiceImpl();
+        userService.setUserDao(userDao);
 
 //        User user = new User();
+//        user.setLogin("admin");
+//        user.setPassword("admin");
+//        user.setName("Alex");
+//        user.setAddress("Kiev");
+//        user.setComment("-");
+//        userService.createUser(user);
+//
+//        user = new User();
+//        user.setLogin("alex@gmail.com");
+//        user.setPassword("A2345678");
+//        user.setName("Alexander");
+//        user.setAddress("Kiev");
+//        user.setComment("call before delivery");
+//        userService.createUser(user);
+//
+//        user = new User();
 //        user.setLogin("julia@gmail.com");
 //        user.setPassword("1111111");
 //        user.setName("julia");
 //        user.setAddress("Kiev");
 //        user.setComment("d'ont call");
-        UserDaoImpl userDao = new UserDaoImpl();
-        UserServiceImpl userService = new UserServiceImpl();
-        userService.setUserDao(userDao);
-//        userService.createUser(user);
-
-//        user = new User();
-//        user.setLogin("lex@gmail.com");
-//        user.setPassword("A2345678");
-//        user.setName("Alex");
-//        user.setAddress("Kiev");
-//        user.setComment("call before delivery");
 //        userService.createUser(user);
 //
 //        user = new User();
@@ -137,15 +162,15 @@ class Mytest {
         ProductDaoImpl productDao = new ProductDaoImpl();
         ProductServiceImpl productService = new ProductServiceImpl();
         productService.setProductDao(productDao);
-//        productService.addProduct(product);
-//
+//        productService.createProduct(product);
+
 //        product = new Product();
 //        product.setPrice(1654);
 //        product.setCategory(1);
 //        product.setName("Very berry marsala");
 //        product.setDescription("Very berry. Long satin dress with a guipure top, a high waistline and a boat neckline. Color: Marsala.");
 //        product.setImage("evening_dress_f1_2300.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(3400);
@@ -153,7 +178,7 @@ class Mytest {
 //        product.setName("Dress Felicia");
 //        product.setDescription("Silk satin dress. The top of the dress is laced. Silk satin skirt fits perfectly on the hips due to the folds. Dresses of A-shaped cut look amazing in a satin version, especially in pastel colors: ashy rose, peach, coffee colors.");
 //        product.setImage("evening_dress_felicia_4500.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(2100);
@@ -161,7 +186,7 @@ class Mytest {
 //        product.setName("Shoes ROSE GOLD Rock Glitter Ankle");
 //        product.setDescription("Comfortable stylish shoes decorated with sequins");
 //        product.setImage("baletki_1255.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(3500);
@@ -169,7 +194,7 @@ class Mytest {
 //        product.setName("Dolce & Gabbana");
 //        product.setDescription("Shoes Dolce & Gabbana, velvet wine shade, decorated with rhinestones");
 //        product.setImage("Dolce & Gabbana_3500.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(3750);
@@ -177,7 +202,7 @@ class Mytest {
 //        product.setName("Rene Caovilla");
 //        product.setDescription("Evening shoes Rene Caovilla, black velvet with rhinestones");
 //        product.setImage("Rene_Caovilla_4300.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(1429);
@@ -185,7 +210,7 @@ class Mytest {
 //        product.setName("Lady bag Parfois 163918-BU");
 //        product.setDescription("Portugal, size 28 x 29 x 13 см");
 //        product.setImage("parfois_163918-BU.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(1200);
@@ -193,7 +218,7 @@ class Mytest {
 //        product.setName("Lady bag Furla");
 //        product.setDescription("Italy, size 22 х 4,5 х 15 см");
 //        product.setImage("furla_1.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
 //
 //        product = new Product();
 //        product.setPrice(1200);
@@ -201,25 +226,50 @@ class Mytest {
 //        product.setName("Evening clutch with rhinestones");
 //        product.setDescription("The outer part of the bag is completely covered with rhinestone ornament. The back of the accessory is silver brocade. The case is rigid, the metal frame is silver. The size 22 х 4,5 х 12 см");
 //        product.setImage("klatch.jpg");
-//        productService.addProduct(product);
+//        productService.createProduct(product);
+//
+//
+//        System.out.println("---------------------------------");
 
-
-        System.out.println("---------------------------------");
-
-        Cart cart = new Cart(4);
-        HashMap<Product, Integer> products = new HashMap<>();
-        products.put(productDao.getProduct(2), 10);
-        cart.setProducts(products);
-
-        CartDaoImpl cartDao = new CartDaoImpl();
+        CartDaoImpl cartDao = new CartDaoImpl(userDao);
         CartServiceImpl cartService = new CartServiceImpl();
-        cartService.setCartDao(cartDao);
-        cartService.addCart(cart);
-//        cartService.addProduct(3, 1, 1);
-//        cartService.addProduct(1, 4, 3);
+        cartService.setDaos(cartDao, productDao);
+
+//        Cart cart = cartService.getCartByUserId(1);
+//        System.out.println("Got cart from DB for userId=1 : " + cart);
+//
+
+//        Cart cart = new Cart();
+//        User user = userService.getUser(9);
+//        cart.setUser(user);
+//        long id  = cartService.createCart(cart, user);
+//        System.out.println("created new cart with id = " + id);
+//        cartService.addProduct(9, 3, 22);
+//        cartService.removeProduct(9, 3, 10);
+//        System.out.println(cartService.getCartByUserId(9));
+        cartService.deleteCartByUserId(9);
+//
+
+//
+//        Cart cart = new Cart();
+//        cart.setUser(userService.getUser(1));
+//        cart.getProducts().put(productDao.getProduct(1), 1);
+//        cart.getProducts().put(productDao.getProduct(2), 1);
+//        cartService.addCart(cart);
+//
+//        cart = new Cart();
+//        cart.setUser(userService.getUser(2));
+//        cart.getProducts().put(productDao.getProduct(5), 1);
+//        cart.getProducts().put(productDao.getProduct(3), 2);
+//        cartService.addCart(cart);
+
+
+
+        /////////
+        //System.out.println("getCart(1):" + cartService.getCart(2));
+
 
         System.out.println("--------end---------");
-//        session.close();
     }
 
 }

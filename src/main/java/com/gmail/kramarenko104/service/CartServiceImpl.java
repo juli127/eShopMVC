@@ -1,54 +1,60 @@
 package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.dao.CartDaoImpl;
+import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.model.Cart;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CartServiceImpl implements CartService {
 
-    @Autowired
+    //@Autowired
     private CartDaoImpl cartDao;
+    //@Autowired
+    private ProductDaoImpl productDao;
     private static Logger logger = LoggerFactory.getLogger(CartService.class);
 
-    public void setCartDao(CartDaoImpl cartDao){
+    public void setDaos(CartDaoImpl cartDao, ProductDaoImpl productDao){
         this.cartDao = cartDao;
+        this.productDao = productDao;
     }
 
-    public Cart getCart(long userId){
-        Cart userCart = cartDao.getCart(userId);
-        if (userCart == null) {
-            logger.debug("CartServlet: cart from DB == null! create new cart for userId: " + userId);
-            userCart = new Cart(userId);
-        }
-        return userCart;
+    @Override
+    public long createCart(Cart cart) {
+        return cartDao.createCart(cart);
     }
 
+    public Cart getCartByUserId(long userId){
+        return cartDao.getCartByUserId(userId);
+    }
+
+    @Override
     public void addProduct(long userId, long productId, int quantity) {
-        cartDao.addProduct(userId, productId, quantity);
+        cartDao.addProduct(userId, productDao.getProduct(productId), quantity);
     }
 
-    public void removeProduct(long userId, long productId, int quantity){
-        cartDao.removeProduct(userId, productId, quantity);
+    @Override
+    public void removeProduct(long userId, long productId, int quantity) {
+        cartDao.removeProduct(userId, productDao.getProduct(productId), quantity);
     }
 
-    public void deleteCart(long userId){
-        cartDao.deleteCart(userId);
+    @Override
+    public void deleteCartByUserId(long userId) {
+        cartDao.deleteCartByUserId(userId);
     }
 
-    public Session openSession() {
-        return cartDao.getSessionFactory().openSession();
+    @Override
+    public List<Cart> getAllCartsByUserId(long userId) {
+        return null;
     }
 
-    public void closeSession(){
-        cartDao.getSessionFactory().getCurrentSession().close();
+    @Override
+    public List<Cart> getAllCarts() {
+        return cartDao.getAllCarts();
     }
 
-    public void addCart(Cart cart) {
-        cartDao.addCart(cart);
-    }
 }

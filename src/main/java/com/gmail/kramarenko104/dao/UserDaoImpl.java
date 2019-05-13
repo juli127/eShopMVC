@@ -1,20 +1,16 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
+import com.gmail.kramarenko104.hibernate.EntityManagerFactoryUtil;
 import com.gmail.kramarenko104.model.User;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.annotations.DynamicUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Repository
@@ -22,17 +18,17 @@ import java.util.List;
 //@EnableTransactionManagement
 public class UserDaoImpl implements UserDao {
 
-    //    @Autowired
+    // @Autowired
     private SessionFactory sessionFactory;
-    private final static String ENTITY_NAME = "User";
-    private final static String SALT = "34Ru9k";
-    private final static String GET_ALL_USERS = "select u from " + ENTITY_NAME + " u";
-    private final static String GET_USER_BY_LOGIN = "select u from " + ENTITY_NAME + " u where u.login = :login";
+    private final static String GET_ALL_USERS = "select u from User u";
+    private final static String GET_USER_BY_LOGIN = "select u from User u where u.login = :login";
     private final static Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
-    private Session session;
+//    private Session session;
+    private EntityManagerFactory emf;
 
     public UserDaoImpl() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+//        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
     }
 
 //    @Autowired
@@ -42,97 +38,95 @@ public class UserDaoImpl implements UserDao {
 //
 //    }
 
-    //    @Transactional
     @Override
-    public long save(User user) {
-        session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        User criptUser = user;
-        criptUser.setPassword(hashString(user.getPassword()));
+    public long createUser(User user) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        long userId = -1;
         try {
-            Serializable id = session.save(criptUser);
-            return (long) id;
-        } finally {
+            tx.begin();
+            em.persist(user);
             tx.commit();
-            session.close();
+            userId = user.getUserId();
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
+        return userId;
     }
 
-    //    @Transactional
     @Override
-    public long update(User user) {
-        session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
+    public long updateUser(User updUser) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        long userId = -1;
         try {
-            session.update(user);
-            long identifier = (long) session.getIdentifier(user);
-            return identifier;
-        } finally {
+            userId = updUser.getUserId();
+            tx.begin();
+            User dbUser = em.find(User.class, userId);
+            dbUser.setLogin(updUser.getLogin());
+            dbUser.setOrders(updUser.getOrders());
+            dbUser.setCart(updUser.getCart());
+            dbUser.setPassword(updUser.getPassword());
+            dbUser.setComment(updUser.getComment());
+            dbUser.setAddress(updUser.getAddress());
+            dbUser.setName(updUser.getName());
             tx.commit();
-            session.close();
+        } catch (Exception ex){
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
+        return userId;
     }
 
-    //    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
-    public User get(long id) {
-        session = sessionFactory.openSession();
-        User user = (User) session.get(User.class, id);
-        session.close();
+    public User getUser(long userId) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, userId);
+        em.close();
         return user;
     }
 
-    //    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
-    public List<User> getAll() {
-        session = sessionFactory.openSession();
-        List<User> usersList = session.createQuery(GET_ALL_USERS).list();
-        session.close();
+    public List<User> getAllUsers() {
+        EntityManager em = emf.createEntityManager();
+        List<User> usersList = em.createQuery(GET_ALL_USERS).getResultList();
+        em.close();
         return usersList;
     }
 
-    //    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
     public User getUserByLogin(String login) {
-        session = sessionFactory.openSession();
-        User user = (User) session.createQuery(GET_USER_BY_LOGIN)
+        EntityManager em = emf.createEntityManager();
+        User user = (User) em.createQuery(GET_USER_BY_LOGIN)
                 .setParameter("login", login)
                 .getSingleResult();
-        session.close();
+        em.close();
         return user;
     }
 
-    @Transactional
     @Override
-    public long delete(long id) {
-        session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        long identifier = -1;
-        User user = session.get(User.class, id);
-        if (user != null) {
-            session.delete(user);
-            session.flush();
-            identifier = (long) session.getIdentifier(user);
-        }
-        tx.commit();
-        session.close();
-        return identifier;
-    }
-
-    public static String hashString(String hash) {
-        MessageDigest md5 = null;
+    public void deleteUser(long userId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            tx.begin();
+            User user = em.find(User.class, userId);
+            if (user != null) {
+                em.remove(user);
+            }
+            tx.commit();
+        } catch (Exception ex){
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
-        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
-        return String.format("%032x", new BigInteger(md5.digest()));
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
     }
 }

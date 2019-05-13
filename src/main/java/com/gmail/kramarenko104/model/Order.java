@@ -1,5 +1,7 @@
 package com.gmail.kramarenko104.model;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ public class Order {
     @Column(nullable = false, updatable = false)
     private long orderNumber;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, updatable = false)
     private User user;
 
@@ -48,6 +50,7 @@ public class Order {
     @MapKeyJoinColumn(name = "productId", updatable = false)
     @Column(name = "quantity")
     @OrderColumn (name = "orderId")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Map<Product, Integer> products;
 
     public Order() {

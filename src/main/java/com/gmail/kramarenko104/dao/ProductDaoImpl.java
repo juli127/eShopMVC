@@ -1,17 +1,17 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.factoryDao.HibernateSessionFactoryUtil;
+import com.gmail.kramarenko104.hibernate.EntityManagerFactoryUtil;
 import com.gmail.kramarenko104.model.Product;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import java.io.Serializable;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -21,9 +21,11 @@ public class ProductDaoImpl implements ProductDao {
 
 //    @Autowired
     private SessionFactory sessionFactory;
-    private final static String ENTITY_NAME = "Product";
+    private final static String GET_ALL_PRODUCTS = "select p from Product p";
+    private final static String GET_PRODUCT_BY_CATEGORY = "select p from Product p where p.category = :category";
     private final static Logger logger = LoggerFactory.getLogger(ProductDaoImpl.class);
-    private Session session;
+//    private Session session;
+    private EntityManagerFactory emf;
 
 //    @Autowired
 //    public ProductDaoImpl(SessionFactory sessionFactory) {
@@ -31,85 +33,100 @@ public class ProductDaoImpl implements ProductDao {
 //    }
 
     public ProductDaoImpl() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+//        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
     }
 
-//    @Transactional
     @Override
     public long createProduct(Product product) {
-        session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        Serializable id = session.save(ENTITY_NAME, product);
-        session.flush();
-        tx.commit();
-        session.close();
-        return (long) id;
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        long productId = -1;
+        try {
+            tx.begin();
+            em.persist(product);
+            tx.commit();
+            productId = product.getProductId();
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return productId;
     }
 
-//    @Transactional
     @Override
-    public long updateProduct(Product product) {
-        session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.update(ENTITY_NAME, product);
-        session.flush();
-        long identifier = (int) session.getIdentifier(session);
-        tx.commit();
-        session.close();
-        return identifier;
+    public long updateProduct(Product updPoduct) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        long productId = -1;
+        try {
+            tx.begin();
+            productId = updPoduct.getProductId();
+            Product dbProduct = em.find(Product.class, productId);
+            dbProduct.setName(updPoduct.getName());
+            dbProduct.setImage(updPoduct.getImage());
+            dbProduct.setCategory(updPoduct.getCategory());
+            dbProduct.setDescription(updPoduct.getDescription());
+            dbProduct.setPrice(updPoduct.getPrice());
+            tx.commit();
+        } catch (Exception ex){
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
+        return productId;
     }
 
-//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     public Product getProduct(long productId) {
-        session = sessionFactory.openSession();
-        Product product = (Product) session.get(Product.class, productId);
-        session.close();
+        EntityManager em = emf.createEntityManager();
+        Product product = em.find(Product.class, productId);
+        em.close();
         return product;
     }
 
-//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
     public List<Product> getAllProducts() {
-        session = sessionFactory.openSession();
-        Query query = session.createQuery("select p from " + ENTITY_NAME + " p");
-        List<Product> productsList = query.list();
-        session.close();
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createQuery(GET_ALL_PRODUCTS);
+        List<Product> productsList = query.getResultList();
+        em.close();
         return productsList;
     }
 
-//    @Transactional(readOnly = true, propagation = Propagation.SUPPORTS)
     @Override
     @SuppressWarnings("unchecked")
     public List<Product> getProductsByCategory(int category) {
-        session = sessionFactory.openSession();
-        Query query = session.createQuery("select p from " + ENTITY_NAME + " p where p.category = :category");
+        EntityManager em = emf.createEntityManager();
+        Query query = em.createQuery(GET_PRODUCT_BY_CATEGORY);
         List<Product> productsList = query
                 .setParameter("category", category )
                 .getResultList();
-        session.close();
+        em.close();
         return productsList;
     }
 
-//    @Transactional
     @Override
-    public long deleteProduct(long productId) {
-        session = sessionFactory.openSession();
-        long identifier = -1;
-        Transaction tx = session.beginTransaction();
-        Product product = session.get(Product.class, productId);
-        if (product != null) {
-            session.delete(ENTITY_NAME, product);
-            session.flush();
-            identifier = (int) session.getIdentifier(product);
+    public void deleteProduct(long productId) {
+        EntityManager em = emf.createEntityManager();
+        long id = -1;
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Product product = em.find(Product.class, productId);
+            if (product != null) {
+                em.remove(product);
+                tx.commit();
+            }
+        } catch (Exception ex){
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
-        tx.commit();
-        session.close();
-        return identifier;
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
     }
 }

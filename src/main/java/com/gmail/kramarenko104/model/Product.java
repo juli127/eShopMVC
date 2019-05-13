@@ -37,7 +37,6 @@ public class Product {
     @Column(columnDefinition = "varchar(100)")
     private String image;
 
-
     public Product() {
     }
 
@@ -94,4 +93,27 @@ public class Product {
         return "{\"productId\":" + productId + ",\"name\":\"" + name + "\",\"price\":" + price + "}";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Product)) return false;
+
+        Product product = (Product) o;
+
+        if (productId != product.productId) return false;
+        if (category != product.category) return false;
+        if (price != product.price) return false;
+        if (!name.equals(product.name)) return false;
+        return description != null ? description.equals(product.description) : product.description == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (productId ^ (productId >>> 32));
+        result = 31 * result + name.hashCode();
+        result = 31 * result + category;
+        result = 31 * result + price;
+        result = 31 * result + (description != null ? description.hashCode() : 0);
+        return result;
+    }
 }

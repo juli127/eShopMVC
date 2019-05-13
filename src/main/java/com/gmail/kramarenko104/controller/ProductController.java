@@ -1,10 +1,12 @@
 package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +29,18 @@ public class ProductController {
     private ProductServiceImpl productService;
     @Autowired
     private CartServiceImpl cartService;
+    //@Autowired
+    private SessionFactory sessionFactory;
 
     public ProductController() {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected String getProducts(@RequestParam(value = "selectedCategory", required=false)  String selectedCateg, Model model) {
+    protected String getProducts(@RequestParam(value = "selectedCategory", required = false) String selectedCateg, Model model) {
 
         // connection to DB is open
-        if (productService.openSession() != null) {
+        if (sessionFactory != null) {
             List<Product> products;
 
             // when form is opened at the first time, selectedCateg == null
@@ -53,17 +58,11 @@ public class ProductController {
                 model.addAttribute("userCart", null);
             } else {
                 User currentUser = (User) model.asMap().get("user");
-                Cart userCart = null;
-                if (model.asMap().get("userCart") == null) {
-                    long userId = currentUser.getUserId();
-                    userCart = cartService.getCart(userId);
-                    if (userCart == null) {
-                        userCart = new Cart(userId);
-                    }
-                    model.addAttribute("userCart", userCart);
-                }
+                //re-check user cart according to currentUser
+                long userId = currentUser.getUserId();
+                Cart userCart = cartService.getCartByUserId(userId);
+                model.addAttribute("userCart", userCart);
             }
-            productService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

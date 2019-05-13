@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.google.gson.Gson;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,25 +24,27 @@ public class CartController {
 
     @Autowired
     private CartServiceImpl cartService;
+    //@Autowired
+    private SessionFactory sessionFactory;
 
     public CartController() {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView doGet() {
         ModelAndView modelAndView = new ModelAndView("cart");
-        if (cartService.openSession() != null) {
+        if (sessionFactory != null) {
             if (modelAndView.getModelMap().get("user") != null) {
                 User currentUser = (User) modelAndView.getModelMap().get("user");
                 logger.debug("CartServlet: Current user: " + currentUser.getName());
                 long userId = currentUser.getUserId();
 
                 if (modelAndView.getModelMap().get("userCart") == null) {
-                    Cart userCart = cartService.getCart(userId);
+                    Cart userCart = cartService.getCartByUserId(userId);
                     modelAndView.addObject("userCart", userCart);
                 }
             }
-            cartService.closeSession();
         } else {
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -58,14 +62,14 @@ public class CartController {
 
         String jsonResp = null;
 
-        if (cartService.openSession() != null) {
+        if (sessionFactory != null) {
             if (model.asMap().get("user") != null) {
                 User currentUser = (User) model.asMap().get("user");
                 logger.debug("CartServlet: Current user: " + currentUser.getName());
                 long userId = currentUser.getUserId();
 
                 // CHANGE CART
-                // get info from Ajax POST req (from updateCart.js)
+                // getProduct info from Ajax POST req (from updateCart.js)
                 boolean needRefresh = false;
                 if (action != null && action.length() > 0) {
                     switch (action) {
@@ -83,9 +87,9 @@ public class CartController {
                     }
                     needRefresh = true;
                 }
-                //  REFRESH CART's characteristics if refresh need
+                //  REFRESH CART's characteristics if need to refresh
                 if (model.asMap().get("userCart") == null || needRefresh) {
-                    Cart userCart = cartService.getCart(userId);
+                    Cart userCart = cartService.getCartByUserId(userId);
                     model.addAttribute("userCart", userCart);
 
                     // send JSON with updated Cart back to cart.jsp
@@ -93,7 +97,6 @@ public class CartController {
                     logger.debug("CartServlet: send JSON data to cart.jsp ---->" + jsondata);
                 }
             }
-            cartService.closeSession();
         } else { // session to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

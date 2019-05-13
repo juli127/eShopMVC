@@ -1,5 +1,8 @@
 package com.gmail.kramarenko104.model;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -25,7 +28,7 @@ public class Cart {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cartId;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, updatable = false)
     private User user;
 
@@ -35,11 +38,12 @@ public class Cart {
     @Transient
     private int totalSum;
 
-    @ElementCollection
+    @ElementCollection (fetch = FetchType.EAGER)
     @CollectionTable(name = "carts_products", joinColumns = @JoinColumn(name = "cartId"))
     @MapKeyJoinColumn(name = "productId", updatable = false)
     @Column(name = "quantity")
     @OrderColumn (name = "cartId")
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private Map<Product, Integer> products;
 
     public Cart() {
@@ -97,5 +101,6 @@ public class Cart {
                 ", totalSum=" + totalSum +
                 ", products=[" + Arrays.asList(products) + "]}";
     }
+
 
 }

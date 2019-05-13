@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104.controller;
 
+import com.gmail.kramarenko104.hibernate.EntityManagerFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.OrderServiceImpl;
+import com.gmail.kramarenko104.service.UserServiceImpl;
 import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.persistence.EntityManagerFactory;
 
 @Controller
 @RequestMapping("/order")
@@ -27,7 +31,17 @@ public class OrderController {
     @Autowired
     private CartServiceImpl cartService;
 
+    @Autowired
+    private UserServiceImpl userService;
+
+    //@Autowired
+//    private SessionFactory sessionFactory;
+    EntityManagerFactory emf;
+
+
     public OrderController() {
+        EntityManagerFactory emf = EntityManagerFactoryUtil.getEntityManagerFactory();
+//        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -42,14 +56,14 @@ public class OrderController {
 
         String jsondata = null;
 
-        if (cartService.openSession() != null) {
+        if (emf != null) {
             if (model.asMap().get("user") != null) {
-                // get info from Ajax POST request (updateCart.js)
+                // getProduct info from Ajax POST request (updateCart.js)
                 if (action != null && (action.equals("makeOrder"))) {
                     logger.debug("OrderServlet.POST: got userId from POST request: " + userId);
 
                     // any user can have only one existing now cart and many processed orders (userId uniquely identifies cart)
-                    Cart cart = cartService.getCart(userId);
+                    Cart cart = cartService.getCartByUserId(userId);
                     logger.debug("OrderServlet.POST: got cart from DB: " + cart);
 
                     // order will be created based on the cart's content
@@ -62,11 +76,10 @@ public class OrderController {
                         jsondata = new Gson().toJson(newOrder);
                         logger.debug("OrderServlet: send JSON data to cart.jsp ---->" + jsondata);
                     }
-                    cartService.deleteCart(Long.valueOf(userId));
+                    cartService.deleteCartByUserId(userId);
                     model.addAttribute("userCart", null);
                 }
             }
-            cartService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

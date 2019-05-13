@@ -2,63 +2,67 @@ package com.gmail.kramarenko104.service;
 
 import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.model.User;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    public void setUserDao(UserDaoImpl userDao) {
-        this.userDao = userDao;
-    }
+    private final static String SALT = "34Ru9k";
 
     @Autowired
     private UserDaoImpl userDao;
 
+    public void setUserDao(UserDaoImpl userDao) {
+        this.userDao = userDao;
+    }
+
     @Override
-//    @Transactional
     public long createUser(User user){
-        return userDao.save(user);
+        User criptUser = user;
+        criptUser.setPassword(hashString(user.getPassword()));
+        return userDao.createUser(criptUser);
     }
 
     @Override
-//    @Transactional
     public User getUser(long id){
-        return userDao.get(id);
+        return userDao.getUser(id);
     }
 
     @Override
-//    @Transactional
     public User getUserByLogin(String login){
         return userDao.getUserByLogin(login);
     }
 
     @Override
-//    @Transactional
     public long updateUser(User user) {
-        return userDao.update(user);
+        return userDao.updateUser(user);
     }
 
     @Override
-//    @Transactional
-    public long deleteUser(long id){
-        return userDao.delete(id);
+    public void deleteUser(long id){
+        userDao.deleteUser(id);
     }
 
     @Override
-//    @Transactional
     public List<User> getAllUsers(){
-        return userDao.getAll();
+        return userDao.getAllUsers();
     }
 
-    public Session openSession() {
-        return userDao.getSessionFactory().openSession();
-    }
-
-    public void closeSession(){
-        userDao.getSessionFactory().getCurrentSession().close();
+    public static String hashString(String hash) {
+        MessageDigest md5 = null;
+        try {
+            md5 = MessageDigest.getInstance("MD5");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
+        return String.format("%032x", new BigInteger(md5.digest()));
     }
 }

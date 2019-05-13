@@ -1,16 +1,17 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.factoryDao.HibernateSessionFactoryUtil;
+import com.gmail.kramarenko104.hibernate.EntityManagerFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+import com.gmail.kramarenko104.model.User;
 import org.hibernate.annotations.DynamicUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import java.util.HashMap;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
 import java.util.List;
 import java.util.Map;
 
@@ -18,174 +19,181 @@ import java.util.Map;
 @DynamicUpdate
 public class CartDaoImpl implements CartDao {
 
-    private final static String ENTITY_NAME = "Cart";
-    //    private final static String GET_PRODUCT_QUANTITY_FOR_USERID = "select c.quantity from " + ENTITY_NAME + " c where c.userId = :userId and c.productId = :productId";
-    private final static String GET_PRODUCT_QUANTITY_FOR_USERID = "select cp.quantity from cart_products cp INNER JOIN carts_test c ON c.cartId = cp.cartId where c.userId = :userId and cp.productId = :productId";
-    private final static String ADD_PRODUCT_TO_CART = "insert into " + ENTITY_NAME + " (userId, productId, quantity) VALUES(?,?,?)";
-    private final static String DELETE_PRODUCT = "delete from " + ENTITY_NAME + " c WHERE c.userId = :userId and c.productId = :productId";
-    private final static String UPDATE_CART = "update " + ENTITY_NAME + " c SET c.quantity = :quantity where c.userId = :userId and c.productId = :productId";
-    private final static String GET_ALL_PRODUCTS_FROM_CART = "SELECT products.*, " + ENTITY_NAME + ".quantity FROM products INNER JOIN " +
-            ENTITY_NAME + " ON products.id = " + ENTITY_NAME + ".productId WHERE " + ENTITY_NAME + ".userId = ?";
-    //    private final static String DELETE_CART = "delete from " + ENTITY_NAME + " c where c.userId = :userId";
+    private final static String GET_ALL_CARTS = "from Cart c";
+    private final static String GET_CART_BY_USERID = "from Cart c where c.user.userId = :userId";
     private final static Logger logger = LoggerFactory.getLogger(CartDaoImpl.class);
+    private EntityManagerFactory emf;
 
-    ///    @Autowired
-    private SessionFactory sessionFactory;
+    @Autowired
+    private UserDaoImpl userDao;
+
+    //@Autowired
+    //private SessionFactory sessionFactory;
+    //private Session session;
 
 //    @Autowired
 //    public CartDaoImpl(SessionFactory sessionFactory) {
 //        this.sessionFactory = sessionFactory;
 //    }
 
-    public CartDaoImpl() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
-        System.out.println(">>>. CartDaoImpl.getSessionFactory() = " + sessionFactory);
+    public CartDaoImpl(UserDaoImpl userDao) {
+        //sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
+        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
+        this.userDao = userDao;
     }
 
-    @Override
-    public Cart getCart(long userId) {
-        Cart cart = null;
-        Session session = sessionFactory.openSession();
-        Map<Product, Integer> productsMap = new HashMap<>();
-        session = sessionFactory.openSession();
-        List<Object[]> resultList = session.createNativeQuery(GET_ALL_PRODUCTS_FROM_CART)
-                .setParameter("userId", userId)
-                .getResultList();
-        session.close();
-
-        int totalSum = 0;
-        int itemsCount = 0;
-
-        for (Object[] resObject : resultList) {
-            Product product = new Product();
-            product.setProductId((Long) resObject[0]);
-            product.setName((String) resObject[1]);
-            product.setCategory((Integer) resObject[2]);
-            product.setDescription((String) resObject[3]);
-            int price = (Integer) resObject[4];
-            product.setPrice(price);
-            product.setImage((String) resObject[5]);
-            int quantity = (Integer) resObject[6];
-            productsMap.put(product, quantity);
-            itemsCount += quantity;
-            totalSum += quantity * price;
-        }
-
-        if (itemsCount > 0) {
-            cart = new Cart(userId);
-            cart.setProducts(productsMap);
-            cart.setItemsCount(itemsCount);
-            cart.setTotalSum(totalSum);
-        }
-        logger.debug("CartDao.getCart: return cart: " + cart);
-        return cart;
-    }
-
-    @Override
-    public void addProduct(long userId, long productId, int addQuantity) {
-        logger.debug("++++CartDao.createProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + addQuantity);
-        int dbQuantity = getProductQuantity(userId, productId);
-//        int dbQuantity = 0;
-        Session session = sessionFactory.openSession();
-        // there is already such product in dB, just update quantity
-        Transaction tx = session.beginTransaction();
-        if (dbQuantity > 0) {
-            logger.debug("++++CartDao.createProduct: there is already such product in dB, just update quantity");
-            session.createQuery(UPDATE_CART)
-                    .setParameter("quantity", dbQuantity + addQuantity)
-                    .setParameter("userId", userId)
-                    .setParameter("productId", productId)
-                    .executeUpdate();
+    public long createCart(Cart cart) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        long cartId = -1;
+        try {
+            tx.begin();
+            cart.setUser(em.merge(cart.getUser()));
+            em.persist(cart);
             tx.commit();
-
-        } else { // there isn't such product in dB, add it
-            logger.debug("++++CartDao.createProduct: there isn't such product in dB, add it");
-            logger.debug("++++CartDao.createProduct: userId: " + userId + ", productId: " + productId + ", addQuantity: " + addQuantity);
-            session.createNativeQuery(ADD_PRODUCT_TO_CART)
-                    .setParameter("userId", userId)
-                    .setParameter("productId", productId)
-                    .setParameter("quantity", addQuantity)
-                    .executeUpdate();
-            tx.commit();
+            cartId = cart.getCartId();
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
-        session.close();
-    }
-
-    private int getProductQuantity(long userId, long productId) {
-        Session session = sessionFactory.openSession();
-
-        int quantity = (int) session.createNativeQuery(GET_PRODUCT_QUANTITY_FOR_USERID)
-                .setParameter("userId", userId)
-                .setParameter("productId", productId)
-                .getSingleResult();
-        logger.debug("CartDao.getProductQuantity: there is " + quantity + " pieces of product " + productId + " for userId " + userId + " in the cart");
-        session.close();
-        return quantity;
+        return cartId;
     }
 
     @Override
-    public void removeProduct(long userId, long productId, int rmQuantity) {
-        logger.debug("----CartDao.removeProduct: for userId: " + userId + ", productId: " + productId + ", quantity: " + rmQuantity);
-        int dbQuantity = getProductQuantity(userId, productId);
-        Session session = sessionFactory.openSession();
+    public void addProduct(long userId, Product product, int addQuantity) {
+        logger.debug("++++CartDao.addProduct: for userId: " + userId + ", product: " + product + ", quantity: " + addQuantity);
+        int dbQuantity = 0;
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Cart cart = (Cart) em.createQuery(GET_CART_BY_USERID)
+                    .setParameter("userId", userId)
+                    .getSingleResult();
+            if (cart.getProducts().containsKey(product)) {
+                dbQuantity = cart.getProducts().get(product);
+            }
+            cart.getProducts().put(product, dbQuantity + addQuantity);
+            tx.commit();
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
+    }
 
-        // there is already such product in dB, just update quantity
-        if (dbQuantity > 0) {
-            Transaction tx = session.beginTransaction();
-            if (dbQuantity > 1) {
-                logger.debug("----CartDao.removeProduct: there is such product in dB, update quantity");
+    @Override
+    public void removeProduct(long userId, Product product, int rmQuantity) {
+        logger.debug("----CartDao.removeProduct: for userId: " + userId + ", product: " + product + ", quantity: " + rmQuantity);
+        int dbQuantity = 0;
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        tx.begin();
+        try {
+            Cart cart = (Cart) em.createQuery(GET_CART_BY_USERID).setParameter("userId", userId).getSingleResult();
+            if (cart.getProducts().containsKey(product)) {
+                dbQuantity = cart.getProducts().get(product);
+            }
+
+            // there is already such product in dB, just update quantity
+            if (dbQuantity > 0) {
                 // cannot remove more then we have
                 if (dbQuantity < rmQuantity) {
                     rmQuantity = dbQuantity;
                 }
-                session.createQuery(UPDATE_CART)
-                        .setParameter("quantity", dbQuantity - rmQuantity)
-                        .setParameter("userId", userId)
-                        .setParameter("productId", productId)
-                        .executeUpdate();
-                tx.commit();
-            } else {
-                // there is only 1 quantity of the product, so, delete this record from DB
-                logger.debug("----CartDao.removeProduct: there is only one product in dB, so, delete it from DB");
-                session.getTransaction().begin();
-                session.createQuery(DELETE_PRODUCT)
-                        .setParameter("userId", userId)
-                        .setParameter("productId", productId)
-                        .executeUpdate();
-                tx.commit();
+                if (rmQuantity != dbQuantity) {
+                    logger.debug("----CartDao.removeProduct: there is such product in dB, update quantity");
+                    cart.getProducts().put(product, dbQuantity - rmQuantity);
+                    tx.commit();
+                } else {
+                    // there is only 1 quantity of the product, so, deleteProduct this record from DB
+                    logger.debug("----CartDao.removeProduct: there is only one product in dB, so, deleteProduct it from DB");
+                    cart.getProducts().remove(product);
+                    tx.commit();
+                }
+            } else  // there isn't such product in db, noting to do
+            {
             }
-        } else { //there isn't such product in dB, do nothing
+            // check if there are any other products in the cart: if cart is empty, deleteProduct it
+            tx.begin();
+            cart = (Cart) em.createQuery(GET_CART_BY_USERID)
+                    .setParameter("userId", userId).getSingleResult();
+            if (cart.getProducts().size() == 0) {
+                em.remove(cart);
+            }
+            tx.commit();
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
         }
-        session.close();
     }
 
     @Override
-    public long deleteCart(long userId) {
-        Session session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        long identifier = -1;
-        Cart cart = session.get(Cart.class, userId);
-        if (cart != null) {
-            session.delete(ENTITY_NAME, cart);
-            session.flush();
-            identifier = (long) session.getIdentifier(cart);
+    public List<Cart> getAllCarts() {
+        EntityManager em = emf.createEntityManager();
+        List<Cart> cartsList = em.createQuery(GET_ALL_CARTS).getResultList();
+        em.close();
+        return cartsList;
+    }
+
+    @Override
+    public Cart getCartByUserId(long userId) {
+        EntityManager em = emf.createEntityManager();
+        Cart cart = (Cart) em.createQuery(GET_CART_BY_USERID)
+                .setParameter("userId", userId).getSingleResult();
+
+        if (cart == null) {
+            cart = new Cart();
+            User currentUser = userDao.getUser(userId);
+            cart.setUser(currentUser);
+            long cartId = createCart(cart);
+            cart = em.find(Cart.class, cartId);
         }
-        tx.commit();
-        session.close();
-        return identifier;
+        Map<Product, Integer> productsInCart = cart.getProducts();
+        int itemsCount = 0;
+        int totalSum = 0;
+
+        if (productsInCart.size() > 0) {
+            int quantity = 0;
+            for (Map.Entry<Product, Integer> entry : productsInCart.entrySet()) {
+                quantity = entry.getValue();
+                itemsCount += quantity;
+                totalSum += quantity * entry.getKey().getPrice();
+            }
+        }
+
+        if (itemsCount > 0) {
+            cart.setItemsCount(itemsCount);
+            cart.setTotalSum(totalSum);
+        }
+        logger.debug("CartDao.getCartByUserId: return cartSum: " + cart.getTotalSum() + ", getItemsCount:" + cart.getItemsCount());
+        em.close();
+        return cart;
     }
 
-    public void addCart(Cart cart) {
-        Session session = sessionFactory.openSession();
-        Transaction tx = session.beginTransaction();
-        session.saveOrUpdate(ENTITY_NAME, cart);
-        session.flush();
-        tx.commit();
-        session.close();
-    }
-
-    public SessionFactory getSessionFactory() {
-        return sessionFactory;
+    @Override
+    public void deleteCartByUserId(long userId) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
+        try {
+            tx.begin();
+            Cart cartToRemove = (Cart) em.createQuery(GET_CART_BY_USERID)
+                    .setParameter("userId", userId).getSingleResult();
+            System.out.println("!!!! before commit ...em.contains(cartToRemove) === " + em.contains(cartToRemove));
+            em.remove(cartToRemove);
+            tx.commit();
+            System.out.println("!!!! after commit ...em.contains(cartToRemove) === " + em.contains(cartToRemove));
+        } catch (Exception ex) {
+            tx.rollback();
+            ex.printStackTrace();
+        } finally {
+            em.close();
+        }
     }
 
 }

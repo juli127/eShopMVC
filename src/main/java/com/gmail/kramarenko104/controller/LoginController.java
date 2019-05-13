@@ -1,10 +1,11 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.dao.UserDaoImpl;
+import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,11 @@ public class LoginController {
     @Autowired
     private CartServiceImpl cartService;
 
+    //@Autowired
+    private SessionFactory sessionFactory;
+
     public LoginController() {
+        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -49,7 +54,7 @@ public class LoginController {
         String viewToGo = "login";
 
         // Connection to DB is open
-        if (userService.openSession() != null) {
+        if (sessionFactory != null) {
             boolean showLoginForm = true;
             boolean accessGranted = false;
             StringBuilder msgText = new StringBuilder();
@@ -71,7 +76,7 @@ public class LoginController {
                     boolean exist = (currentUser != null);
 
                     if (exist) {
-                        String passVerif = UserDaoImpl.hashString(pass);
+                        String passVerif = userService.hashString(pass);
                         accessGranted = (currentUser.getPassword().equals(passVerif));
                         showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
 
@@ -112,14 +117,15 @@ public class LoginController {
                 }
             }
 
-            // for authorized user get the corresponding shopping Cart
+            // for authorized user getProduct the corresponding shopping Cart
             if (accessGranted) {
                 showLoginForm = false;
                 Cart userCart = (Cart) model.asMap().get("userCart");
                 if (userCart == null) {
-                    userCart = cartService.getCart(currentUser.getUserId());
+                    userCart = cartService.getCartByUserId(currentUser.getUserId());
                     if (userCart == null) {
-                        userCart = new Cart(currentUser.getUserId());
+                        userCart = new Cart();
+                        userCart.setUser(currentUser);
                     }
                     model.addAttribute("userCart", userCart);
                 }
@@ -133,7 +139,6 @@ public class LoginController {
             model.addAttribute("message", msgText.toString());
             model.addAttribute("attempt", attempt);
             model.addAttribute("isAdmin", isAdmin);
-            userService.closeSession();
         } else { // connection to DB is closed
             model.addAttribute("warning", DB_WARNING);
         }

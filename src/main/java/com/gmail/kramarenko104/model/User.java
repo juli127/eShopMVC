@@ -37,10 +37,10 @@ public class User {
     @Column(columnDefinition = "varchar(100)")
     private String comment;
 
-    @OneToOne (mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToOne (mappedBy = "user")
     private Cart cart;
 
-    @OneToMany (mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @OneToMany (mappedBy = "user")
     private List<Order> orders;
 
     public List<Order> getOrders() {
@@ -116,4 +116,27 @@ public class User {
                 ", name='" + name + "']";
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+
+        User user = (User) o;
+
+        if (userId != user.userId) return false;
+        if (!login.equals(user.login)) return false;
+        if (!password.equals(user.password)) return false;
+        if (name != null ? !name.equals(user.name) : user.name != null) return false;
+        return address != null ? address.equals(user.address) : user.address == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (userId ^ (userId >>> 32));
+        result = 31 * result + login.hashCode();
+        result = 31 * result + password.hashCode();
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        return result;
+    }
 }

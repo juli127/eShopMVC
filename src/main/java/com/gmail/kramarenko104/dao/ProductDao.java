@@ -9,7 +9,7 @@ public interface ProductDao {
 
     Product getProduct(long id);
 
-    long deleteProduct(long id);
+    void deleteProduct(long id);
 
     long updateProduct(Product product);
 
