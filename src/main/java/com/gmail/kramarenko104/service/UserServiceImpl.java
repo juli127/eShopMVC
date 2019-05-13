@@ -4,7 +4,6 @@ import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

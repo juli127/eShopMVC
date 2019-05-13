@@ -20,8 +20,8 @@ public class UserDaoImpl implements UserDao {
 
     // @Autowired
     private SessionFactory sessionFactory;
-    private final static String GET_ALL_USERS = "select u from User u";
-    private final static String GET_USER_BY_LOGIN = "select u from User u where u.login = :login";
+    private final static String GET_ALL_USERS = "from User u";
+    private final static String GET_USER_BY_LOGIN = "from User u where u.login = :login";
     private final static Logger logger = LoggerFactory.getLogger(UserDaoImpl.class);
 //    private Session session;
     private EntityManagerFactory emf;
@@ -67,8 +67,6 @@ public class UserDaoImpl implements UserDao {
             tx.begin();
             User dbUser = em.find(User.class, userId);
             dbUser.setLogin(updUser.getLogin());
-            dbUser.setOrders(updUser.getOrders());
-            dbUser.setCart(updUser.getCart());
             dbUser.setPassword(updUser.getPassword());
             dbUser.setComment(updUser.getComment());
             dbUser.setAddress(updUser.getAddress());

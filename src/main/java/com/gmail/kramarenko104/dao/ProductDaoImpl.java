@@ -21,8 +21,8 @@ public class ProductDaoImpl implements ProductDao {
 
 //    @Autowired
     private SessionFactory sessionFactory;
-    private final static String GET_ALL_PRODUCTS = "select p from Product p";
-    private final static String GET_PRODUCT_BY_CATEGORY = "select p from Product p where p.category = :category";
+    private final static String GET_ALL_PRODUCTS = "from Product p";
+    private final static String GET_PRODUCT_BY_CATEGORY = "from Product p where p.category = :category";
     private final static Logger logger = LoggerFactory.getLogger(ProductDaoImpl.class);
 //    private Session session;
     private EntityManagerFactory emf;

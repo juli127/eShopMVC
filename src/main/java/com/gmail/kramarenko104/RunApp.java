@@ -9,10 +9,6 @@ import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
 public class RunApp {
 
@@ -94,17 +90,6 @@ class Mytest {
 
     @Autowired
     UserServiceImpl userService;
-
-    public static String hashString(String hash) {
-        MessageDigest md5 = null;
-        try {
-            md5 = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
-        return String.format("%032x", new BigInteger(md5.digest()));
-    }
 
     public void test(){
 //        ClassLoader classLoader = getClass().getClassLoader();
@@ -235,17 +220,14 @@ class Mytest {
         CartServiceImpl cartService = new CartServiceImpl();
         cartService.setDaos(cartDao, productDao);
 
-//        Cart cart = cartService.getCartByUserId(1);
-//        System.out.println("Got cart from DB for userId=1 : " + cart);
-//
 
 //        Cart cart = new Cart();
 //        User user = userService.getUser(9);
 //        cart.setUser(user);
-//        long id  = cartService.createCart(cart, user);
-//        System.out.println("created new cart with id = " + id);
+//        long id  = cartService.createCart(cart);
+////        System.out.println("created new cart with id = " + id);
 //        cartService.addProduct(9, 3, 22);
-//        cartService.removeProduct(9, 3, 10);
+//        cartService.removeProduct(9, 3, 22);
 //        System.out.println(cartService.getCartByUserId(9));
         cartService.deleteCartByUserId(9);
 //

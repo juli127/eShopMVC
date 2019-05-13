@@ -1,7 +1,6 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
-import java.util.List;
 
 /*
   userId BIGINT AUTO_INCREMENT,
@@ -37,19 +36,6 @@ public class User {
     @Column(columnDefinition = "varchar(100)")
     private String comment;
 
-    @OneToOne (mappedBy = "user")
-    private Cart cart;
-
-    @OneToMany (mappedBy = "user")
-    private List<Order> orders;
-
-    public List<Order> getOrders() {
-        return orders;
-    }
-
-    public void setOrders(List<Order> orders) {
-        this.orders = orders;
-    }
     public User() {
     }
 
@@ -99,14 +85,6 @@ public class User {
 
     public void setComment(String comment) {
         this.comment = comment;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
-        this.cart = cart;
     }
 
     @Override
