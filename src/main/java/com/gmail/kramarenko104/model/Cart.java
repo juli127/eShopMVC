@@ -2,7 +2,6 @@ package com.gmail.kramarenko104.model;
 
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
-
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -22,6 +21,7 @@ entity 'carts_test':
 @Entity
 @Table(name = "carts")
 @Access(value = AccessType.FIELD)
+@NamedQuery(name="GET_CART_BY_USERID", query = "from Cart c where c.user.userId = :userId")
 public class Cart {
 
     @Id
@@ -38,7 +38,7 @@ public class Cart {
     @Transient
     private int totalSum;
 
-    @ElementCollection (fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "carts_products", joinColumns = @JoinColumn(name = "cartId"))
     @MapKeyJoinColumn(name = "productId", updatable = false)
     @Column(name = "quantity")

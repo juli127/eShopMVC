@@ -15,4 +15,5 @@ public class EntityManagerFactoryUtil {
     public static EntityManagerFactory getEntityManagerFactory() {
         return entityManagerFactory;
     }
+
 }

@@ -8,14 +8,14 @@ public interface UserDao {
 
     long createUser(User user);
 
-    User getUser(long userId);
+    User get(long userId);
 
     User getUserByLogin(String login);
 
-    long updateUser(User user);
+    User update(User user);
 
-    List<User> getAllUsers();
+    List<User> getAll();
 
-    void deleteUser(long userId);
+    void delete(long userId);
 
 }

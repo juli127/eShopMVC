@@ -16,6 +16,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "products")
 @Access(value=AccessType.FIELD)
+@NamedQuery(name="GET_PRODUCT_BY_CATEGORY", query = "from Product p where p.category = :category")
 public class Product {
 
     @Id

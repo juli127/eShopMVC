@@ -33,13 +33,13 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addProduct(long userId, long productId, int quantity) {
-        cartDao.addProduct(userId, productDao.getProduct(productId), quantity);
+    public Cart addProduct(long userId, long productId, int quantity) {
+        return cartDao.addProduct(userId, productDao.get(productId), quantity);
     }
 
     @Override
-    public void removeProduct(long userId, long productId, int quantity) {
-        cartDao.removeProduct(userId, productDao.getProduct(productId), quantity);
+    public Cart removeProduct(long userId, long productId, int quantity) {
+        return cartDao.removeProduct(userId, productDao.get(productId), quantity);
     }
 
     @Override
@@ -54,7 +54,10 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public List<Cart> getAllCarts() {
-        return cartDao.getAllCarts();
+        return cartDao.getAll();
     }
 
+    public boolean isDbConnected(){
+        return cartDao.isDbConnected();
+    }
 }

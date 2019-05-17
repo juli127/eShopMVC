@@ -12,5 +12,6 @@ public interface OrderDao {
 
     void deleteAllOrdersForUser(long userId);
 
-    long getNewOrderNumber();
+    List<Order> getAll();
+
 }

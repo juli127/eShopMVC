@@ -21,19 +21,22 @@ public class ProductServiceImpl implements ProductService {
     }
 
     public Product getProduct(long productId) {
-        return productDao.getProduct(productId);
+        return productDao.get(productId);
     }
 
     public void deleteProduct(long productId) {
-        productDao.deleteProduct(productId);
+        productDao.delete(productId);
     }
 
     public List<Product> getAllProducts() {
-        return productDao.getAllProducts();
+        return productDao.getAll();
     }
 
     public List<Product> getProductsByCategory(int category) {
         return productDao.getProductsByCategory(category);
     }
 
+    public boolean isDbConnected(){
+        return productDao.isDbConnected();
+    }
 }

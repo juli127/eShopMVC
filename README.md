@@ -1,9 +1,10 @@
-**E-shop webapp based on Spring MVC + Ajax + Hibernate + MySQL(HikariCP):**
+**E-shop webapp based on Spring MVC + JPA + Hibernate + MySQL(HikariCP) + Ajax:**
 
 Were used:
 - Spring Framework 5.1.5
 - Spring Data 1.11.9
 - Hibernate 5.3.1
+- JPA 2.2, JPQL
 - MySQL Server 5.7.23
 - MySQL Connector/J 8.0.13
 - HikariCP 3.1.0

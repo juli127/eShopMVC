@@ -1,19 +1,20 @@
 package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Product;
+
 import java.util.List;
 
 public interface ProductDao {
 
     long createProduct(Product product);
 
-    Product getProduct(long id);
+    Product get(long productId);
 
-    void deleteProduct(long id);
+    Product update(Product product);
 
-    long updateProduct(Product product);
+    void delete(long productId);
 
-    List<Product> getAllProducts();
+    List<Product> getAll();
 
     List<Product> getProductsByCategory(int category);
 

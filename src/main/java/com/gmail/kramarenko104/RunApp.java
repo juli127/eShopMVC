@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104;
 
 import com.gmail.kramarenko104.dao.CartDaoImpl;
+import com.gmail.kramarenko104.dao.OrderDaoImpl;
 import com.gmail.kramarenko104.dao.ProductDaoImpl;
 import com.gmail.kramarenko104.dao.UserDaoImpl;
 import com.gmail.kramarenko104.service.CartServiceImpl;
+import com.gmail.kramarenko104.service.OrderServiceImpl;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,6 +106,7 @@ class Mytest {
         UserDaoImpl userDao = new UserDaoImpl();
         UserServiceImpl userService = new UserServiceImpl();
         userService.setUserDao(userDao);
+        System.out.println("++++++++++IS DB CONNECTED???   "  + userService.isDbConnected());
 
 //        User user = new User();
 //        user.setLogin("admin");
@@ -222,14 +225,14 @@ class Mytest {
 
 
 //        Cart cart = new Cart();
-//        User user = userService.getUser(9);
+//        User user = userService.getUser(10);
 //        cart.setUser(user);
 //        long id  = cartService.createCart(cart);
-////        System.out.println("created new cart with id = " + id);
-//        cartService.addProduct(9, 3, 22);
-//        cartService.removeProduct(9, 3, 22);
-//        System.out.println(cartService.getCartByUserId(9));
-        cartService.deleteCartByUserId(9);
+//        System.out.println("created new cart with id = " + id);
+        System.out.println("Julia: " + cartService.addProduct(10, 3, 22));
+//        cartService.removeProduct(10, 3, 12);
+//        System.out.println(cartService.getCartByUserId(10));
+//        cartService.deleteCartByUserId(10);
 //
 
 //
@@ -246,10 +249,32 @@ class Mytest {
 //        cartService.addCart(cart);
 
 
+//        -----------------
+//        Order order = new Order();
+//         User user = userService.getUser(10);
+//        order.setUser(user);
 
-        /////////
-        //System.out.println("getCart(1):" + cartService.getCart(2));
+        OrderDaoImpl orderDao = new OrderDaoImpl();
+        OrderServiceImpl orderService = new OrderServiceImpl();
+        orderService.setOrderDao(orderDao, userDao, cartDao);
 
+//        orderService.createOrder(user.getUserId(), cartDao.getCartByUserId(user.getUserId()).getProducts());
+//        orderService.getAll().stream().forEach(p -> System.out.println(p));
+
+//        List<Product> products = orderService.;
+//        for (Product p: products) {
+//            System.out.println(p.getName());
+//        }
+
+//        List<User> users = userService.getAllUsers();
+//        for (User u: users) {
+//            System.out.println(u.getName());
+//        }
+
+
+//        System.out.println(cartDao.getAll());
+//        dbUser.setComment("do nothing");
+//        userService.update(dbUser);
 
         System.out.println("--------end---------");
     }

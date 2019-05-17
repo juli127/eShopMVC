@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUser(long id){
-        return userDao.getUser(id);
+        return userDao.get(id);
     }
 
     @Override
@@ -40,18 +40,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long updateUser(User user) {
-        return userDao.updateUser(user);
+    public User update(User user) {
+        return userDao.update(user);
     }
 
     @Override
     public void deleteUser(long id){
-        userDao.deleteUser(id);
+        userDao.delete(id);
     }
 
     @Override
     public List<User> getAllUsers(){
-        return userDao.getAllUsers();
+        return userDao.getAll();
     }
 
     public static String hashString(String hash) {
@@ -63,5 +63,9 @@ public class UserServiceImpl implements UserService {
         }
         md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
         return String.format("%032x", new BigInteger(md5.digest()));
+    }
+
+    public boolean isDbConnected(){
+        return userDao.isDbConnected();
     }
 }

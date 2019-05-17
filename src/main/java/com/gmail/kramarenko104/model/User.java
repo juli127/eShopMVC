@@ -14,14 +14,15 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-@Access(value=AccessType.FIELD)
+@Access(value = AccessType.FIELD)
+@NamedQuery(name = "GET_USER_BY_LOGIN", query = "from User u where u.login = :login")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
 
-    @Column (unique = true, nullable = false, updatable = false, columnDefinition = "varchar(30)")
+    @Column(unique = true, nullable = false, columnDefinition = "varchar(30)")
     private String login;
 
     @Column(nullable = false, columnDefinition = "varchar(50)")

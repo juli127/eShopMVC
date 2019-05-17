@@ -23,6 +23,9 @@ entity 'orders_test':
 @Entity
 @Table(name = "orders")
 @Access(value = AccessType.FIELD)
+@NamedQueries(value =
+        {@NamedQuery(name = "GET_ALL_ORDERS_BY_USERID", query = "from Order o where o.user.userId = :userId"),
+        @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.orderNumber) as lastOrderNumber from Order o")})
 public class Order {
 
     @Id
@@ -45,7 +48,7 @@ public class Order {
     @Transient
     private int totalSum;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "orders_products", joinColumns = @JoinColumn(name = "orderId"))
     @MapKeyJoinColumn(name = "productId", updatable = false)
     @Column(name = "quantity")

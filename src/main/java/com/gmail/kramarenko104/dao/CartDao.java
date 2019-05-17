@@ -9,14 +9,14 @@ public interface CartDao {
 
     long createCart(Cart cart);
 
-    void addProduct(long userId, Product product, int quantity);
+    Cart addProduct(long userId, Product product, int quantity);
 
-    void removeProduct(long userId, Product product, int quantity);
+    Cart removeProduct(long userId, Product product, int quantity);
 
     Cart getCartByUserId(long userId);
 
     void deleteCartByUserId(long userId);
 
-    List<Cart> getAllCarts();
+    List<Cart> getAll();
 
 }
