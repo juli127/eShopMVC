@@ -40,14 +40,6 @@ CREATE TABLE `categories` (
   `name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`id`, `name`) VALUES
-(1, 'dresses'),
-(2, 'shoes'),
-(3, 'accessories');
 
 -- --------------------------------------------------------
 --

@@ -4,11 +4,12 @@
 
 <c:set var="user" value="${user}"/>
 <c:set var="username" value="${user.name}"/>
-<c:set var="cart" value="${userCart}"/>
+<c:set var="cart" value="${cart}"/>
 <c:set var="itemsCount" value="${cart.itemsCount}"/>
 <c:set var="warning" value="${warning}"/>
-<c:set var="users" value="${sessionScope.usersList}" ></c:set>
-<c:set var="products" value="${sessionScope.productsList}"></c:set>
+<c:set var="users" value="${usersList}" ></c:set>
+<c:set var="products" value="${products}"></c:set>
+<c:set var="totalSum" value="${cart.totalSum}"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -34,9 +35,9 @@
                 <td>
                     <div id="menu">
                         <ul>
-                            <li><a href="products">All categories</a></li>
+                            <li><a href="product">All categories</a></li>
                             <c:choose>
-                                <c:when test="${user != null}">
+                                <c:when test="${user != null && username != null}">
                                     <li><a href="logout">Logout</a></li>
                                 </c:when>
                                 <c:otherwise>
@@ -67,7 +68,7 @@
                 ${username}, your cart has <span id="itemsCountField">${itemsCount==null?0:itemsCount}</span> items
             </c:when>
             <c:otherwise>
-            <font color=red>You should register or login before shopping or see your cart/order!</font>
+                <font color=red>You should <a href="registration">register</a> or <a href="login">login</a> before shopping or see your cart/order!</font>
                 </c:otherwise>
             </c:choose>
             </c:otherwise>
@@ -78,13 +79,13 @@
 <div class="page" id="page">
     <div id="sidebar">
         <table>
-            <tr>DRESSES<a href="products?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
+            <tr>DRESSES<a href="product?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
                                                                   alt="" width="120" height="120"
                                                                   title="DRESSES"/></a></tr>
-            <tr>SHOES<a href="products?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
+            <tr>SHOES<a href="product?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
                                                                 alt="" width="120" height="120" title="SHOES"/></a>
             </tr>
-            <tr>ACCESSORIES<a href="products?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
+            <tr>ACCESSORIES<a href="product?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
                                                                       width="120" height="120"
                                                                       title="ACCESSORIES"/></a></tr>
         </table>

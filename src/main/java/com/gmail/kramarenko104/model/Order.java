@@ -3,6 +3,7 @@ package com.gmail.kramarenko104.model;
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +26,9 @@ entity 'orders_test':
 @Access(value = AccessType.FIELD)
 @NamedQueries(value =
         {@NamedQuery(name = "GET_ALL_ORDERS_BY_USERID", query = "from Order o where o.user.userId = :userId"),
-        @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.orderNumber) as lastOrderNumber from Order o")})
-public class Order {
+        @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.orderNumber) as lastOrderNumber from Order o"),
+        @NamedQuery(name = "GET_LAST_ORDER_BY_USERID", query = "from Order o where o.user.userId = :userId order by o.orderNumber DESC")})
+public class Order  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

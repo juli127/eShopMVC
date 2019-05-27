@@ -1,6 +1,6 @@
 package com.gmail.kramarenko104.dao;
 
-import com.gmail.kramarenko104.hibernate.EntityManagerFactoryUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -10,10 +10,11 @@ import java.util.List;
 public class BaseDao<T>{
 
     private Class<T> persistenceClass;
+
+    @Autowired
     private EntityManagerFactory emf;
 
     BaseDao(){
-        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
         persistenceClass = (Class<T>) (((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 

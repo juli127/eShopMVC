@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.factoryDao;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -9,7 +10,7 @@ import java.util.ResourceBundle;
 
 public class MySqlJDBCDaoFactory extends DaoFactory {
 
-    private static Logger logger = Logger.getLogger(MySqlJDBCDaoFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(MySqlJDBCDaoFactory.class);
     private String connStr;
 
     public MySqlJDBCDaoFactory() {

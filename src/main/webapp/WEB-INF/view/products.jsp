@@ -14,7 +14,7 @@
                         <input type='button' onclick="minus('${product.productId}')" value='-' />
                         <span id='pq${product.productId}'>1</span>
                         <input type='button' onclick="plus('${product.productId}')" value='+' />
-                        <input type='button' onclick="buy('${user.id}', '${product.productId}')" value='Buy'/>
+                        <input type='button' onclick="buy('${user.userId}', '${product.productId}')" value='Buy'/>
                     </div>
                 </td>
             </table>

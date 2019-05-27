@@ -14,8 +14,8 @@
        http://www.springframework.org/schema/tx/spring-tx.xsd">
 
     <!--CONTEXT  ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <context:component-scan base-package="com.gmail.kramarenko104.model"/>
-    <!--<context:property-placeholder location="classpath:application.properties"/>-->
+    <context:component-scan base-package="com.gmail.kramarenko104"/>
+    <context:property-placeholder location="classpath:application.properties"/>
     <context:annotation-config/>
 
     <!--=========================================-->
@@ -100,20 +100,41 @@
 
     <!--Persistence ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--<bean id="persistenceExceptionTranslation" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>-->
-    <!--<bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"-->
-          <!--p:showSql="true"-->
-          <!--p:generateDdl="true"-->
-          <!--p:database="MYSQL"-->
-    <!--/>-->
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
 
-    <!--<bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"-->
-          <!--p:dataSource-ref="dataSource"-->
-          <!--p:packagesToScan="com.gmail.kramarenko104.model"-->
-          <!--p:jpaVendorAdapter-ref="jpaVendorAdapter"-->
-    <!--/>-->
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+        <property name="persistenceUnitName" value="eshopMVCpersistence"/>
+        <property name="packagesToScan">
+            <array>
+                <value>com.gmail.kramarenko104.model</value>
+                <value>com.gmail.kramarenko104.controller</value>
+                <value>com.gmail.kramarenko104.dao</value>
+                <value>com.gmail.kramarenko104.service</value>
+            </array>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
+                <prop key="javax.persistence.jdbc.driver">com.mysql.jdbc.Driver</prop>
+                <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/testdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</prop>
+                <prop key="javax.persistence.jdbc.user">julia</prop>
+                <prop key="javax.persistence.jdbc.password">julia</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.connection.provider_class">org.hibernate.hikaricp.internal.HikariCPConnectionProvider</prop>
+                <prop key="hibernate.hikari.minimumIdle">5</prop>
+                <prop key="hibernate.hikari.maximumPoolSize">10</prop>
+                <prop key="hibernate.hikari.idleTimeout">30000</prop>
+            </props>
+        </property>
+
+    </bean>
+         
 
     <!--DAO Implementations ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!--<bean id="userDao" class="com.gmail.kramarenko104.repository.UserJpaRepositoryImpl"/> -->
     <bean id="userDao" class="com.gmail.kramarenko104.dao.UserDaoImpl"/>
     <bean id="productDao" class="com.gmail.kramarenko104.dao.ProductDaoImpl"/>
     <bean id="cartDao" class="com.gmail.kramarenko104.dao.CartDaoImpl"/>

@@ -53,9 +53,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setItemsCount(itemsCount);
         Order dbNewOrder = orderDao.createOrder(newOrder);
 
-        //delete cart, the newOrder was created on the base on
-        cartDao.deleteCartByUserId(userId);
-
         return dbNewOrder;
     }
 
@@ -64,7 +61,35 @@ public class OrderServiceImpl implements OrderService {
         return orderDao.getAll();
     }
 
+    @Override
+    public Order getLastOrderByUserId(long userId){
+        Order order = orderDao.getLastOrderByUserId(userId);
+        if (order != null){
+            order = recalculateOrder(order);
+        }
+        return order;
+    }
+
     public boolean isDbConnected(){
         return orderDao.isDbConnected();
+    }
+
+    private Order recalculateOrder(Order order) {
+        Map<Product, Integer> productsInOrder = order.getProducts();
+        int itemsCount = 0;
+        int totalSum = 0;
+        if (productsInOrder.size() > 0) {
+            int quantity = 0;
+            for (Map.Entry<Product, Integer> entry : productsInOrder.entrySet()) {
+                quantity = entry.getValue();
+                itemsCount += quantity;
+                totalSum += quantity * entry.getKey().getPrice();
+            }
+        }
+        if (itemsCount > 0) {
+            order.setItemsCount(itemsCount);
+            order.setTotalSum(totalSum);
+        }
+        return order;
     }
 }

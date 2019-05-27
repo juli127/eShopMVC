@@ -2,8 +2,8 @@ package com.gmail.kramarenko104.factoryDao;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.log4j.Logger;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -11,7 +11,7 @@ import java.sql.SQLException;
 
 //@Component("mySqlHikariDataSourceFactory")
 public class MySqlHikariDataSourceFactory extends DaoFactory {
-    private static Logger logger = Logger.getLogger(MySqlHikariDataSourceFactory.class);
+    private static Logger logger = LoggerFactory.getLogger(MySqlHikariDataSourceFactory.class);
 
     //    @Autowired
     private HikariConfig hikariConfig;

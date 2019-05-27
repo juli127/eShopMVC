@@ -1,14 +1,15 @@
 package com.gmail.kramarenko104.model;
 
 import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 /*
-entity 'carts_test':
+entity 'carts':
   cartId BIGINT AUTO_INCREMENT,
   userId BIGINT,
   productId BIGINT, // taken from Map<Product, Integer> products
@@ -22,14 +23,14 @@ entity 'carts_test':
 @Table(name = "carts")
 @Access(value = AccessType.FIELD)
 @NamedQuery(name="GET_CART_BY_USERID", query = "from Cart c where c.user.userId = :userId")
-public class Cart {
+public class Cart  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cartId;
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
-    @JoinColumn(name = "userId", nullable = false, updatable = false)
+    @JoinColumn(name = "userId", nullable = false, unique = true, updatable = false)
     private User user;
 
     @Transient

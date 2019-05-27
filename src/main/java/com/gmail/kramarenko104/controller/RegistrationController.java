@@ -1,18 +1,19 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.UserServiceImpl;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.servlet.ModelAndView;
+
+import javax.persistence.EntityManagerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -20,6 +21,7 @@ import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/registration")
+@SessionAttributes(value = {"cart", "user", "login", "name", "address", "comment", "errorsMsg", "warning"})
 public class RegistrationController {
 
     private static Logger logger = LoggerFactory.getLogger(RegistrationController.class);
@@ -28,11 +30,10 @@ public class RegistrationController {
     @Autowired
     private UserServiceImpl userService;
 
-    //@Autowired
-    private SessionFactory sessionFactory;
+    @Autowired
+    private EntityManagerFactory emf;
 
     public RegistrationController() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -41,17 +42,17 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected String doPost(@RequestParam("login") String login,
+    protected ModelAndView doPost(ModelAndView modelAndView,
+                            @RequestParam("login") String login,
                             @RequestParam("password") String pass,
                             @RequestParam("repassword") String repass,
                             @RequestParam("name") String name,
                             @RequestParam("address") String address,
-                            @RequestParam("comment") String comment,
-                            Model model) {
+                            @RequestParam("comment") String comment) {
 
         String viewToGo = "registration";
 
-        if (sessionFactory != null) {
+        if (emf != null) {
             boolean needRegistration = true;
             boolean userExist = false;
             StringBuilder message = new StringBuilder();
@@ -101,14 +102,14 @@ public class RegistrationController {
                             newUser = userService.getUser(newUserId);
                             logger.debug("RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
-                            model.addAttribute("user", newUser);
+                            modelAndView.addObject("user", newUser);
                             Cart newCart = new Cart();
                             newCart.setUser(newUser);
-                            model.addAttribute("userCart", newCart);
+                            modelAndView.addObject("cart", newCart);
                         } else {
                             logger.debug("RegisrtServlet: new user was NOT created: got newUserId == " + newUserId);
-                            model.addAttribute("user", null);
-                            model.addAttribute("userCart", null);
+                            modelAndView.addObject("user", null);
+                            modelAndView.addObject("cart", null);
                         }
                         needRegistration = false;
                     }
@@ -127,15 +128,15 @@ public class RegistrationController {
                     needRegistration = false;
                 }
             }
-            model.addAttribute("RegMessage", message.toString());
+            modelAndView.addObject("RegMessage", message.toString());
 
             if (needRegistration) {
                 // save some entered fields not to force user enter them again
-                model.addAttribute("login", login);
-                model.addAttribute("name", name);
-                model.addAttribute("address", address);
-                model.addAttribute("comment", comment);
-                model.addAttribute("errorsMsg", errorsMsg);
+                modelAndView.addObject("login", login);
+                modelAndView.addObject("name", name);
+                modelAndView.addObject("address", address);
+                modelAndView.addObject("comment", comment);
+                modelAndView.addObject("errorsMsg", errorsMsg);
             } else {
                 // user with this login/password is already registered, send user to /login
                 if (userExist) {
@@ -145,14 +146,15 @@ public class RegistrationController {
                     // it's the new fresh-registered user, send user to /products
                     viewToGo = "redirect:/products";
                 }
-                model.addAttribute("name", null);
-                model.addAttribute("address", null);
-                model.addAttribute("comment", null);
-                model.addAttribute("errorsMsg", null);
+                modelAndView.addObject("name", null);
+                modelAndView.addObject("address", null);
+                modelAndView.addObject("comment", null);
+                modelAndView.addObject("errorsMsg", null);
             }
         } else {
-            model.addAttribute("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return viewToGo;
+        modelAndView.setViewName(viewToGo);
+        return modelAndView;
     }
 }

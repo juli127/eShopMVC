@@ -1,21 +1,23 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
+import com.gmail.kramarenko104.dto.CartDto;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
-import com.google.gson.Gson;
-import org.hibernate.SessionFactory;
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.EntityManagerFactory;
+
 @Controller
+@SessionAttributes(value = {"warning", "cart", "user"})
 @RequestMapping("/cart")
 public class CartController {
 
@@ -24,49 +26,59 @@ public class CartController {
 
     @Autowired
     private CartServiceImpl cartService;
-    //@Autowired
-    private SessionFactory sessionFactory;
 
-    public CartController() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
-    }
+    @Autowired
+    private EntityManagerFactory emf;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView doGet() {
-        ModelAndView modelAndView = new ModelAndView("cart");
-        if (sessionFactory != null) {
-            if (modelAndView.getModelMap().get("user") != null) {
-                User currentUser = (User) modelAndView.getModelMap().get("user");
-                logger.debug("CartServlet: Current user: " + currentUser.getName());
-                long userId = currentUser.getUserId();
+    public ModelAndView doGet(ModelAndView modelAndView,
+                              @ModelAttribute(name = "user") User user,
+                              @ModelAttribute(name = "cart") Cart cart) {
+        modelAndView.setViewName("cart");
+        System.out.println("CartController.doGet:   enter.. user : " + user);
+        System.out.println("CartController.doGet:   enter.. cart: " + cart);
 
-                if (modelAndView.getModelMap().get("userCart") == null) {
+        if (emf != null) {
+            if (user != null) {
+                System.out.println("CartController.doGet: Current user: " + user);
+                modelAndView.addObject("user", user);
+                long userId = user.getUserId();
+
+                if (modelAndView.getModelMap().get("cart") == null) {
                     Cart userCart = cartService.getCartByUserId(userId);
-                    modelAndView.addObject("userCart", userCart);
+                    System.out.println("CartController.doGet: userCart = cartService.getCartByUserId(userId): " + userCart);
+                    modelAndView.addObject("cart", userCart);
                 }
             }
         } else {
             modelAndView.addObject("warning", DB_WARNING);
         }
+        System.out.println("CartController.doGet:   exit.. user: " + modelAndView.getModel().get("user"));
+        System.out.println("CartController.doGet:   exit.. userCart: " + modelAndView.getModel().get("cart"));
         return modelAndView;
     }
 
 
-    @RequestMapping(method = RequestMethod.POST, produces = "text/json")
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String doPost(@RequestParam("action") String action,
-                         @RequestParam("productId") int productId,
-                         @RequestParam("quantity") int quantity,
-                         Model model) {
+    public @ResponseBody
+    String doPost(ModelAndView modelAndView,
+                  @RequestParam("action") String action,
+                  @RequestParam("productId") int productId,
+                  @RequestParam("quantity") int quantity,
+                  @ModelAttribute(name = "user") User user,
+                  @ModelAttribute(name = "cart") Cart cart) {
 
-        String jsonResp = null;
+        String jsonString = null;
+        modelAndView.setViewName("cart");
+        System.out.println("CartController.doPost: enter with productId: " + productId + ", quantity:" + quantity);
+        System.out.println("CartController.doPost: enter with currentUser: " + user);
+        System.out.println("CartController.doPost: enter.. cart: " + cart);
 
-        if (sessionFactory != null) {
-            if (model.asMap().get("user") != null) {
-                User currentUser = (User) model.asMap().get("user");
-                logger.debug("CartServlet: Current user: " + currentUser.getName());
-                long userId = currentUser.getUserId();
+        if (emf != null) {
+            if (user != null) {
+                long userId = user.getUserId();
+                modelAndView.addObject("user", user);
 
                 // CHANGE CART
                 // getProduct info from Ajax POST req (from updateCart.js)
@@ -74,32 +86,45 @@ public class CartController {
                 if (action != null && action.length() > 0) {
                     switch (action) {
                         case "add":
-                            logger.debug("CatServlet: GOT PARAMETER 'add'....");
-                            logger.debug("CatServlet: userId: " + currentUser.getUserId() + ", productId: " + productId + ", quantity: " + quantity);
-                            cartService.addProduct(currentUser.getUserId(), productId, quantity);
-                            logger.debug("CartServlet: for user '" + currentUser.getName() + "' was added " + quantity + " of productId: " + productId);
+                            System.out.println("CartController.doPost: GOT PARAMETER 'add'....");
+                            System.out.println("CartController.doPost: userId: " + user.getUserId() + ", productId: " + productId + ", quantity: " + quantity);
+                            cartService.addProduct(user.getUserId(), productId, quantity);
+                            System.out.println("CartController.doPost: for user '" + user.getName() + "' was added " + quantity + " of productId: " + productId);
                             break;
                         case "remove":
-                            logger.debug("CartServlet: GOT PARAMETER 'remove' ");
-                            cartService.removeProduct(currentUser.getUserId(), productId, quantity);
-                            logger.debug("CartServlet: for user: " + currentUser.getName() + "was removed " + quantity + " of productId " + productId);
+                            System.out.println("CartController.doPost: GOT PARAMETER 'remove' ");
+                            cartService.removeProduct(user.getUserId(), productId, quantity);
+                            System.out.println("CartController.doPost: for user: " + user.getUserId() + " was removed " + quantity + " of productId " + productId);
                             break;
                     }
                     needRefresh = true;
                 }
                 //  REFRESH CART's characteristics if need to refresh
-                if (model.asMap().get("userCart") == null || needRefresh) {
+                if (needRefresh) {
                     Cart userCart = cartService.getCartByUserId(userId);
-                    model.addAttribute("userCart", userCart);
+                    System.out.println("CartController.doPost:  userId " + userId);
+                    System.out.println("CartController.doPost:  updated cart " + userCart);
+                    modelAndView.addObject("cart", userCart);
 
                     // send JSON with updated Cart back to cart.jsp
-                    String jsondata = new Gson().toJson(userCart);
-                    logger.debug("CartServlet: send JSON data to cart.jsp ---->" + jsondata);
+                    if (userCart != null) {
+                        // we don't need to pass full Cart object with included User object, but only cart's properties
+                        // so, use Cart DTO object for marshalling
+                        CartDto jsonCart = new CartDto(userId);
+                        jsonCart.setProducts(userCart.getProducts());
+                        jsonCart.setItemsCount(userCart.getItemsCount());
+                        jsonCart.setTotalSum(userCart.getTotalSum());
+                        jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(jsonCart);
+                    }
                 }
             }
         } else { // session to DB is closed
-            model.addAttribute("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return jsonResp;
+//        System.out.println("JULIA: CartController.doPost:  return json: " + jsonString);
+        System.out.println("CartController.doPost:   exit.. user: " + modelAndView.getModel().get("user"));
+        System.out.println("CartController.doPost:   exit.. cart: " + modelAndView.getModel().get("cart"));
+        return jsonString;
     }
+
 }

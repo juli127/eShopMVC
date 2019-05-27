@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 /*
   productId BIGINT AUTO_INCREMENT,
@@ -17,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "products")
 @Access(value=AccessType.FIELD)
 @NamedQuery(name="GET_PRODUCT_BY_CATEGORY", query = "from Product p where p.category = :category")
-public class Product {
+public class Product  implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -11,7 +11,7 @@ Were used:
 - Gson 2.8.5
 - Servlet API 3.1.0
 - Maven
-- Java 8
+- JDK 1.8
 
 **Functionality description:**
 - Not authorized user can see, choose any product but cannot buy them, notification to register or login is shown (screenshots/MainPageWithAllProducts.png);

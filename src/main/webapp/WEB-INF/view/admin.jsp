@@ -43,7 +43,7 @@
                 <td><c:out value="${product.category}"/></td>
                 <td><c:out value="${product.price}"/></td>
                 <td><c:out value="${product.image}"/></td>
-                <td><a href="/admin/products/delete?${product.id}">delete</a></td>
+                <td><a href="/admin/products/delete?${product.productId}">delete</a></td>
             </tr>
         </c:forEach>
     </table>

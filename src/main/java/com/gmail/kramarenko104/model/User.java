@@ -1,6 +1,8 @@
 package com.gmail.kramarenko104.model;
 
 import javax.persistence.*;
+import java.io.Serializable;
+import java.util.List;
 
 /*
   userId BIGINT AUTO_INCREMENT,
@@ -16,7 +18,7 @@ import javax.persistence.*;
 @Table(name = "users")
 @Access(value = AccessType.FIELD)
 @NamedQuery(name = "GET_USER_BY_LOGIN", query = "from User u where u.login = :login")
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +38,12 @@ public class User {
 
     @Column(columnDefinition = "varchar(100)")
     private String comment;
+
+    @OneToOne (mappedBy = "user", cascade = CascadeType.REMOVE)
+    private Cart cart;
+
+    @OneToMany (mappedBy = "user", cascade = CascadeType.REMOVE)
+    private List<Order> userOrders;
 
     public User() {
     }
@@ -88,11 +96,27 @@ public class User {
         this.comment = comment;
     }
 
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
+    }
+
+    public List<Order> getUserOrders() {
+        return userOrders;
+    }
+
+    public void setUserOrders(List<Order> userOrders) {
+        this.userOrders = userOrders;
+    }
+
     @Override
     public String toString() {
         return "User[" +
-                "login='" + login + '\'' +
-                ", name='" + name + "']";
+                "userId:" + userId + ", " +
+                "login:'" + login + "', name:'" + name + "']";
     }
 
     @Override

@@ -17,6 +17,7 @@ function buy(userId, productId) {
     if (userId == null || userId == "") {
         alert("You should register or login before shopping!");
     } else {
+        alert("This product was added to your cart");
         var elem = document.getElementById('pq' + productId);
         var qnt = +elem.innerHTML;
         $.ajax({
@@ -30,12 +31,12 @@ function buy(userId, productId) {
             dataType: 'json',
             success: function (response) {
                 parseCartRespose(response);
+                alert("There were added product with id " + productId + " to your cart");
             },
             error: function (e) {
                 console.log(e.message);
             }
         });
-        alert("This item was added to your cart");
     }
 }
 
@@ -89,17 +90,17 @@ function addToCart(productId) {
 // JSON parser: got JSON string with updated Cart from '/cart' servlet
 // parse it and update table with cart's items on 'cart.jsp' page
 function parseCartRespose(response) {
-    // response has JSON like this one:
-    // {
-    // "userId":9,
-    // "itemsCount":3,
-    // "totalSum":5854,
-    // "products":
-    //     {
-    //      "{"productId":4,"name":"Shoes ROSE GOLD Rock Glitter Ankle","price":2100}"  :  2,
-    //      "{"productId":2,"name":"Very berry marsala","price":1654}"  :  1
-    //     }
-    // }
+    /* response has JSON like this one:
+    {
+    "userId":9,
+    "itemsCount":3,
+    "totalSum":5854,
+    "products":
+        {
+         "{"productId":4,"name":"Shoes ROSE GOLD Rock Glitter Ankle","price":2100}"  :  2,
+         "{"productId":2,"name":"Very berry marsala","price":1654}"  :  1
+        }
+    } */
 
     // get updated itemsCount and totalSum from JSON:
     document.getElementById('itemsCountField').innerHTML = response.itemsCount;

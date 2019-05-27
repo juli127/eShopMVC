@@ -8,10 +8,12 @@ public interface OrderDao {
 
     Order createOrder(Order order);
 
-    List<Order> getAllOrdersForUser(long userId);
+    List<Order> getAllOrdersByUserId(long userId);
 
     void deleteAllOrdersForUser(long userId);
 
     List<Order> getAll();
+
+    Order getLastOrderByUserId(long userId);
 
 }

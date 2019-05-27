@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface CartDao {
 
-    long createCart(Cart cart);
+    Cart createCart(long userId);
 
-    Cart addProduct(long userId, Product product, int quantity);
+    void addProduct(long userId, Product product, int quantity);
 
-    Cart removeProduct(long userId, Product product, int quantity);
+    void removeProduct(long userId, Product product, int quantity);
 
     Cart getCartByUserId(long userId);
 
-    void deleteCartByUserId(long userId);
+    void clearCartByUserId(long userId);
 
     List<Cart> getAll();
 

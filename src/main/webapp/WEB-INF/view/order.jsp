@@ -1,10 +1,10 @@
 <%@ include file="includes/header.jsp" %>
 
-<c:set var="order" value="${newOrder}"/>
+<c:set var="order" value="${order}"/>
 
 <c:if test="${user != null}">
 <c:choose>
-    <c:when test="${order != null}">
+    <c:when test="${order != null and order.itemsCount > 0}">
         <br><div id="infoGreen">Thank you for your purchase! Your order # ${order.orderNumber} includes:</div>
         <br><br>
 

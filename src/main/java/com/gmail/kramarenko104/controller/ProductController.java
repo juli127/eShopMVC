@@ -1,25 +1,22 @@
 package com.gmail.kramarenko104.controller;
 
-import com.gmail.kramarenko104.hibernate.HibernateSessionFactoryUtil;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.ProductServiceImpl;
-import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 @Controller
-@RequestMapping({"/", "/products"})
+@SessionAttributes(value = {"user", "cart", "selectedCateg", "products", "warning", "showLoginForm"})
 public class ProductController {
 
     private static Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -29,18 +26,21 @@ public class ProductController {
     private ProductServiceImpl productService;
     @Autowired
     private CartServiceImpl cartService;
-    //@Autowired
-    private SessionFactory sessionFactory;
+    @Autowired
+    private EntityManagerFactory emf;
 
-    public ProductController() {
-        sessionFactory = HibernateSessionFactoryUtil.getSessionFactory();
-    }
 
-    @RequestMapping(method = RequestMethod.GET)
-    protected String getProducts(@RequestParam(value = "selectedCategory", required = false) String selectedCateg, Model model) {
+    @RequestMapping(value = {"/product"}, method = RequestMethod.GET)
+    protected ModelAndView getProducts(ModelAndView modelAndView,
+                                       @ModelAttribute(name = "user") User user,
+                                       @RequestParam(value = "selectedCategory", required = false) String selectedCateg) {
+
+        modelAndView.setViewName("products");
+        System.out.println("ProductController.doGet:   enter.. currentUser: " + user);
+//        modelAndView.addObject("showLoginForm", false);
 
         // connection to DB is open
-        if (sessionFactory != null) {
+        if (emf != null) {
             List<Product> products;
 
             // when form is opened at the first time, selectedCateg == null
@@ -49,23 +49,27 @@ public class ProductController {
             } else {
                 products = productService.getAllProducts();
             }
-            model.addAttribute("selectedCateg", selectedCateg);
-            model.addAttribute("products", products);
-            // products.forEach(e -> logger.debug(e));
+//            modelAndView.addObject("selectedCateg", selectedCateg);
+            modelAndView.addObject("products", products);
+//            products.forEach(e -> logger.debug(e.toString()));
 
             // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
-            if (model.asMap().get("user") == null) {
-                model.addAttribute("userCart", null);
+            if (user == null ) {
+                modelAndView.addObject("user", null);
+                modelAndView.addObject("cart", null);
+                modelAndView.addObject("order", null);
             } else {
-                User currentUser = (User) model.asMap().get("user");
                 //re-check user cart according to currentUser
-                long userId = currentUser.getUserId();
+                long userId = user.getUserId();
                 Cart userCart = cartService.getCartByUserId(userId);
-                model.addAttribute("userCart", userCart);
+                System.out.println("JULIA: ProductController:  userId " + userId);
+                System.out.println("JULIA: ProductController:  userCart " + userCart);
+                modelAndView.addObject("cart", userCart);
             }
         } else { // connection to DB is closed
-            model.addAttribute("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        return "products";
+
+        return modelAndView;
     }
 }

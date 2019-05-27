@@ -13,4 +13,6 @@ public interface OrderService {
     Order createOrder(long userId, Map<Product, Integer> products);
 
     List<Order> getAll();
+
+    Order getLastOrderByUserId(long userId);
 }
