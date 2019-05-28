@@ -139,7 +139,7 @@ function parseCartRespose(response) {
         // no items in cart, so, cart won't be shown at all
         document.getElementById('summary_info').innerHTML = "";
     }
-    document.getElementById('cart_content').innerHTML = newTable;
+    document.getElementById('myTable').innerHTML = newTable;
 }
 
 // make order means that products from object 'Cart' will be moved to object 'Order'. Cart becomes empty.
