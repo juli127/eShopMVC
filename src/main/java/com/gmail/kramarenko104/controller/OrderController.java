@@ -13,14 +13,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManagerFactory;
 
 @Controller
 @RequestMapping("/order")
-@SessionAttributes(value = {"cart", "warning", "user", "order"})
+@SessionAttributes(value = {"warning", "user"})
 public class OrderController {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderController.class);
@@ -38,38 +37,34 @@ public class OrderController {
     @Autowired
     EntityManagerFactory emf;
 
-
     public OrderController() {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public String doGet(Model model,
-                              @ModelAttribute(name = "user") User user,
-                              @ModelAttribute(name = "cart") Cart cart,
-                              @ModelAttribute(name = "order") Order order) {
-        System.out.println("OrderController.GET: .......enter..............");
-        model.addAttribute("user", user);
-        model.addAttribute("cart", cart);
-        model.addAttribute("order", order);
-        System.out.println("OrderController.GET:   exit .. user: " + model.asMap().get("user"));
-        System.out.println("OrderController.GET:   exit .. cart: " + model.asMap().get("cart"));
-        System.out.println(">>>>>>>>>>>OrderController.GET:   exit .. order: " + model.asMap().get("order"));
-        return "order";
+    public ModelAndView doGet(ModelAndView modelAndView,
+                              @ModelAttribute(name = "user") User user) {
+        modelAndView.setViewName("order");
+        Cart cart = cartService.getCartByUserId(user.getUserId());
+        Order order = orderService.getLastOrderByUserId(user.getUserId());
+        modelAndView.addObject("user", user);
+        modelAndView.addObject("cart", cart);
+        modelAndView.addObject("order", order);
+        return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String doPost(Model model,
+    String doPost(ModelAndView modelAndView,
                   @RequestParam("action") String action,
                   @RequestParam("userId") long userId) {
         String jsondata = null;
-        //modelAndView.setViewName("order");
-        System.out.println("OrderController.POST: .......enter..............");
+        modelAndView.setViewName("order");
+        System.out.println("OrderController.POST: .......enter......CREATE NEW ORDER ........................");
 
         if (emf != null) {
             User dbUser = userService.getUser(userId);
             if (dbUser != null) {
-                model.addAttribute("user", dbUser);
+                modelAndView.addObject("user", dbUser);
 
                 // getProduct info from Ajax POST request (updateCart.js)
                 if (action != null && (action.equals("makeOrder"))) {
@@ -89,7 +84,7 @@ public class OrderController {
                     jsonOrder.setItemsCount(newOrder.getItemsCount());
                     jsonOrder.setTotalSum(newOrder.getTotalSum());
                     System.out.println("OrderController.POST: !!! new Order was created: " + jsonOrder);
-                    model.addAttribute("order", newOrder);
+                    modelAndView.addObject("order", newOrder);
 
                     // send JSON back with the new Order to show on order.jsp
                     if (jsonOrder != null) {
@@ -97,16 +92,31 @@ public class OrderController {
                         System.out.println("OrderController.POST: send JSON data to cart.jsp ---->" + jsondata);
                     }
                     cartService.clearCartByUserId(userId);
-                    model.addAttribute("cart", null);
+                    modelAndView.addObject("cart", null);
                 }
             }
         } else { // connection to DB is closed
-            model.addAttribute("warning", DB_WARNING);
+            modelAndView.addObject("warning", DB_WARNING);
         }
-        System.out.println("OrderController.POST:   user: " + model.asMap().get("user"));
-        System.out.println("OrderController.POST:   cart: " + model.asMap().get("cart"));
-        System.out.println(">>>>>>>>>>OrderController.POST:   order: " + model.asMap().get("order"));
+//        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. cart: " + modelAndView.getModel().get("cart"));
+//        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. order: " + modelAndView.getModel().get("order"));
         return jsondata;
+    }
+
+    @ModelAttribute("cart")
+    public Cart getCart() {
+        System.out.println("!!!!! OrderController.getCart... !!!!!");
+//        Thread.dumpStack();
+        return new Cart();
+
+    }
+
+    @ModelAttribute("order")
+    public Order getOrder() {
+        System.out.println("!!!!! OrderController.getOrder... !!!!!");
+//        Thread.dumpStack();
+        return new Order();
+
     }
 
 }

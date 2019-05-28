@@ -13,11 +13,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.persistence.EntityManagerFactory;
 
 @Controller
-@SessionAttributes(value = {"warning", "cart", "user"})
+@SessionAttributes(value = {"warning", "user"})
 @RequestMapping("/cart")
 public class CartController {
 
@@ -32,29 +31,17 @@ public class CartController {
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView doGet(ModelAndView modelAndView,
-                              @ModelAttribute(name = "user") User user,
-                              @ModelAttribute(name = "cart") Cart cart) {
+                              @ModelAttribute(name = "user") User user) {
         modelAndView.setViewName("cart");
-        System.out.println("CartController.doGet:   enter.. user : " + user);
-        System.out.println("CartController.doGet:   enter.. cart: " + cart);
-
         if (emf != null) {
-            if (user != null) {
-                System.out.println("CartController.doGet: Current user: " + user);
-                modelAndView.addObject("user", user);
-                long userId = user.getUserId();
-
-                if (modelAndView.getModelMap().get("cart") == null) {
-                    Cart userCart = cartService.getCartByUserId(userId);
-                    System.out.println("CartController.doGet: userCart = cartService.getCartByUserId(userId): " + userCart);
-                    modelAndView.addObject("cart", userCart);
-                }
-            }
+            Cart cart = cartService.getCartByUserId(user.getUserId());
+            modelAndView.addObject("cart", cart);
+            System.out.println(">>>>CartController.doGet:   enter.. cart from DB: " + cart);
+            modelAndView.addObject("user", user);
         } else {
             modelAndView.addObject("warning", DB_WARNING);
         }
-        System.out.println("CartController.doGet:   exit.. user: " + modelAndView.getModel().get("user"));
-        System.out.println("CartController.doGet:   exit.. userCart: " + modelAndView.getModel().get("cart"));
+        System.out.println(">>>>CartController.doGet:   exit.. userCart: " + modelAndView.getModel().get("cart"));
         return modelAndView;
     }
 
@@ -66,14 +53,11 @@ public class CartController {
                   @RequestParam("action") String action,
                   @RequestParam("productId") int productId,
                   @RequestParam("quantity") int quantity,
-                  @ModelAttribute(name = "user") User user,
-                  @ModelAttribute(name = "cart") Cart cart) {
+                  @ModelAttribute(name = "user") User user) {
 
         String jsonString = null;
         modelAndView.setViewName("cart");
-        System.out.println("CartController.doPost: enter with productId: " + productId + ", quantity:" + quantity);
-        System.out.println("CartController.doPost: enter with currentUser: " + user);
-        System.out.println("CartController.doPost: enter.. cart: " + cart);
+        System.out.println("CartController.doPost: enter with productId: " + productId + ", quantity:" + quantity +"----------------------------");
 
         if (emf != null) {
             if (user != null) {
@@ -87,7 +71,6 @@ public class CartController {
                     switch (action) {
                         case "add":
                             System.out.println("CartController.doPost: GOT PARAMETER 'add'....");
-                            System.out.println("CartController.doPost: userId: " + user.getUserId() + ", productId: " + productId + ", quantity: " + quantity);
                             cartService.addProduct(user.getUserId(), productId, quantity);
                             System.out.println("CartController.doPost: for user '" + user.getName() + "' was added " + quantity + " of productId: " + productId);
                             break;
@@ -102,7 +85,6 @@ public class CartController {
                 //  REFRESH CART's characteristics if need to refresh
                 if (needRefresh) {
                     Cart userCart = cartService.getCartByUserId(userId);
-                    System.out.println("CartController.doPost:  userId " + userId);
                     System.out.println("CartController.doPost:  updated cart " + userCart);
                     modelAndView.addObject("cart", userCart);
 
@@ -122,9 +104,7 @@ public class CartController {
             modelAndView.addObject("warning", DB_WARNING);
         }
 //        System.out.println("JULIA: CartController.doPost:  return json: " + jsonString);
-        System.out.println("CartController.doPost:   exit.. user: " + modelAndView.getModel().get("user"));
         System.out.println("CartController.doPost:   exit.. cart: " + modelAndView.getModel().get("cart"));
         return jsonString;
     }
-
 }

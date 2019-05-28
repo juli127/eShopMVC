@@ -1,7 +1,6 @@
 package com.gmail.kramarenko104.controller;
 
 import com.gmail.kramarenko104.model.Cart;
-import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
 import com.gmail.kramarenko104.service.OrderServiceImpl;
@@ -10,13 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityManagerFactory;
 
 @Controller
-@SessionAttributes(value = {"showLoginForm", "message", "attempt", "order", "user", "login", "startTime", "cart", "isAdmin", "warning"})
+@SessionAttributes(value = {"showLoginForm", "message", "attempt", "user", "login", "startTime", "cart", "isAdmin", "warning"})
 public class LoginController {
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
@@ -47,7 +49,6 @@ public class LoginController {
         System.out.println("LoginController.doGet:   enter.. null all attributes");
         modelAndView.addObject("user", null);
         modelAndView.addObject("cart", null);
-        modelAndView.addObject("order", null);
         modelAndView.addObject("message", null);
         modelAndView.addObject("attempt", null);
         modelAndView.addObject("showLoginForm", true);
@@ -122,7 +123,7 @@ public class LoginController {
                     } else {
                         attempt = 0;
                         showLoginForm = false;
-                        msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register, please,</a> or <a href='login'>login</a>");
+                        msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register</a>, please, or <a href='login'>login</a>");
                     }
                 } else {
                     attempt = 0;
@@ -134,28 +135,15 @@ public class LoginController {
                 showLoginForm = false;
                 Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
                 System.out.println("LoginController.doPost:  GOT userCart from db == " + userCart);
-                modelAndView.addObject("cart", userCart);
 
-                Order userOrder = orderService.getLastOrderByUserId(currentUser.getUserId());
-                System.out.println("LoginController.doPost:  GOT userOrder from db == " + userOrder);
-                modelAndView.addObject("order", userOrder);
-
-                if (userCart != null && userCart.getItemsCount() > 0) {
-                    System.out.println("LoginController.doPost: cart is not empty, goto cart.jsp");
-                    viewToGo = "cart";
-                } if (userOrder != null && userOrder.getItemsCount() > 0) {
-                    System.out.println("LoginController.doPost: order is not empty, goto cart.jsp");
-                    viewToGo = "order";
-                } else {
-                    System.out.println("LoginController.doPost: cart is empty, order is empty, goto product.jsp");
-                    // go to product.jsp and create the new cart as it is null now for start shopping
-                    Cart cart = new Cart();
-                    cart.setUser(currentUser);
-                    Cart newCart = cartService.createCart(currentUser.getUserId());
-                    modelAndView.addObject("cart", newCart);
-                    viewToGo = "product";
+                if (userCart == null) {
+                    System.out.println("LoginController.doPost: cart is empty, goto product.jsp");
+                    userCart = cartService.createCart(currentUser.getUserId());
                 }
+                viewToGo = "product";
+                modelAndView.addObject("cart", userCart);
             }
+
             modelAndView.addObject("showLoginForm", showLoginForm);
             modelAndView.addObject("message", msgText.toString());
             modelAndView.addObject("attempt", attempt);

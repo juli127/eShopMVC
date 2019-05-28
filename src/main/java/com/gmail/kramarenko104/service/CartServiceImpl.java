@@ -60,7 +60,8 @@ public class CartServiceImpl implements CartService {
     }
 
     private Cart recalculateCart(Cart cart) {
-        System.out.println(">>>>CartServiceImpl.recalculateCart ..enter with cart: " + cart);
+//        System.out.println(">>>>CartServiceImpl.recalculateCart ..enter with cart: cart: id:"
+//                + cart.getCartId() + ", count:" + cart.getItemsCount() + ", sum: " + cart.getTotalSum());
         Map<Product, Integer> productsInCart = cart.getProducts();
         int itemsCount = 0;
         int totalSum = 0;
@@ -76,7 +77,8 @@ public class CartServiceImpl implements CartService {
             cart.setItemsCount(itemsCount);
             cart.setTotalSum(totalSum);
         }
-        System.out.println(">>>>CartServiceImpl.recalculateCart ..upd cart: " + cart.getItemsCount() + ", " + cart.getTotalSum());
+//        System.out.println(">>>>CartServiceImpl.recalculateCart ..upd cart: id:"
+//                + cart.getCartId() + ", count:" + cart.getItemsCount() + ", sum: " + cart.getTotalSum());
         return cart;
     }
 }

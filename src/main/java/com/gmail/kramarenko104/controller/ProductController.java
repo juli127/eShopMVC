@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
@@ -29,17 +28,13 @@ public class ProductController {
     @Autowired
     private EntityManagerFactory emf;
 
-
     @RequestMapping(value = {"/product"}, method = RequestMethod.GET)
     protected ModelAndView getProducts(ModelAndView modelAndView,
                                        @ModelAttribute(name = "user") User user,
-//                                       @ModelAttribute(name = "cart") Cart cart,
                                        @RequestParam(value = "selectedCategory", required = false) String selectedCateg) {
 
         modelAndView.setViewName("products");
         System.out.println("ProductController.doGet:   enter.. currentUser: " + user);
-        Thread.dumpStack();
-//        modelAndView.addObject("showLoginForm", false);
 
         // connection to DB is open
         if (emf != null) {
@@ -51,7 +46,6 @@ public class ProductController {
             } else {
                 products = productService.getAllProducts();
             }
-//            modelAndView.addObject("selectedCateg", selectedCateg);
             modelAndView.addObject("products", products);
 //            products.forEach(e -> logger.debug(e.toString()));
 
@@ -71,7 +65,6 @@ public class ProductController {
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
-
         return modelAndView;
     }
 }

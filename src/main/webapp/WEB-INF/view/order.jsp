@@ -5,7 +5,7 @@
 <c:if test="${user != null}">
 <c:choose>
     <c:when test="${order != null and order.itemsCount > 0}">
-        <br><div id="infoGreen">Thank you for your purchase! Your order # ${order.orderNumber} includes:</div>
+        <br><div id="infoGreen">Thank you for your purchase! Your last order # ${order.orderNumber} includes:</div>
         <br><br>
 
         <table id="cart" border=1>

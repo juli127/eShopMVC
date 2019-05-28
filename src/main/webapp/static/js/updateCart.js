@@ -17,7 +17,6 @@ function buy(userId, productId) {
     if (userId == null || userId == "") {
         alert("You should register or login before shopping!");
     } else {
-        alert("buy: Start to add product to your cart");
         var elem = document.getElementById('pq' + productId);
         var qnt = +elem.innerHTML;
         $.ajax({
@@ -30,9 +29,8 @@ function buy(userId, productId) {
             },
             dataType: 'json',
             success: function (response) {
-                alert("buy: success");
+                alert("buy: There will be added " + qnt + " of product " + productId + "(id) to your cart");
                 parseCartRespose(response);
-                alert("buy: There were added product with id " + productId + " to your cart");
             },
             error: function (e) {
                 console.log(e.message);
