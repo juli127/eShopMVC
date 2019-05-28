@@ -44,7 +44,7 @@ public class LoginController {
     @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
     protected ModelAndView doGet(ModelAndView modelAndView) {
         modelAndView.setViewName("login");
-        System.out.println("LoginController.doGet:   enter.. user: " + modelAndView.getModel().get("user"));
+        System.out.println("LoginController.doGet:   enter.. null all attributes");
         modelAndView.addObject("user", null);
         modelAndView.addObject("cart", null);
         modelAndView.addObject("order", null);
@@ -58,6 +58,7 @@ public class LoginController {
     protected ModelAndView doPost(ModelAndView modelAndView,
                                   @RequestParam("login") String login,
                                   @RequestParam("password") String pass) {
+        System.out.println("LoginController.doPost:   enter.................");
         String viewToGo = "login";
         boolean showLoginForm = true;
         boolean accessGranted = false;
@@ -89,14 +90,14 @@ public class LoginController {
                         String passVerif = userService.hashString(pass);
                         accessGranted = (currentUser.getPassword().equals(passVerif));
                         showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
-                        System.out.println("LoginServlet: JULIA: currentUser: " + currentUser);
+                        System.out.println("LoginController.doPost: currentUser: " + currentUser);
 
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
                             modelAndView.addObject("user", currentUser);
                             modelAndView.addObject("login", null);
-                            logger.debug("LoginServlet: User " + currentUser.getName() + " was registered and passed autorization");
+                            logger.debug("LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
                             if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
                                 isAdmin = true;
                             }
@@ -132,21 +133,26 @@ public class LoginController {
             if (accessGranted) {
                 showLoginForm = false;
                 Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
-                System.out.println("LoginController:  GOT userCart == " + userCart);
+                System.out.println("LoginController.doPost:  GOT userCart from db == " + userCart);
                 modelAndView.addObject("cart", userCart);
 
                 Order userOrder = orderService.getLastOrderByUserId(currentUser.getUserId());
-                System.out.println("LoginController:  GOT userOrder == " + userOrder);
+                System.out.println("LoginController.doPost:  GOT userOrder from db == " + userOrder);
                 modelAndView.addObject("order", userOrder);
 
                 if (userCart != null && userCart.getItemsCount() > 0) {
-                    System.out.println("LoginController: cart is not empty, goto cart.jsp");
+                    System.out.println("LoginController.doPost: cart is not empty, goto cart.jsp");
                     viewToGo = "cart";
-                } else if (userOrder != null && userOrder.getItemsCount() > 0) {
-                    System.out.println("LoginController: order is not empty, goto cart.jsp");
+                } if (userOrder != null && userOrder.getItemsCount() > 0) {
+                    System.out.println("LoginController.doPost: order is not empty, goto cart.jsp");
                     viewToGo = "order";
                 } else {
-                    System.out.println("LoginController: cart is empty, order is empty, goto product.jsp");
+                    System.out.println("LoginController.doPost: cart is empty, order is empty, goto product.jsp");
+                    // go to product.jsp and create the new cart as it is null now for start shopping
+                    Cart cart = new Cart();
+                    cart.setUser(currentUser);
+                    Cart newCart = cartService.createCart(currentUser.getUserId());
+                    modelAndView.addObject("cart", newCart);
                     viewToGo = "product";
                 }
             }
@@ -162,7 +168,7 @@ public class LoginController {
             viewToGo = "redirect:" + viewToGo;
         }
         modelAndView.setViewName(viewToGo);
-
+        System.out.println("LoginController.doPost:   exit.......goto " + viewToGo);
         return modelAndView;
     }
 }

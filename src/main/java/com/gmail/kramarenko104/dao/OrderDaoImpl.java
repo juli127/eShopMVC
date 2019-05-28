@@ -41,7 +41,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         } finally {
             em.close();
         }
-        logger.debug("OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
+        logger.debug("    OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
         return newOrder;
     }
 
@@ -50,7 +50,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class).setParameter("userId", userId);
         List<Order> resultList = query.getResultList();
-        logger.debug("OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
+        logger.debug("    OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
         em.close();
         return resultList;
     }
@@ -59,13 +59,13 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     public Order getLastOrderByUserId(long userId) {
         EntityManager em = emf.createEntityManager();
         Order order = null;
-        System.out.println("OrderDAO.getLastOrderByUserId: get order for userId: " + userId);
+        System.out.println("    OrderDAO.getLastOrderByUserId: get order for userId: " + userId);
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class).setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
         } catch (NoResultException ex) {
         }
-        System.out.println("OrderDAO.getLastOrderByUserId: the last orders is: " + order);
+        System.out.println("    OrderDAO.getLastOrderByUserId: the last orders is: " + order);
         em.close();
         return order;
     }

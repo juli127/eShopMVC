@@ -33,10 +33,12 @@ public class ProductController {
     @RequestMapping(value = {"/product"}, method = RequestMethod.GET)
     protected ModelAndView getProducts(ModelAndView modelAndView,
                                        @ModelAttribute(name = "user") User user,
+//                                       @ModelAttribute(name = "cart") Cart cart,
                                        @RequestParam(value = "selectedCategory", required = false) String selectedCateg) {
 
         modelAndView.setViewName("products");
         System.out.println("ProductController.doGet:   enter.. currentUser: " + user);
+        Thread.dumpStack();
 //        modelAndView.addObject("showLoginForm", false);
 
         // connection to DB is open
@@ -62,8 +64,8 @@ public class ProductController {
                 //re-check user cart according to currentUser
                 long userId = user.getUserId();
                 Cart userCart = cartService.getCartByUserId(userId);
-                System.out.println("JULIA: ProductController:  userId " + userId);
-                System.out.println("JULIA: ProductController:  userCart " + userCart);
+                System.out.println("ProductController.GET:  userId " + userId);
+                System.out.println("ProductController.GET:  got from db userCart " + userCart);
                 modelAndView.addObject("cart", userCart);
             }
         } else { // connection to DB is closed
