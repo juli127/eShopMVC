@@ -42,8 +42,7 @@ public class RegistrationController {
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(ModelAndView modelAndView,
-                            @RequestParam("login") String login,
+    protected ModelAndView doPost(@RequestParam("login") String login,
                             @RequestParam("password") String pass,
                             @RequestParam("repassword") String repass,
                             @RequestParam("name") String name,
@@ -51,6 +50,7 @@ public class RegistrationController {
                             @RequestParam("comment") String comment) {
 
         String viewToGo = "registration";
+        ModelAndView modelAndView = new ModelAndView();
 
         if (emf != null) {
             boolean needRegistration = true;
@@ -97,9 +97,8 @@ public class RegistrationController {
                         newUser.setPassword(pass);
                         newUser.setAddress(address);
                         newUser.setComment(comment);
-                        long newUserId = userService.createUser(newUser);
-                        if (newUserId > 0) {
-                            newUser = userService.getUser(newUserId);
+                        newUser = userService.createUser(newUser);
+                        if (newUser != null) {
                             logger.debug("RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
                             modelAndView.addObject("user", newUser);
@@ -107,7 +106,7 @@ public class RegistrationController {
                             newCart.setUser(newUser);
                             modelAndView.addObject("cart", newCart);
                         } else {
-                            logger.debug("RegisrtServlet: new user was NOT created: got newUserId == " + newUserId);
+                            logger.debug("RegisrtServlet: new user was NOT created " );
                             modelAndView.addObject("user", null);
                             modelAndView.addObject("cart", null);
                         }

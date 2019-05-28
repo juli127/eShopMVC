@@ -117,7 +117,7 @@
             <props>
                 <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
                 <prop key="javax.persistence.jdbc.driver">com.mysql.jdbc.Driver</prop>
-                <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/testdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</prop>
+                <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</prop>
                 <prop key="javax.persistence.jdbc.user">julia</prop>
                 <prop key="javax.persistence.jdbc.password">julia</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>

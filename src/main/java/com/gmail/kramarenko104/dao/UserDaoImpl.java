@@ -4,6 +4,7 @@ import com.gmail.kramarenko104.model.User;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.*;
 
 @Repository
@@ -15,10 +16,11 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     private EntityManagerFactory emf;
 
     public UserDaoImpl() {
+//        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
     }
 
     @Override
-    public long createUser(User user) {
+    public User createUser(User user) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         long userId = -1;
@@ -26,14 +28,14 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
             tx.begin();
             em.persist(user);
             tx.commit();
-            userId = user.getUserId();
+//            userId = user.getUserId();
         } catch (Exception ex) {
             tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();
         }
-        return userId;
+        return user;
     }
 
     @Override

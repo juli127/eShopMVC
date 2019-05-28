@@ -23,7 +23,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public long createUser(User user){
+    public User createUser(User user){
         User criptUser = user;
         criptUser.setPassword(hashString(user.getPassword()));
         return userDao.createUser(criptUser);

@@ -4,19 +4,20 @@
 <c:set var="products" value="${productsList}"></c:set>
 
 <c:if test="${users != null}">
-    <div id="info">All users:</div><br><br>
+    <div id="info">All users:</div>
+    <a href="/admin/users/add">Add new user</a><br>
     <table id="myTable" border=1>
         <tr id="tableTitle">
             <td>Login</td>
             <td>Name</td>
             <td>Address</td>
         </tr>
-
         <c:forEach var="user" items="${users}">
             <tr>
                 <td><c:out value="${user.login}"/></td>
                 <td><c:out value="${user.name}"/></td>
                 <td><c:out value="${user.address}"/></td>
+                <td><a href="/admin/users/delete?userId=${user.userId}">delete</a></td>
             </tr>
         </c:forEach>
     </table>
@@ -26,8 +27,7 @@
 
 <c:if test="${products != null}">
     <div id="info">All products:</div>
-    <a href="/admin/products/add">Add new product</a>
-    <br>
+    <a href="/admin/products/add">Add new product</a><br>
     <table id="myTable" border=1>
         <tr id="tableTitle">
             <td>Name</td>
@@ -43,7 +43,7 @@
                 <td><c:out value="${product.category}"/></td>
                 <td><c:out value="${product.price}"/></td>
                 <td><c:out value="${product.image}"/></td>
-                <td><a href="/admin/products/delete?${product.productId}">delete</a></td>
+                <td><a href="/admin/products/delete?productId=${product.productId}">delete</a></td>
             </tr>
         </c:forEach>
     </table>

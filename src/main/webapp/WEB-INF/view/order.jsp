@@ -2,7 +2,7 @@
 
 <c:set var="order" value="${order}"/>
 
-<c:if test="${user != null}">
+<c:if test="${user != null && username != null}">
     <c:choose>
         <c:when test="${order != null and order.itemsCount > 0}">
             <br>

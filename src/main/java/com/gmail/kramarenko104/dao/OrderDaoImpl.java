@@ -41,7 +41,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         } finally {
             em.close();
         }
-        logger.debug("    OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
+        System.out.println("    OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
         return newOrder;
     }
 

@@ -14,7 +14,7 @@ function minus(productId) {
 
 // products.jsp: add some items' quantity to the cart -> save these items to cart into DB and get updated cart back through JSON
 function buy(userId, productId) {
-    if (userId == null || userId == "") {
+    if (userId == null || userId == 0) {
         alert("You should register or login before shopping!");
     } else {
         var elem = document.getElementById('pq' + productId);

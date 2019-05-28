@@ -15,7 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
 @Controller
-@SessionAttributes(value = {"user", "cart", "selectedCateg", "products", "warning", "showLoginForm"})
+@SessionAttributes(value = {"user", "cart", "selectedCateg", "products", "warning", "showLoginForm", "order"})
 public class ProductController {
 
     private static Logger logger = LoggerFactory.getLogger(ProductController.class);
@@ -28,12 +28,11 @@ public class ProductController {
     @Autowired
     private EntityManagerFactory emf;
 
-    @RequestMapping(value = {"/product"}, method = RequestMethod.GET)
-    protected ModelAndView getProducts(ModelAndView modelAndView,
-                                       @ModelAttribute(name = "user") User user,
+    @RequestMapping(value = {"/", "/product"}, method = RequestMethod.GET)
+    protected ModelAndView getProducts(@ModelAttribute(name = "user") User user,
                                        @RequestParam(value = "selectedCategory", required = false) String selectedCateg) {
 
-        modelAndView.setViewName("products");
+        ModelAndView modelAndView = new ModelAndView("products");
         System.out.println("ProductController.doGet:   enter.. currentUser: " + user);
 
         // connection to DB is open
@@ -50,15 +49,18 @@ public class ProductController {
 //            products.forEach(e -> logger.debug(e.toString()));
 
             // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
-            if (user == null ) {
-                modelAndView.addObject("user", null);
-                modelAndView.addObject("cart", null);
+            if (user == null || (user != null && user.getLogin() == null)) {
+                System.out.println("ProductController.doGet:   user==null,so.. null all attributes");
                 modelAndView.addObject("order", null);
+                modelAndView.addObject("cart", null);
+                modelAndView.addObject("message", null);
+                modelAndView.addObject("attempt", null);
+                modelAndView.addObject("showLoginForm", true);
             } else {
                 //re-check user cart according to currentUser
+                System.out.println("ProductController.doGet:   user!=null,so.. get Cart from db...");
                 long userId = user.getUserId();
                 Cart userCart = cartService.getCartByUserId(userId);
-                System.out.println("ProductController.GET:  userId " + userId);
                 System.out.println("ProductController.GET:  got from db userCart " + userCart);
                 modelAndView.addObject("cart", userCart);
             }
@@ -66,5 +68,10 @@ public class ProductController {
             modelAndView.addObject("warning", DB_WARNING);
         }
         return modelAndView;
+    }
+
+    @ModelAttribute("user")
+    public User populateUser() {
+        return new User();
     }
 }

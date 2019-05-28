@@ -13,10 +13,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManagerFactory;
 
 @Controller
-@SessionAttributes(value = {"warning", "user"})
+@SessionAttributes(value = {"user", "cart", "warning"})
 @RequestMapping("/cart")
 public class CartController {
 
@@ -30,18 +31,16 @@ public class CartController {
     private EntityManagerFactory emf;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView doGet(ModelAndView modelAndView,
-                              @ModelAttribute(name = "user") User user) {
-        modelAndView.setViewName("cart");
+    public ModelAndView doGet(@ModelAttribute("user") User user) {
+        ModelAndView modelAndView = new ModelAndView("cart");
         if (emf != null) {
             Cart cart = cartService.getCartByUserId(user.getUserId());
-            modelAndView.addObject("cart", cart);
-            System.out.println(">>>>CartController.doGet:   enter.. cart from DB: " + cart);
+            System.out.println("CartController.doGet:  user cart: " + cart);
             modelAndView.addObject("user", user);
+            modelAndView.addObject("cart", cart);
         } else {
             modelAndView.addObject("warning", DB_WARNING);
         }
-        System.out.println(">>>>CartController.doGet:   exit.. userCart: " + modelAndView.getModel().get("cart"));
         return modelAndView;
     }
 
@@ -49,21 +48,17 @@ public class CartController {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
     public @ResponseBody
-    String doPost(ModelAndView modelAndView,
-                  @RequestParam("action") String action,
+    String doPost(@RequestParam("action") String action,
                   @RequestParam("productId") int productId,
                   @RequestParam("quantity") int quantity,
-                  @ModelAttribute(name = "user") User user) {
-
+                  @ModelAttribute("user") User user) {
         String jsonString = null;
-        modelAndView.setViewName("cart");
-        System.out.println("CartController.doPost: enter with productId: " + productId + ", quantity:" + quantity +"----------------------------");
+        ModelAndView modelAndView = new ModelAndView("cart");
 
         if (emf != null) {
-            if (user != null) {
+            if (user != null && user.getLogin() != null) {
                 long userId = user.getUserId();
                 modelAndView.addObject("user", user);
-
                 // CHANGE CART
                 // getProduct info from Ajax POST req (from updateCart.js)
                 boolean needRefresh = false;
@@ -99,12 +94,16 @@ public class CartController {
                         jsonString = new GsonBuilder().setPrettyPrinting().create().toJson(jsonCart);
                     }
                 }
+            } else {
+                // pass empty cart for null user to see modal window from updateCart.js about login before shopping
+                new GsonBuilder().setPrettyPrinting().create().toJson(new CartDto(0));
             }
         } else { // session to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
-//        System.out.println("JULIA: CartController.doPost:  return json: " + jsonString);
-        System.out.println("CartController.doPost:   exit.. cart: " + modelAndView.getModel().get("cart"));
+//        System.out.println("CartController.doPost:  return json: " + jsonString);
+//        System.out.println("CartController.doPost:   exit with user: " + modelAndView.getModel().get("user"));
+        System.out.println("CartController.doPost:   exit with cart: " + modelAndView.getModel().get("cart"));
         return jsonString;
     }
 }

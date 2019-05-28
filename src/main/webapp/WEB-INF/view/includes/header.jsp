@@ -64,7 +64,7 @@
             </c:when>
             <c:otherwise>
             <c:choose>
-            <c:when test="${user != null && username.length() > 0}">
+            <c:when test="${user != null && username != null}">
                 ${username}, your cart has <span id="itemsCountField">${itemsCount==null?0:itemsCount}</span> items
             </c:when>
             <c:otherwise>

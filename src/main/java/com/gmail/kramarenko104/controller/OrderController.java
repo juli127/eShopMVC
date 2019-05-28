@@ -19,7 +19,7 @@ import javax.persistence.EntityManagerFactory;
 
 @Controller
 @RequestMapping("/order")
-@SessionAttributes(value = {"warning", "user"})
+@SessionAttributes(value = {"warning", "user", "cart", "order"})
 public class OrderController {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderController.class);
@@ -41,9 +41,8 @@ public class OrderController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView doGet(ModelAndView modelAndView,
-                              @ModelAttribute(name = "user") User user) {
-        modelAndView.setViewName("order");
+    public ModelAndView doGet(@ModelAttribute(name = "user") User user) {
+        ModelAndView modelAndView = new ModelAndView("order");
         Cart cart = cartService.getCartByUserId(user.getUserId());
         Order order = orderService.getLastOrderByUserId(user.getUserId());
         modelAndView.addObject("user", user);
@@ -54,11 +53,10 @@ public class OrderController {
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody
-    String doPost(ModelAndView modelAndView,
-                  @RequestParam("action") String action,
+    String doPost(@RequestParam("action") String action,
                   @RequestParam("userId") long userId) {
         String jsondata = null;
-        modelAndView.setViewName("order");
+        ModelAndView modelAndView = new ModelAndView("order");
         System.out.println("OrderController.POST: .......enter......CREATE NEW ORDER ........................");
 
         if (emf != null) {
@@ -91,6 +89,7 @@ public class OrderController {
                         jsondata = new GsonBuilder().setPrettyPrinting().create().toJson(jsonOrder);
                         System.out.println("OrderController.POST: send JSON data to cart.jsp ---->" + jsondata);
                     }
+                    System.out.println("OrderController.POST: clearCartByUserId...");
                     cartService.clearCartByUserId(userId);
                     modelAndView.addObject("cart", null);
                 }
@@ -98,25 +97,8 @@ public class OrderController {
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
-//        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. cart: " + modelAndView.getModel().get("cart"));
-//        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. order: " + modelAndView.getModel().get("order"));
+        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. cart: " + modelAndView.getModel().get("cart"));
+        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. order: " + modelAndView.getModel().get("order"));
         return jsondata;
     }
-
-    @ModelAttribute("cart")
-    public Cart getCart() {
-        System.out.println("!!!!! OrderController.getCart... !!!!!");
-//        Thread.dumpStack();
-        return new Cart();
-
-    }
-
-    @ModelAttribute("order")
-    public Order getOrder() {
-        System.out.println("!!!!! OrderController.getOrder... !!!!!");
-//        Thread.dumpStack();
-        return new Order();
-
-    }
-
 }

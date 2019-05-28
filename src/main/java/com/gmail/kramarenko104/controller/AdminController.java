@@ -35,8 +35,8 @@ public class AdminController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ModelAndView getAllInfo(ModelAndView modelAndView ) {
-        modelAndView.setViewName("admin");
+    public ModelAndView getAllInfo() {
+        ModelAndView modelAndView = new ModelAndView("admin");
         if (emf != null) {
             List<User> usersList = userService.getAllUsers();
             List<Product> productsList = productService.getAllProducts();
@@ -48,14 +48,18 @@ public class AdminController {
         return modelAndView;
     }
 
+    @RequestMapping(value = "/products/add", method = RequestMethod.GET)
+    public ModelAndView addNewProduct() {
+        return new ModelAndView("adminNewProduct");
+    }
+
     @RequestMapping(value = "/products/add", method = RequestMethod.POST)
-    public ModelAndView addNewProduct(ModelAndView modelAndView,
-                                      @RequestParam("name") String name,
+    public ModelAndView addNewProduct(@RequestParam("name") String name,
                                       @RequestParam("category") String category,
                                       @RequestParam("price") String price,
                                       @RequestParam("description") String description,
                                       @RequestParam("image") String image) {
-        modelAndView.setViewName("admin");
+        ModelAndView modelAndView = new ModelAndView("admin");
         if (emf != null) {
             Product newProduct = new Product();
             newProduct.setName(name);
@@ -66,6 +70,7 @@ public class AdminController {
             newProduct.setImage(image);
             logger.debug("adminServlet.addNewProduct: got new product from form: " + newProduct);
             productService.createProduct(newProduct);
+            modelAndView.addObject("productsList", productService.getAllProducts());
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -77,6 +82,49 @@ public class AdminController {
         ModelAndView modelAndView = new ModelAndView("admin");
         if (emf != null) {
             productService.deleteProduct(productId);
+            modelAndView.addObject("productsList", productService.getAllProducts());
+        } else { // connection to DB is closed
+            modelAndView.addObject("warning", DB_WARNING);
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/users/add", method = RequestMethod.GET)
+    public ModelAndView addNewUser() {
+        System.out.println("AdminController.addNewUser.GET");
+        return new ModelAndView("adminNewUser");
+    }
+
+    @RequestMapping(value = "/users/add", method = RequestMethod.POST)
+    public ModelAndView addNewUser(@RequestParam("login") String login,
+                                   @RequestParam("password") String password,
+                                   @RequestParam("name") String name,
+                                   @RequestParam("address") String address,
+                                   @RequestParam("comment") String comment) {
+        ModelAndView modelAndView = new ModelAndView("admin");
+        System.out.println("AdminController.addNewUser.POST");
+        if (emf != null) {
+            User newUser = new User();
+            newUser.setLogin(login);
+            newUser.setPassword(password);
+            newUser.setName(name);
+            newUser.setAddress(address);
+            newUser.setComment(comment);
+            newUser = userService.createUser(newUser);
+            System.out.println("adminServlet.addNewUser: got new user from form: " + newUser);
+            modelAndView.addObject("usersList", userService.getAllUsers());
+        } else { // connection to DB is closed
+            modelAndView.addObject("warning", DB_WARNING);
+        }
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/users/delete", method = RequestMethod.GET)
+    public ModelAndView deleteUser(@RequestParam int userId) {
+        ModelAndView modelAndView = new ModelAndView("admin");
+        if (emf != null) {
+            userService.deleteUser(userId);
+            modelAndView.addObject("usersList", userService.getAllUsers());
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }

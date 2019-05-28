@@ -64,8 +64,7 @@ public class RunApp {
 //////            System.out.println("cat from db: " + e);
 //////        });
 ////
-////        //String iselectedCategory =  req.getParameter("selectedCat");
-////        String iselectedCategory =  "1";
+////        //String iselectedCategory =  req.getParameter("selectedCat");////        String iselectedCategory =  "1";
 ////		int selectedCategory = (iselectedCategory == null? 0: Integer.parseInt(iselectedCategory));
 ////
 //        List<Product> products = null;

@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface UserService {
 
-    long createUser(User user);
+    User createUser(User user);
 
     User getUser(long id);
 

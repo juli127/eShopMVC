@@ -24,6 +24,7 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
     private EntityManagerFactory emf;
 
     public ProductDaoImpl() {
+//        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
     }
 
     @Override

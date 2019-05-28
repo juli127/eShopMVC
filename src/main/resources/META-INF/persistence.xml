@@ -7,14 +7,14 @@
 <persistence-unit name="eshopMVCpersistence">
     <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
 
-    <!--<class>com.gmail.kramarenko104.model.User</class>-->
-    <!--<class>com.gmail.kramarenko104.model.Product</class>-->
-    <!--<class>com.gmail.kramarenko104.model.Cart</class>-->
-    <!--<class>com.gmail.kramarenko104.model.Order</class>-->
+    <class>com.gmail.kramarenko104.model.User</class>
+    <class>com.gmail.kramarenko104.model.Product</class>
+    <class>com.gmail.kramarenko104.model.Cart</class>
+    <class>com.gmail.kramarenko104.model.Order</class>
 
     <properties>
         <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-        <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/testdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"/>
+        <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC"/>
         <property name="javax.persistence.jdbc.user" value="julia"/>
         <property name="javax.persistence.jdbc.password" value="julia"/>
 

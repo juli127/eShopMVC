@@ -3,7 +3,6 @@ package com.gmail.kramarenko104.controller;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.service.CartServiceImpl;
-import com.gmail.kramarenko104.service.OrderServiceImpl;
 import com.gmail.kramarenko104.service.UserServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +25,6 @@ public class LoginController {
     private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
     private static final String DB_WARNING = "Check your connection to DB!";
     private static final String adminLog = "admin";
-    private ModelAndView modelAndView;
 
     @Autowired
     private UserServiceImpl userService;
@@ -35,53 +33,43 @@ public class LoginController {
     private CartServiceImpl cartService;
 
     @Autowired
-    private OrderServiceImpl orderService;
-
-    @Autowired
     private EntityManagerFactory emf;
 
     public LoginController() {
     }
 
-    @RequestMapping(value = {"/", "/login"}, method = RequestMethod.GET)
-    protected ModelAndView doGet(ModelAndView modelAndView) {
-        modelAndView.setViewName("login");
-        System.out.println("LoginController.doGet:   enter.. null all attributes");
-        modelAndView.addObject("user", null);
-        modelAndView.addObject("cart", null);
-        modelAndView.addObject("message", null);
-        modelAndView.addObject("attempt", null);
-        modelAndView.addObject("showLoginForm", true);
-        return modelAndView;
+    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+    protected ModelAndView doGet() {
+        return new ModelAndView("login");
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(ModelAndView modelAndView,
-                                  @RequestParam("login") String login,
+    protected ModelAndView doPost(@RequestParam("login") String login,
                                   @RequestParam("password") String pass) {
-        System.out.println("LoginController.doPost:   enter.................");
+        System.out.println("LoginController.doPost:   enter .........." );
         String viewToGo = "login";
+        ModelAndView modelAndView = new ModelAndView();
         boolean showLoginForm = true;
         boolean accessGranted = false;
         StringBuilder msgText = new StringBuilder();
         boolean isAdmin = false;
         User currentUser = null;
         int attempt;
-//        modelAndView = new ModelAndView();
 
-        // Connection to DB is open
         if (emf != null) {
             Object attemptObj = modelAndView.getModel().get("attempt");
             attempt = (attemptObj == null) ? 0 : (int) attemptObj;
+            currentUser = (User) modelAndView.getModel().get("user");
+            System.out.println("LoginController.doPost:   currentUser from session = " + currentUser);
 
             // already logged in
-            if (modelAndView.getModel().get("user") != null) {
-                currentUser = (User) modelAndView.getModel().get("user");
+            if (currentUser != null && currentUser.getLogin() != null) {
+                System.out.println("LoginController.doPost:   already logged in.... " );
                 accessGranted = true;
             } // not logged in yet
             else {
+                System.out.println("LoginController.doPost:   not logged in yet.... " );
                 long waitTime = 0;
-
                 if ((login != null) && !("".equals(login))) {
                     modelAndView.addObject("login", login);
                     currentUser = userService.getUserByLogin(login);
@@ -143,7 +131,6 @@ public class LoginController {
                 viewToGo = "product";
                 modelAndView.addObject("cart", userCart);
             }
-
             modelAndView.addObject("showLoginForm", showLoginForm);
             modelAndView.addObject("message", msgText.toString());
             modelAndView.addObject("attempt", attempt);

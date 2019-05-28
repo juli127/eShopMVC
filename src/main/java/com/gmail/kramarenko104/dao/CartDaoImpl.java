@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.*;
-import java.util.Map;
 
 @Repository
 public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
@@ -65,7 +64,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         } finally {
             em.close();
         }
-        logger.debug("JULIA: CartDao.getCartByUserId: return cart: " + cart);
+        System.out.println("  ---- CartDao.getCartByUserId: return cart: " + cart);
         return cart;
     }
 
@@ -74,8 +73,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         Cart cartToClear = getCartByUserId(userId);
-        Map<Product, Integer> products = cartToClear.getProducts();
-        System.out.println("CartDaoImpl: cartToRemove: " + cartToClear);
+        System.out.println("CartDaoImpl.clearCartByUserId: cartToRemove: " + cartToClear);
         try {
             // let's cartId stays the same for this userId
             // just remove all products from this cart
