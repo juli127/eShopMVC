@@ -1,5 +1,8 @@
 package com.gmail.kramarenko104.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,10 +22,12 @@ entity 'carts':
  */
 
 @Entity
+@Getter @Setter
+@EqualsAndHashCode
 @Table(name = "carts")
 @Access(value = AccessType.FIELD)
 @NamedQuery(name="GET_CART_BY_USERID", query = "from Cart c where c.user.userId = :userId")
-public class Cart  implements Serializable {
+public class Cart implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -52,46 +57,6 @@ public class Cart  implements Serializable {
         products = new HashMap<>();
     }
 
-    public long getCartId() {
-        return cartId;
-    }
-
-    public void setCartId(long cartId) {
-        this.cartId = cartId;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Map<Product, Integer> getProducts() {
-        return products;
-    }
-
-    public void setProducts(Map<Product, Integer> products) {
-        this.products = products;
-    }
-
-    public int getItemsCount() {
-        return itemsCount;
-    }
-
-    public void setItemsCount(int itemsCount) {
-        this.itemsCount = itemsCount;
-    }
-
-    public int getTotalSum() {
-        return totalSum;
-    }
-
-    public void setTotalSum(int totalSum) {
-        this.totalSum = totalSum;
-    }
-
     @Override
     public String toString() {
         return "Cart{" +
@@ -101,6 +66,4 @@ public class Cart  implements Serializable {
                 ", totalSum=" + totalSum +
                 ", products=[" + Arrays.asList(products) + "]}";
     }
-
-
 }

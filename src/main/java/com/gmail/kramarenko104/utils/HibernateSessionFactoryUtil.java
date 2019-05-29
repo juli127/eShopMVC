@@ -10,9 +10,9 @@ import org.hibernate.cfg.Configuration;
 
 public class HibernateSessionFactoryUtil {
 
-    private static final SessionFactory sessionFactory = buildSessionFactory();
+    private static SessionFactory sessionFactory;
 
-    private static SessionFactory buildSessionFactory() {
+    static {
         try {
             Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
             configuration.addAnnotatedClass(User.class);
@@ -22,7 +22,7 @@ public class HibernateSessionFactoryUtil {
 
             StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
                     .applySettings(configuration.getProperties());
-            return configuration.buildSessionFactory(builder.build());
+            sessionFactory = configuration.buildSessionFactory(builder.build());
         } catch (Exception e) {
             e.printStackTrace();
             throw new ExceptionInInitializerError("There was en error building the factory: " + e);

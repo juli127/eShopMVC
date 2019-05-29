@@ -5,6 +5,7 @@ Were used:
 - Spring Data 1.11.9
 - Hibernate 5.3.1
 - JPA 2.2, JPQL
+- Lombok 1.16.22
 - MySQL Server 5.7.23
 - MySQL Connector/J 8.0.13
 - HikariCP 3.1.0
