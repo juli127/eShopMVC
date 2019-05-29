@@ -75,7 +75,7 @@ public class Order implements Serializable {
                 ", user=" + user +
                 ", itemsCount=" + itemsCount +
                 ", totalSum=" + totalSum +
-                ", products=[" + Arrays.asList(products) + "]}";
+                ", products=" + Arrays.asList(products) + "}";
     }
 
 }
