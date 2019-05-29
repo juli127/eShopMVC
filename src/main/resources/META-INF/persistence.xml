@@ -24,6 +24,7 @@
         <property name="hibernate.cache.use.query_cache" value="false"/>
         <property name="hibernate.cache.use_second_level_cache" value="false"/>
         <property name="hibernate.hbm2ddl.auto" value="update"/>
+        <property name="hiberante.connection.characterEncoding" value="utf8"/>
     </properties>
 </persistence-unit>
 

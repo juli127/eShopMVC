@@ -117,17 +117,23 @@
             <props>
                 <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
                 <prop key="javax.persistence.jdbc.driver">com.mysql.jdbc.Driver</prop>
-                <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</prop>
+                <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/eshopdb</prop>
                 <prop key="javax.persistence.jdbc.user">julia</prop>
                 <prop key="javax.persistence.jdbc.password">julia</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">false</prop>
                 <prop key="hibernate.format_sql">true</prop>
+                <prop key="hiberante.connection.characterEncoding">utf8</prop>
+                <prop key="hiberante.connection.useUnicode">true</prop>
+                <prop key="hiberante.connection.serverTimezone">UTC</prop>
+                <prop key="hiberante.connection.useLegacyDatetimeCode">false</prop>
+                <prop key="hiberante.connection.useJDBCCompliantTimezoneShift">true</prop>
                 <prop key="hibernate.connection.provider_class">org.hibernate.hikaricp.internal.HikariCPConnectionProvider</prop>
                 <prop key="hibernate.hikari.minimumIdle">5</prop>
                 <prop key="hibernate.hikari.maximumPoolSize">10</prop>
                 <prop key="hibernate.hikari.idleTimeout">30000</prop>
+
             </props>
         </property>
 
