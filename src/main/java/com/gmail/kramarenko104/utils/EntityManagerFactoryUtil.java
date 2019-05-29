@@ -1,4 +1,4 @@
-package com.gmail.kramarenko104.hibernate;
+package com.gmail.kramarenko104.utils;
 
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;

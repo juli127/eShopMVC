@@ -31,17 +31,12 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         Cart cart = new Cart();
         User currentUser = userDao.get(userId);
         cart.setUser(currentUser);
-//        long cartId = -1;
         try {
             tx.begin();
             cart.setUser(em.merge(cart.getUser()));
             em.persist(cart);
-            em.flush();
+//            em.flush();
             tx.commit();
-//            cartId = cart.getCartId();
-//            tx.begin();
-//            cart = em.find(Cart.class, cartId);
-//            tx.commit();
         } catch (Exception ex) {
             tx.rollback();
             ex.printStackTrace();

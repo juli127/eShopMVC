@@ -15,20 +15,20 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     @Autowired
     private EntityManagerFactory emf;
 
+//    @Autowired
+//    private SessionFactory sessionFactory;
+
     public UserDaoImpl() {
-//        emf = EntityManagerFactoryUtil.getEntityManagerFactory();
     }
 
     @Override
     public User createUser(User user) {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
-        long userId = -1;
         try {
             tx.begin();
             em.persist(user);
             tx.commit();
-//            userId = user.getUserId();
         } catch (Exception ex) {
             tx.rollback();
             ex.printStackTrace();
@@ -52,6 +52,4 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
         em.close();
         return user;
     }
-
-
 }

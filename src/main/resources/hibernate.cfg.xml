@@ -1,0 +1,33 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration xmlns="http://www.hibernate.org/xsd/hibernate-configuration">
+    <session-factory>
+
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.username">julia</property>
+        <property name="hibernate.connection.password">julia</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/eshopdb</property>
+        <property name="hiberante.connection.characterEncoding">utf8</property>
+        <property name="hiberante.connection.useUnicode">true</property>
+        <property name="hiberante.connection.serverTimezone">UTC</property>
+        <property name="hiberante.connection.useLegacyDatetimeCode">false</property>
+        <property name="hiberante.connection.useJDBCCompliantTimezoneShift">true</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.generate_statistics">true</property>
+        <property name="hibernate.connection.provider_class">org.hibernate.hikaricp.internal.HikariCPConnectionProvider</property>
+        <property name="hibernate.hikari.minimumIdle">5</property>
+        <property name="hibernate.hikari.maximumPoolSize">10</property>
+        <property name="hibernate.hikari.idleTimeout">30000</property>
+
+        <mapping class="com.gmail.kramarenko104.model.User"/>
+        <mapping class="com.gmail.kramarenko104.model.Product"/>
+        <mapping class="com.gmail.kramarenko104.model.Cart"/>
+        <mapping class="com.gmail.kramarenko104.model.Order"/>
+
+    </session-factory>
+</hibernate-configuration>

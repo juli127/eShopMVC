@@ -1,4 +1,4 @@
-package com.gmail.kramarenko104.hibernate;
+package com.gmail.kramarenko104.utils;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Order;
