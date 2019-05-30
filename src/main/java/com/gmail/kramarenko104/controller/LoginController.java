@@ -45,7 +45,7 @@ public class LoginController {
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView doPost(@RequestParam("login") String login,
                                   @RequestParam("password") String pass) {
-        logger.debug("LoginController.doPost:   enter .........." );
+        logger.debug("[eshop] LoginController.doPost:   enter .........." );
         String viewToGo = "login";
         ModelAndView modelAndView = new ModelAndView();
         boolean showLoginForm = true;
@@ -59,15 +59,15 @@ public class LoginController {
             Object attemptObj = modelAndView.getModel().get("attempt");
             attempt = (attemptObj == null) ? 0 : (int) attemptObj;
             currentUser = (User) modelAndView.getModel().get("user");
-            logger.debug("LoginController.doPost:   currentUser from session = " + currentUser);
+            logger.debug("[eshop] LoginController.doPost:   currentUser from session = " + currentUser);
 
             // already logged in
             if (currentUser != null && currentUser.getLogin() != null) {
-                logger.debug("LoginController.doPost:   already logged in.... " );
+                logger.debug("[eshop] LoginController.doPost:   already logged in.... " );
                 accessGranted = true;
             } // not logged in yet
             else {
-                logger.debug("LoginController.doPost:   not logged in yet.... " );
+                logger.debug("[eshop] LoginController.doPost:   not logged in yet.... " );
                 long waitTime = 0;
                 if ((login != null) && !("".equals(login))) {
                     modelAndView.addObject("login", login);
@@ -78,14 +78,14 @@ public class LoginController {
                         String passVerif = userService.hashString(pass);
                         accessGranted = (currentUser.getPassword().equals(passVerif));
                         showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
-                        logger.debug("LoginController.doPost: currentUser: " + currentUser);
+                        logger.debug("[eshop] LoginController.doPost: currentUser: " + currentUser);
 
                         if (accessGranted) {
                             attempt = 0;
                             showLoginForm = false;
                             modelAndView.addObject("user", currentUser);
                             modelAndView.addObject("login", null);
-                            logger.debug("LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
+                            logger.debug("[eshop] LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
                             if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
                                 isAdmin = true;
                             }
@@ -121,10 +121,10 @@ public class LoginController {
             if (accessGranted) {
                 showLoginForm = false;
                 Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
-                logger.debug("LoginController.doPost:  GOT userCart from db == " + userCart);
+                logger.debug("[eshop] LoginController.doPost:  GOT userCart from db == " + userCart);
 
                 if (userCart == null) {
-                    logger.debug("LoginController.doPost: cart is empty, goto product.jsp");
+                    logger.debug("[eshop] LoginController.doPost: cart is empty, goto product.jsp");
                     userCart = cartService.createCart(currentUser.getUserId());
                 }
                 viewToGo = "product";
@@ -142,7 +142,7 @@ public class LoginController {
             viewToGo = "redirect:" + viewToGo;
         }
         modelAndView.setViewName(viewToGo);
-        logger.debug("LoginController.doPost:   exit.......goto " + viewToGo);
+        logger.debug("[eshop] LoginController.doPost:   exit.......goto " + viewToGo);
         return modelAndView;
     }
 }

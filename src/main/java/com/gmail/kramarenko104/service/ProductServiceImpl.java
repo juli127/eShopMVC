@@ -12,31 +12,32 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     private ProductDaoImpl productDao;
 
-    public void setProductDao(ProductDaoImpl productDao) {
-        this.productDao = productDao;
+    public ProductServiceImpl(){
     }
 
+    @Override
     public long createProduct(Product product) {
         return productDao.createProduct(product);
     }
 
+    @Override
     public Product getProduct(long productId) {
         return productDao.get(productId);
     }
 
+    @Override
     public void deleteProduct(long productId) {
         productDao.delete(productId);
     }
 
+    @Override
     public List<Product> getAllProducts() {
         return productDao.getAll();
     }
 
+    @Override
     public List<Product> getProductsByCategory(int category) {
         return productDao.getProductsByCategory(category);
     }
 
-    public boolean isDbConnected(){
-        return productDao.isDbConnected();
-    }
 }

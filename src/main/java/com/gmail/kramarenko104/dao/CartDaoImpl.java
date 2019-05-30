@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.*;
 
 @Repository
@@ -42,7 +41,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         } finally {
             em.close();
         }
-        System.out.println("CartDaoImpl.createCart: NEW cart was created: " + cart);
+        logger.debug("[eshop] CartDaoImpl.createCart: NEW cart was created: " + cart);
         return cart;
     }
 
@@ -58,7 +57,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         } finally {
             em.close();
         }
-        System.out.println("  ---- CartDao.getCartByUserId: return cart: " + cart);
+        logger.debug("[eshop] CartDao.getCartByUserId: return cart: " + cart);
         return cart;
     }
 
@@ -67,7 +66,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         Cart cartToClear = getCartByUserId(userId);
-        System.out.println("CartDaoImpl.clearCartByUserId: cartToRemove: " + cartToClear);
+        logger.debug("[eshop] CartDaoImpl.clearCartByUserId: cartToRemove: " + cartToClear);
         try {
             // let's cartId stays the same for this userId
             // just remove all products from this cart
@@ -80,12 +79,12 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         } finally {
             em.close();
         }
-        System.out.println("CartDaoImpl: cart for userId: " + userId + " was deleted");
+        logger.debug("[eshop] CartDaoImpl: cart for userId: " + userId + " was deleted");
     }
 
     @Override
     public void addProduct(long userId, Product product, int addQuantity) {
-        System.out.println("Julia ++++CartDao.addProduct: for userId: " + userId + ", product: " + product + ", quantity: " + addQuantity);
+        logger.debug("[eshop] Julia ++++CartDao.addProduct: for userId: " + userId + ", product: " + product + ", quantity: " + addQuantity);
         int dbQuantity = 0;
         Cart cart = getCartByUserId(userId);
         if (cart != null) {
@@ -112,7 +111,7 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
 
     @Override
     public void removeProduct(long userId, Product product, int rmQuantity) {
-        System.out.println("----CartDao.deleteProduct: for userId: " + userId + ", product: " + product + ", quantity: " + rmQuantity);
+        logger.debug("[eshop] CartDao.deleteProduct: for userId: " + userId + ", product: " + product + ", quantity: " + rmQuantity);
         int dbQuantity = 0;
         Cart cart = getCartByUserId(userId);
         if (cart != null) {
@@ -134,11 +133,11 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
             try {
                 tx.begin();
                 if (rmQuantity != dbQuantity) {
-                    System.out.println("----CartDao.deleteProduct: there is such product in dB, update quantity");
+                    logger.debug("[eshop] CartDao.deleteProduct: there is such product in dB, update quantity");
                     cart.getProducts().put(product, dbQuantity - rmQuantity);
                 } else {
                     // there is only 1 quantity of the product, so, deleteProduct this record from DB
-                    System.out.println("----CartDao.deleteProduct: there is only one product in dB, so, deleteProduct it from DB");
+                    logger.debug("[eshop] CartDao.deleteProduct: there is only one product in dB, so, deleteProduct it from DB");
                     cart.getProducts().remove(product);
                 }
                 em.merge(cart);

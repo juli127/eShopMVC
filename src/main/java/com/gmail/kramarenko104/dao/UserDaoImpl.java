@@ -4,12 +4,10 @@ import com.gmail.kramarenko104.model.User;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.*;
 
 @Repository
 @DynamicUpdate
-//@EnableTransactionManagement
 public class UserDaoImpl extends BaseDao<User> implements UserDao {
 
     @Autowired
@@ -36,7 +34,6 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public User getUserByLogin(String login) {
         EntityManager em = emf.createEntityManager();
         User user = null;

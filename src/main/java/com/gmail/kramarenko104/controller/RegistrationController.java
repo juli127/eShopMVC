@@ -65,7 +65,7 @@ public class RegistrationController {
 
                 // user with this login/password wasn't registered yet
                 if (!userExist) {
-                    logger.debug("RegisrtServlet: user with entered login wasn't registered yet");
+                    logger.debug("[eshop] RegisrtServlet: user with entered login wasn't registered yet");
                     Map<String, String> regData = new HashMap<>();
                     regData.put("login", login);
                     regData.put("pass", pass);
@@ -99,14 +99,14 @@ public class RegistrationController {
                         newUser.setComment(comment);
                         newUser = userService.createUser(newUser);
                         if (newUser != null) {
-                            logger.debug("RegisrtServlet: new user was created: " + newUser);
+                            logger.debug("[eshop] RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
                             modelAndView.addObject("user", newUser);
                             Cart newCart = new Cart();
                             newCart.setUser(newUser);
                             modelAndView.addObject("cart", newCart);
                         } else {
-                            logger.debug("RegisrtServlet: new user was NOT created " );
+                            logger.debug("[eshop] RegisrtServlet: new user was NOT created " );
                             modelAndView.addObject("user", null);
                             modelAndView.addObject("cart", null);
                         }
@@ -139,7 +139,7 @@ public class RegistrationController {
             } else {
                 // user with this login/password is already registered, send user to /login
                 if (userExist) {
-                    logger.debug("RegisrtServlet: user was already registered before, send user to login page");
+                    logger.debug("[eshop] RegisrtServlet: user was already registered before, send user to login page");
                     viewToGo = "redirect:/login";
                 } else {
                     // it's the new fresh-registered user, send user to /products

@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -15,7 +14,6 @@ import java.util.List;
 
 @Repository
 @DynamicUpdate
-//@EnableTransactionManagement
 public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
 
     private final static Logger logger = LoggerFactory.getLogger(ProductDaoImpl.class);
@@ -46,7 +44,6 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public List<Product> getProductsByCategory(int category) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Product> query = em.createNamedQuery("GET_PRODUCT_BY_CATEGORY", Product.class)

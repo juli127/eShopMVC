@@ -18,8 +18,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDaoImpl userDao;
 
-    public void setUserDao(UserDaoImpl userDao) {
-        this.userDao = userDao;
+    public UserServiceImpl(){
     }
 
     @Override
@@ -63,9 +62,5 @@ public class UserServiceImpl implements UserService {
         }
         md5.update(StandardCharsets.UTF_8.encode(hash + SALT));
         return String.format("%032x", new BigInteger(md5.digest()));
-    }
-
-    public boolean isDbConnected(){
-        return userDao.isDbConnected();
     }
 }

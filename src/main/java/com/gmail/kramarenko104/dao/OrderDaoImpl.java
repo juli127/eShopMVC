@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.*;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         } finally {
             em.close();
         }
-        System.out.println("    OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
+        logger.debug("[eshop] OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
         return newOrder;
     }
 
@@ -50,7 +49,7 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class).setParameter("userId", userId);
         List<Order> resultList = query.getResultList();
-        logger.debug("    OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
+        logger.debug("[eshop] OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
         em.close();
         return resultList;
     }
@@ -59,13 +58,13 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
     public Order getLastOrderByUserId(long userId) {
         EntityManager em = emf.createEntityManager();
         Order order = null;
-        System.out.println("    OrderDAO.getLastOrderByUserId: get order for userId: " + userId);
+        logger.debug("[eshop] OrderDAO.getLastOrderByUserId: get order for userId: " + userId);
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class).setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
         } catch (NoResultException ex) {
         }
-        System.out.println("    OrderDAO.getLastOrderByUserId: the last orders is: " + order);
+        logger.debug("[eshop] OrderDAO.getLastOrderByUserId: the last orders is: " + order);
         em.close();
         return order;
     }

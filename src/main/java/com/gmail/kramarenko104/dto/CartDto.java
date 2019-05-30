@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104.dto;
 
 import com.gmail.kramarenko104.model.Product;
+import lombok.Setter;
 import java.util.HashMap;
 import java.util.Map;
 
+@Setter
 public class CartDto {
 
     private long userId;
@@ -17,19 +19,6 @@ public class CartDto {
         totalSum = 0;
         products = new HashMap<>();
     }
-
-    public void setItemsCount(int itemsCount) {
-        this.itemsCount = itemsCount;
-    }
-
-    public void setTotalSum(int totalSum) {
-        this.totalSum = totalSum;
-    }
-
-    public void setProducts(Map<Product, Integer> products) {
-        this.products = products;
-    }
-
 
     @Override
     public String toString() {

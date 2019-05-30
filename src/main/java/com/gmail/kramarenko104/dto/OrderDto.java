@@ -1,10 +1,12 @@
 package com.gmail.kramarenko104.dto;
 
 import com.gmail.kramarenko104.model.Product;
+import lombok.Setter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+@Setter
 public class OrderDto {
 
     private long userId;
@@ -22,22 +24,6 @@ public class OrderDto {
         itemsCount = 0;
         totalSum = 0;
         products = new HashMap<>();
-    }
-
-    public void setOrderNumber(long orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-
-    public void setProducts(Map<Product, Integer> products) {
-        this.products = products;
-    }
-
-    public void setTotalSum(int totalSum) {
-        this.totalSum = totalSum;
-    }
-
-    public void setItemsCount(int itemsCount) {
-        this.itemsCount = itemsCount;
     }
 
     @Override

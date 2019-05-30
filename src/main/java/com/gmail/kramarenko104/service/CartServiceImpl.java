@@ -21,9 +21,7 @@ public class CartServiceImpl implements CartService {
 
     private static Logger logger = LoggerFactory.getLogger(CartService.class);
 
-    public void setDaos(CartDaoImpl cartDao, ProductDaoImpl productDao) {
-        this.cartDao = cartDao;
-        this.productDao = productDao;
+    public CartServiceImpl(){
     }
 
     @Override
@@ -31,6 +29,7 @@ public class CartServiceImpl implements CartService {
         return cartDao.createCart(userId);
     }
 
+    @Override
     public Cart getCartByUserId(long userId) {
         Cart cart = cartDao.getCartByUserId(userId);
         if (cart != null && cart.getProducts().size() > 0) {
@@ -54,13 +53,7 @@ public class CartServiceImpl implements CartService {
         cartDao.clearCartByUserId(userId);
     }
 
-    public boolean isDbConnected() {
-        return cartDao.isDbConnected();
-    }
-
     private Cart recalculateCart(Cart cart) {
-//        System.out.println(">>>>CartServiceImpl.recalculateCart ..enter with cart: cart: id:"
-//                + cart.getCartId() + ", count:" + cart.getItemsCount() + ", sum: " + cart.getTotalSum());
         Map<Product, Integer> productsInCart = cart.getProducts();
         int itemsCount = 0;
         int totalSum = 0;
@@ -76,8 +69,6 @@ public class CartServiceImpl implements CartService {
             cart.setItemsCount(itemsCount);
             cart.setTotalSum(totalSum);
         }
-//        System.out.println(">>>>CartServiceImpl.recalculateCart ..upd cart: id:"
-//                + cart.getCartId() + ", count:" + cart.getItemsCount() + ", sum: " + cart.getTotalSum());
         return cart;
     }
 }

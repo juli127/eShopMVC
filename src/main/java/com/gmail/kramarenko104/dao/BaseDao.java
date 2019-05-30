@@ -18,10 +18,6 @@ public class BaseDao<T>{
         persistenceClass = (Class<T>) (((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 
-    public boolean isDbConnected(){
-        return emf.isOpen();
-    }
-
     public T get(long id) {
         EntityManager em = emf.createEntityManager();
         T t = em.find(persistenceClass, id);

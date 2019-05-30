@@ -7,12 +7,13 @@ import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Map;
 
 @Service
 public class OrderServiceImpl implements OrderService {
+
+    private final static String PROCESSED_ORDER = "ordered";
 
     @Autowired
     OrderDaoImpl orderDao;
@@ -23,18 +24,15 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     CartDaoImpl cartDao;
 
-    private final static String PROCESSED_ORDER = "ordered";
-
-    public void setOrderDao(OrderDaoImpl orderDao, UserDaoImpl userDao, CartDaoImpl cartDao) {
-        this.orderDao = orderDao;
-        this.userDao = userDao;
-        this.cartDao = cartDao;
+    public OrderServiceImpl(){
     }
 
+    @Override
     public void deleteAllOrders(long userId){
         orderDao.deleteAllOrdersForUser(userId);
     }
 
+    @Override
     public Order createOrder(long userId, Map<Product, Integer> products){
         long newOrderNumber = orderDao.getNewOrderNumber();
         // createProduct the new order on the base of Cart
@@ -52,7 +50,6 @@ public class OrderServiceImpl implements OrderService {
         newOrder.setTotalSum(totalSum);
         newOrder.setItemsCount(itemsCount);
         Order dbNewOrder = orderDao.createOrder(newOrder);
-
         return dbNewOrder;
     }
 
@@ -68,10 +65,6 @@ public class OrderServiceImpl implements OrderService {
             order = recalculateOrder(order);
         }
         return order;
-    }
-
-    public boolean isDbConnected(){
-        return orderDao.isDbConnected();
     }
 
     private Order recalculateOrder(Order order) {

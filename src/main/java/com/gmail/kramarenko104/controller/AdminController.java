@@ -68,7 +68,7 @@ public class AdminController {
             newProduct.setPrice(Integer.valueOf(price));
             newProduct.setDescription(description);
             newProduct.setImage(image);
-            logger.debug("adminServlet.addNewProduct: got new product from form: " + newProduct);
+            logger.debug("[eshop] adminServlet.addNewProduct: got new product from form: " + newProduct);
             productService.createProduct(newProduct);
             modelAndView.addObject("productsList", productService.getAllProducts());
         } else { // connection to DB is closed
@@ -91,7 +91,7 @@ public class AdminController {
 
     @RequestMapping(value = "/users/add", method = RequestMethod.GET)
     public ModelAndView addNewUser() {
-        logger.debug("AdminController.addNewUser.GET");
+        logger.debug("[eshop] AdminController.addNewUser.GET");
         return new ModelAndView("adminNewUser");
     }
 
@@ -102,7 +102,7 @@ public class AdminController {
                                    @RequestParam("address") String address,
                                    @RequestParam("comment") String comment) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        logger.debug("AdminController.addNewUser.POST");
+        logger.debug("[eshop] AdminController.addNewUser.POST");
         if (emf != null) {
             User newUser = new User();
             newUser.setLogin(login);
@@ -111,7 +111,7 @@ public class AdminController {
             newUser.setAddress(address);
             newUser.setComment(comment);
             newUser = userService.createUser(newUser);
-            logger.debug("adminServlet.addNewUser: got new user from form: " + newUser);
+            logger.debug("[eshop] adminServlet.addNewUser: got new user from form: " + newUser);
             modelAndView.addObject("usersList", userService.getAllUsers());
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
