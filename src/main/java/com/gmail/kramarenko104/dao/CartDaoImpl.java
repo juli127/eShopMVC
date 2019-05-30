@@ -35,7 +35,6 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
             tx.begin();
             cart.setUser(em.merge(cart.getUser()));
             em.persist(cart);
-//            em.flush();
             tx.commit();
         } catch (Exception ex) {
             tx.rollback();
@@ -152,26 +151,4 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
             }
         }
     }
-
-    // old version
-    //    @Override
-//    public long createCart(Cart cart) {
-//        EntityManager em = emf.createEntityManager();
-//        EntityTransaction tx = em.getTransaction();
-//        long cartId = -1;
-//        try {
-//            tx.begin();
-//            cart.setUser(em.merge(cart.getUser()));
-//            em.persist(cart);
-//            tx.commit();
-//            cartId = cart.getCartId();
-//        } catch (Exception ex) {
-//            tx.rollback();
-//            ex.printStackTrace();
-//        } finally {
-//            em.close();
-//        }
-//        return cartId;
-//    }
-
 }

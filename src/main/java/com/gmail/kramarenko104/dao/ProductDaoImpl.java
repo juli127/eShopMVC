@@ -55,5 +55,4 @@ public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
         em.close();
         return productsList;
     }
-
 }

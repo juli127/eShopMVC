@@ -15,9 +15,6 @@ public class UserDaoImpl extends BaseDao<User> implements UserDao {
     @Autowired
     private EntityManagerFactory emf;
 
-//    @Autowired
-//    private SessionFactory sessionFactory;
-
     public UserDaoImpl() {
     }
 

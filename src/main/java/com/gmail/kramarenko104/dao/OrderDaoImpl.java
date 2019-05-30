@@ -100,6 +100,4 @@ public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
             em.close();
         }
     }
-
-
 }
