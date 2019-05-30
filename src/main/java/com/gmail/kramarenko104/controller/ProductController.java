@@ -33,7 +33,7 @@ public class ProductController {
                                        @RequestParam(value = "selectedCategory", required = false) String selectedCateg) {
 
         ModelAndView modelAndView = new ModelAndView("products");
-        System.out.println("ProductController.doGet:   enter.. currentUser: " + user);
+        logger.debug("ProductController.doGet:   enter.. currentUser: " + user);
 
         // connection to DB is open
         if (emf != null) {
@@ -50,7 +50,7 @@ public class ProductController {
 
             // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
             if (user == null || (user != null && user.getLogin() == null)) {
-                System.out.println("ProductController.doGet:   user==null,so.. null all attributes");
+                logger.debug("ProductController.doGet:   user==null,so.. null all attributes");
                 modelAndView.addObject("order", null);
                 modelAndView.addObject("cart", null);
                 modelAndView.addObject("message", null);
@@ -58,10 +58,10 @@ public class ProductController {
                 modelAndView.addObject("showLoginForm", true);
             } else {
                 //re-check user cart according to currentUser
-                System.out.println("ProductController.doGet:   user!=null,so.. get Cart from db...");
+                logger.debug("ProductController.doGet:   user!=null,so.. get Cart from db...");
                 long userId = user.getUserId();
                 Cart userCart = cartService.getCartByUserId(userId);
-                System.out.println("ProductController.GET:  got from db userCart " + userCart);
+                logger.debug("ProductController.GET:  got from db userCart " + userCart);
                 modelAndView.addObject("cart", userCart);
             }
         } else { // connection to DB is closed

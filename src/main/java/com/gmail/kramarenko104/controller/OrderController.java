@@ -57,7 +57,7 @@ public class OrderController {
                   @RequestParam("userId") long userId) {
         String jsondata = null;
         ModelAndView modelAndView = new ModelAndView("order");
-        System.out.println("OrderController.POST: .......enter......CREATE NEW ORDER ........................");
+        logger.debug("OrderController.POST: .......enter......CREATE NEW ORDER ........................");
 
         if (emf != null) {
             User dbUser = userService.getUser(userId);
@@ -66,11 +66,11 @@ public class OrderController {
 
                 // getProduct info from Ajax POST request (updateCart.js)
                 if (action != null && (action.equals("makeOrder"))) {
-                    System.out.println("OrderController.POST: got userId from POST request: " + userId);
+                    logger.debug("OrderController.POST: got userId from POST request: " + userId);
 
                     // any user can have only one existing now cart and many processed orders (userId uniquely identifies cart)
                     Cart cart = cartService.getCartByUserId(userId);
-                    System.out.println("OrderController.POST: got cart from DB: " + cart);
+                    logger.debug("OrderController.POST: got cart from DB: " + cart);
 
                     // order will be created based on the cart's content
                     Order newOrder = orderService.createOrder(userId, cart.getProducts());
@@ -81,15 +81,15 @@ public class OrderController {
                     jsonOrder.setProducts(newOrder.getProducts());
                     jsonOrder.setItemsCount(newOrder.getItemsCount());
                     jsonOrder.setTotalSum(newOrder.getTotalSum());
-                    System.out.println("OrderController.POST: !!! new Order was created: " + jsonOrder);
+                    logger.debug("OrderController.POST: !!! new Order was created: " + jsonOrder);
                     modelAndView.addObject("order", newOrder);
 
                     // send JSON back with the new Order to show on order.jsp
                     if (jsonOrder != null) {
                         jsondata = new GsonBuilder().setPrettyPrinting().create().toJson(jsonOrder);
-                        System.out.println("OrderController.POST: send JSON data to cart.jsp ---->" + jsondata);
+                        logger.debug("OrderController.POST: send JSON data to cart.jsp ---->" + jsondata);
                     }
-                    System.out.println("OrderController.POST: clearCartByUserId...");
+                    logger.debug("OrderController.POST: clearCartByUserId...");
                     cartService.clearCartByUserId(userId);
                     modelAndView.addObject("cart", null);
                 }
@@ -97,8 +97,8 @@ public class OrderController {
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
-        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. cart: " + modelAndView.getModel().get("cart"));
-        System.out.println(">>>>>>>>>>OrderController.POST:  exit .. order: " + modelAndView.getModel().get("order"));
+        logger.debug(">>>>>>>>>>OrderController.POST:  exit .. cart: " + modelAndView.getModel().get("cart"));
+        logger.debug(">>>>>>>>>>OrderController.POST:  exit .. order: " + modelAndView.getModel().get("order"));
         return jsondata;
     }
 }

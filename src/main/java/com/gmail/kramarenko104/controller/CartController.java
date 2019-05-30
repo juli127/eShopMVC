@@ -34,7 +34,7 @@ public class CartController {
         ModelAndView modelAndView = new ModelAndView("cart");
         if (emf != null) {
             Cart cart = cartService.getCartByUserId(user.getUserId());
-            System.out.println("CartController.doGet:  user cart: " + cart);
+            logger.debug("CartController.doGet:  user cart: " + cart);
             modelAndView.addObject("user", user);
             modelAndView.addObject("cart", cart);
         } else {
@@ -64,14 +64,14 @@ public class CartController {
                 if (action != null && action.length() > 0) {
                     switch (action) {
                         case "add":
-                            System.out.println("CartController.doPost: GOT PARAMETER 'add'....");
+                            logger.debug("CartController.doPost: GOT PARAMETER 'add'....");
                             cartService.addProduct(user.getUserId(), productId, quantity);
-                            System.out.println("CartController.doPost: for user '" + user.getName() + "' was added " + quantity + " of productId: " + productId);
+                            logger.debug("CartController.doPost: for user '" + user.getName() + "' was added " + quantity + " of productId: " + productId);
                             break;
                         case "remove":
-                            System.out.println("CartController.doPost: GOT PARAMETER 'remove' ");
+                            logger.debug("CartController.doPost: GOT PARAMETER 'remove' ");
                             cartService.removeProduct(user.getUserId(), productId, quantity);
-                            System.out.println("CartController.doPost: for user: " + user.getUserId() + " was removed " + quantity + " of productId " + productId);
+                            logger.debug("CartController.doPost: for user: " + user.getUserId() + " was removed " + quantity + " of productId " + productId);
                             break;
                     }
                     needRefresh = true;
@@ -79,7 +79,7 @@ public class CartController {
                 //  REFRESH CART's characteristics if need to refresh
                 if (needRefresh) {
                     Cart userCart = cartService.getCartByUserId(userId);
-                    System.out.println("CartController.doPost:  updated cart " + userCart);
+                    logger.debug("CartController.doPost:  updated cart " + userCart);
                     modelAndView.addObject("cart", userCart);
 
                     // send JSON with updated Cart back to cart.jsp
@@ -100,9 +100,9 @@ public class CartController {
         } else { // session to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
-//        System.out.println("CartController.doPost:  return json: " + jsonString);
-//        System.out.println("CartController.doPost:   exit with user: " + modelAndView.getModel().get("user"));
-        System.out.println("CartController.doPost:   exit with cart: " + modelAndView.getModel().get("cart"));
+//        logger.debug("CartController.doPost:  return json: " + jsonString);
+//        logger.debug("CartController.doPost:   exit with user: " + modelAndView.getModel().get("user"));
+        logger.debug("CartController.doPost:   exit with cart: " + modelAndView.getModel().get("cart"));
         return jsonString;
     }
 }
