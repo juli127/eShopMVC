@@ -143,6 +143,12 @@
             <version>${hibernate.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.22</version>
+        </dependency>
+
         <!--<dependency>-->
         <!--<groupId>org.hibernate</groupId>-->
         <!--<artifactId>hibernate</artifactId>-->
@@ -215,7 +221,7 @@
             <version>8.0.13</version>
         </dependency>
 
-        <!-- LOGGING +++++++++++++++++++++++++++++++++++++++++ -->
+        <!-- slf4j-log4j  +++++++++++++++++++++++++++++++++++++++++ -->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -223,14 +229,6 @@
             <version>${org.slf4j-version}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.slf4j</groupId>-->
-            <!--<artifactId>jcl-over-slf4j</artifactId>-->
-            <!--<version>${org.slf4j-version}</version>-->
-            <!--<scope>runtime</scope>-->
-        <!--</dependency>-->
-
-        <!-- slf4j-log4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
@@ -257,11 +255,6 @@
             <artifactId>junit</artifactId>
             <version>4.11</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.22</version>
         </dependency>
 
     </dependencies>
