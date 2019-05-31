@@ -1,7 +1,6 @@
 package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Order;
-import org.hibernate.annotations.DynamicUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import javax.persistence.*;
 import java.util.List;
 
 @Repository
-@DynamicUpdate
 public class OrderDaoImpl extends BaseDao<Order> implements OrderDao {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderDaoImpl.class);

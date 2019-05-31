@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -26,6 +27,7 @@ entity 'carts':
 @EqualsAndHashCode
 @Table(name = "carts")
 @Access(value = AccessType.FIELD)
+@DynamicUpdate
 @NamedQuery(name="GET_CART_BY_USERID", query = "from Cart c where c.user.userId = :userId")
 public class Cart implements Serializable {
 
