@@ -26,6 +26,7 @@
             <artifactId>spring-core</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -43,6 +44,7 @@
             <artifactId>spring-aop</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+
         <!--<dependency>-->
         <!--<groupId>aopalliance</groupId>-->
         <!--<artifactId>aopalliance</artifactId>-->
@@ -63,46 +65,35 @@
         <!--<artifactId>spring-expression</artifactId>-->
         <!--<version>${springframework.version}</version>-->
         <!--</dependency>-->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+
         <!--<dependency>-->
         <!--<groupId>org.springframework</groupId>-->
         <!--<artifactId>spring-jdbc</artifactId>-->
         <!--<version>${springframework.version}</version>-->
         <!--</dependency>-->
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
             <version>${springframework.version}</version>
         </dependency>
+
         <!--<dependency>-->
         <!--<groupId>org.springframework.data</groupId>-->
         <!--<artifactId>spring-data-jpa</artifactId>-->
         <!--<version>2.1.5.RELEASE</version>-->
-        <!--</dependency>-->
-
-
-        <!-- https://mvnrepository.com/artifact/org.apache.tomcat/tomcat-jdbc -->
-        <!--<dependency>-->
-        <!--<groupId>org.apache.tomcat</groupId>-->
-        <!--<artifactId>tomcat-jdbc</artifactId>-->
-        <!--<version>9.0.12</version>-->
-        <!--</dependency>-->
-
-        <!--connections' pool support +++++++++++++++++++++++++++++++++++++++++-->
-        <!--<dependency>-->
-        <!--<groupId>com.zaxxer</groupId>-->
-        <!--<artifactId>HikariCP</artifactId>-->
-        <!--<version>${hikaricp.version}</version>-->
-        <!--&lt;!&ndash;<scope>compile</scope>&ndash;&gt;-->
         <!--</dependency>-->
 
         <dependency>
@@ -126,15 +117,15 @@
         <!--</dependency>-->
 
         <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-entitymanager</artifactId>
-        <version>${hibernate.version}</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <dependency>
-        <groupId>org.hibernate</groupId>
-        <artifactId>hibernate-core</artifactId>
-        <version>${hibernate.version}</version>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
 
         <dependency>
@@ -148,30 +139,6 @@
             <artifactId>lombok</artifactId>
             <version>1.16.22</version>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate</artifactId>-->
-        <!--<version>3.1.3</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>javax.xml.bind</groupId>-->
-        <!--<artifactId>jaxb-api</artifactId>-->
-        <!--<version>2.3.0</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-commons-annotations</artifactId>-->
-        <!--<version>5.1.5.RELEASE</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-        <!--<groupId>org.hibernate</groupId>-->
-        <!--<artifactId>hibernate-annotations</artifactId>-->
-        <!--<version>3.3.1.GA</version>-->
-        <!--</dependency>-->
 
         <!-- https://mvnrepository.com/artifact/javax.transaction/jta -->
         <dependency>
@@ -188,12 +155,6 @@
         <!--</dependency>-->
 
         <!--OTHER dependencies +++++++++++++++++++++++++++++++++++++++++ -->
-        <!--&lt;!&ndash; https://mvnrepository.com/artifact/commons-logging/commons-logging &ndash;&gt;-->
-        <!--<dependency>-->
-        <!--<groupId>commons-logging</groupId>-->
-        <!--<artifactId>commons-logging</artifactId>-->
-        <!--<version>1.2</version>-->
-        <!--</dependency>-->
 
         <!-- Servlet  +++++++++++++++++++++++++++++++++++++++++ -->
         <dependency>
@@ -225,21 +186,9 @@
 
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${org.slf4j-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>${org.slf4j-version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
         </dependency>
 
         <!-- GSON +++++++++++++++++++++++++++++++++++++++++ -->
@@ -299,4 +248,5 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>
