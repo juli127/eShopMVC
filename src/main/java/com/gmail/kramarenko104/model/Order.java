@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.DynamicUpdate;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -28,6 +29,7 @@ entity 'orders':
 @EqualsAndHashCode
 @Table(name = "orders")
 @Access(value = AccessType.FIELD)
+@DynamicUpdate
 @NamedQueries(value =
         {@NamedQuery(name = "GET_ALL_ORDERS_BY_USERID", query = "from Order o where o.user.userId = :userId"),
         @NamedQuery(name = "GET_LAST_ORDER_NUMBER", query = "select distinct max(o.orderNumber) as lastOrderNumber from Order o"),

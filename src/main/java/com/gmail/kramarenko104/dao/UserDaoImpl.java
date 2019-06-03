@@ -1,13 +1,12 @@
 package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.User;
-import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.*;
 
 @Repository
-@DynamicUpdate
 public class UserDaoImpl extends BaseDao<User> implements UserDao {
 
     @Autowired

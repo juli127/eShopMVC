@@ -1,11 +1,11 @@
 package com.gmail.kramarenko104.dao;
 
 import com.gmail.kramarenko104.model.Product;
-import org.hibernate.annotations.DynamicUpdate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -13,7 +13,6 @@ import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
-@DynamicUpdate
 public class ProductDaoImpl extends BaseDao<Product> implements ProductDao {
 
     private final static Logger logger = LoggerFactory.getLogger(ProductDaoImpl.class);
