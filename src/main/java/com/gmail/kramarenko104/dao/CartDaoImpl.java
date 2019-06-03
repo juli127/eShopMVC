@@ -28,11 +28,11 @@ public class CartDaoImpl extends BaseDao<Cart> implements CartDao {
         EntityManager em = emf.createEntityManager();
         EntityTransaction tx = em.getTransaction();
         Cart cart = new Cart();
-        User currentUser = userDao.get(userId);
-        cart.setUser(currentUser);
         try {
             tx.begin();
-            cart.setUser(em.merge(cart.getUser()));
+            // make currentUser managed
+            User currentUser = em.merge(userDao.get(userId));
+            cart.setUser(currentUser);
             em.persist(cart);
             tx.commit();
         } catch (Exception ex) {

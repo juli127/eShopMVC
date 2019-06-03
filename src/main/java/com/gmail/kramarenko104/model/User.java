@@ -34,10 +34,10 @@ public class User implements Serializable {
     @Column(columnDefinition = "varchar(100)")
     private String comment;
 
-    @OneToOne (mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToOne (mappedBy = "user", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude private Cart cart;
 
-    @OneToMany (mappedBy = "user", cascade = CascadeType.REMOVE)
+    @OneToMany (mappedBy = "user", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Exclude private List<Order> userOrders;
 
     @Override

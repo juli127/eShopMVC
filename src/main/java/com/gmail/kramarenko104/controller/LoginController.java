@@ -16,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManagerFactory;
 
 @Controller
+@RequestMapping("/login")
 @SessionAttributes(value = {"showLoginForm", "message", "attempt", "user", "login", "startTime", "cart", "isAdmin", "warning"})
 public class LoginController {
 
@@ -37,8 +38,9 @@ public class LoginController {
     public LoginController() {
     }
 
-    @RequestMapping(value = {"/login"}, method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     protected ModelAndView doGet() {
+        logger.debug("[eshop] LoginController.doGet:   enter ....goto login.jsp......");
         return new ModelAndView("login");
     }
 
