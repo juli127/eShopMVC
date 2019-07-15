@@ -14,7 +14,7 @@ public class RunApp {
         logger.debug("[eshop] --------start---------");
 //        List<User> usersList = new ArrayList<>();
 
-//        UserDaoImpl userDao = new UserDaoImpl();
+//        UserDaoImplImpl userDao = new UserDaoImplImpl();
 //        UserServiceImpl userService = new UserServiceImpl();
 //        userService.setUserDao(userDao);
 //
@@ -51,7 +51,7 @@ public class RunApp {
 //        userService.createUser(user);
 //
 //        logger.debug("[eshop] ---------------------------------");
-//        ProductDaoImpl productDao = new ProductDaoImpl();
+//        ProductDaoImplImpl productDao = new ProductDaoImplImpl();
 //        ProductServiceImpl productService = new ProductServiceImpl();
 //        productService.setProductDao(productDao);
 //
@@ -129,7 +129,7 @@ public class RunApp {
 
 //        logger.debug("[eshop] ---------cart functionality testing------------------------");
 
-//        CartDaoImpl cartDao = new CartDaoImpl();
+//        CartDaoImplImpl cartDao = new CartDaoImplImpl();
 //        CartServiceImpl cartService = new CartServiceImpl();
 //        cartService.setDaos(cartDao, productDao);
 
@@ -161,7 +161,7 @@ public class RunApp {
 //         User user = userService.getUser(4);
 //        order.setUser(user);
 
-//        OrderDaoImpl orderDao = new OrderDaoImpl();
+//        OrderDaoImplImpl orderDao = new OrderDaoImplImpl();
 //        OrderServiceImpl orderService = new OrderServiceImpl();
 //        orderService.setOrderDao(orderDao, userDao, cartDao);
 

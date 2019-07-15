@@ -11,18 +11,19 @@
        http://www.springframework.org/schema/context
        http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/tx
-       http://www.springframework.org/schema/tx/spring-tx.xsd">
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/data/jpa ">
 
     <!--CONTEXT  ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <context:component-scan base-package="com.gmail.kramarenko104"/>
-    <context:property-placeholder location="classpath:application.properties"/>
-    <context:annotation-config/>
+    <!--<context:property-placeholder location="classpath:application.properties"/>-->
+    <!--<context:annotation-config/>-->
 
     <!--=========================================-->
     <!-- 1) JDBC configuration +++++++++++++++++++++++++++-->
     <!--<bean  name="dataSource" class="org.apache.tomcat.jdbc.pool.DataSource">-->
     <!--destroy-method="close">-->
-    <!--<property name="url" value="{db.url}" />-->
+    <!--<property name="url" value="${db.url}" />-->
     <!--<property name="driverClassName" value="${db.driverClassName}" />-->
     <!--<property name="username" value="${db.user}" />-->
     <!--<property name="password" value="${db.password}" />-->
@@ -49,16 +50,16 @@
 
     <!--  3) HIKARI configuration +++++++++++++++++++++++++++-->
     <!--<bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig"-->
-          <!--p:driverClassName="${db.driverClassName}"-->
-          <!--p:jdbcUrl="${db.url}"-->
-          <!--p:username="${db.user}"-->
-          <!--p:password="${db.password}"-->
-          <!--p:minimumIdle="${hibernate.hikari.minimumIdle}"-->
-          <!--p:maximumPoolSize="${hibernate.hikari.maximumPoolSize}"-->
-          <!--p:idleTimeout="${hibernate.hikari.idleTimeout}"-->
-          <!--p:poolName="${hibernate.hikari.poolName}"/>-->
+    <!--p:driverClassName="${db.driverClassName}"-->
+    <!--p:jdbcUrl="${db.url}"-->
+    <!--p:username="${db.user}"-->
+    <!--p:password="${db.password}"-->
+    <!--p:minimumIdle="${hibernate.hikari.minimumIdle}"-->
+    <!--p:maximumPoolSize="${hibernate.hikari.maximumPoolSize}"-->
+    <!--p:idleTimeout="${hibernate.hikari.idleTimeout}"-->
+    <!--p:poolName="${hibernate.hikari.poolName}"/>-->
 
-     <!--&lt;!&ndash;1 HIKARI connection pool +++++++++++++++++++++++++++&ndash;&gt;-->
+    <!--&lt;!&ndash;1 HIKARI connection pool +++++++++++++++++++++++++++&ndash;&gt;-->
     <!--<bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource"-->
     <!--c:configuration-ref="hikariConfig"/>-->
 
@@ -70,53 +71,45 @@
 
     <!--Hibernate ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--<bean id="sessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean" depends-on="dataSource">-->
-        <!--<property name="dataSource" ref="dataSource"/>-->
-        <!--<property name="packagesToScan" value="com.gmail.kramarenko104.model"/>-->
-        <!--<property name="hibernateProperties">-->
-            <!--<props>-->
-                <!--<prop key="hibernate.dialect">${hibernate.dialect}</prop>-->
-                <!--<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>-->
-                <!--<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>-->
-            <!--</props>-->
-        <!--</property>-->
-        <!--&lt;!&ndash;<property name="annotatedClasses">&ndash;&gt;-->
-            <!--&lt;!&ndash;<list>&ndash;&gt;-->
-                <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.User</value>&ndash;&gt;-->
-                <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Product</value>&ndash;&gt;-->
-                <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Cart</value>&ndash;&gt;-->
-                <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Order </value>&ndash;&gt;-->
-            <!--&lt;!&ndash;</list>&ndash;&gt;-->
-        <!--&lt;!&ndash;</property>&ndash;&gt;-->
+    <!--<property name="dataSource" ref="dataSource"/>-->
+    <!--<property name="packagesToScan" value="com.gmail.kramarenko104.model"/>-->
+    <!--<property name="hibernateProperties">-->
+    <!--<props>-->
+    <!--<prop key="hibernate.dialect">${hibernate.dialect}</prop>-->
+    <!--<prop key="hibernate.show_sql">${hibernate.show_sql}</prop>-->
+    <!--<prop key="hibernate.hbm2ddl.auto">${hibernate.hbm2ddl.auto}</prop>-->
+    <!--</props>-->
+    <!--</property>-->
+    <!--&lt;!&ndash;<property name="annotatedClasses">&ndash;&gt;-->
+    <!--&lt;!&ndash;<list>&ndash;&gt;-->
+    <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.User</value>&ndash;&gt;-->
+    <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Product</value>&ndash;&gt;-->
+    <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Cart</value>&ndash;&gt;-->
+    <!--&lt;!&ndash;<value>com.gmail.kramarenko104.model.Order </value>&ndash;&gt;-->
+    <!--&lt;!&ndash;</list>&ndash;&gt;-->
+    <!--&lt;!&ndash;</property>&ndash;&gt;-->
     <!--</bean>-->
-
-    <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!--<bean id="transationManager" class="org.springframework.orm.jpa.JpaTransactionManager"-->
-          <!--p:entityManagerFactory="entityManagerFactory"/>-->
-    <!--<bean id="transationManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager"-->
-          <!--depends-on="sessionFactory"-->
-          <!--p:sessionFactory="sessionFactory"/>-->
-    <!--<tx:annotation-driven transaction-manager="transationManager"/>-->
-
 
     <!--Persistence ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <!--<bean id="persistenceExceptionTranslation" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>-->
-    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
-
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
         <property name="persistenceUnitName" value="eshopMVCpersistence"/>
-        <property name="packagesToScan">
-            <array>
-                <value>com.gmail.kramarenko104.model</value>
-                <value>com.gmail.kramarenko104.controller</value>
-                <value>com.gmail.kramarenko104.dao</value>
-                <value>com.gmail.kramarenko104.service</value>
-            </array>
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
+        <!--<property name="packagesToScan">-->
+        <!--<array>-->
+        <!--<value>com.gmail.kramarenko104.model</value>-->
+        <!--<value>com.gmail.kramarenko104.controller</value>-->
+        <!--<value>com.gmail.kramarenko104.dao</value>-->
+        <!--<value>com.gmail.kramarenko104.service</value>-->
+        <!--</array>-->
+        <!--</property>-->
+
         <property name="jpaProperties">
             <props>
                 <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
-                <prop key="javax.persistence.jdbc.driver">com.mysql.jdbc.Driver</prop>
+                <prop key="javax.persistence.jdbc.driver">com.mysql.cj.jdbc.Driver</prop>
                 <prop key="javax.persistence.jdbc.url">jdbc:mysql://localhost:3306/eshopdb?useUnicode=true&amp;useJDBCCompliantTimezoneShift=true&amp;useLegacyDatetimeCode=false&amp;serverTimezone=UTC</prop>
                 <prop key="javax.persistence.jdbc.user">julia</prop>
                 <prop key="javax.persistence.jdbc.password">julia</prop>
@@ -126,26 +119,32 @@
                 <prop key="hibernate.format_sql">true</prop>
                 <prop key="hibernate.current_session_context_class">thread</prop>
                 <prop key="hiberante.connection.characterEncoding">utf8</prop>
-                <prop key="hibernate.connection.provider_class">org.hibernate.hikaricp.internal.HikariCPConnectionProvider</prop>
+                <prop key="hibernate.connection.provider_class">
+                    org.hibernate.hikaricp.internal.HikariCPConnectionProvider
+                </prop>
                 <prop key="hibernate.hikari.minimumIdle">5</prop>
                 <prop key="hibernate.hikari.maximumPoolSize">10</prop>
                 <prop key="hibernate.hikari.idleTimeout">30000</prop>
 
             </props>
         </property>
-
     </bean>
-         
+
+    <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+          p:entityManagerFactory-ref="emf"/>
+
+    <tx:annotation-driven transaction-manager="transactionManager"/>
 
     <!--DAO Implementations ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <bean id="userDao" class="com.gmail.kramarenko104.dao.UserDaoImpl"/>
-    <bean id="productDao" class="com.gmail.kramarenko104.dao.ProductDaoImpl"/>
-    <bean id="cartDao" class="com.gmail.kramarenko104.dao.CartDaoImpl"/>
-    <bean id="orderDao" class="com.gmail.kramarenko104.dao.OrderDaoImpl"/>
+    <!--<bean id="userDao" class="UserDaoImplImplImpl"/>-->
+    <!--<bean id="productDao" class="ProductDaoImplImplImpl"/>-->
+    <!--<bean id="cartDao" class="CartDaoImplImplImpl"/>-->
+    <!--<bean id="orderDao" class="OrderDaoImplImplImpl"/>-->
 
-    <bean id="userService" class="com.gmail.kramarenko104.service.UserServiceImpl"/>
-    <bean id="productService" class="com.gmail.kramarenko104.service.ProductServiceImpl"/>
-    <bean id="cartService" class="com.gmail.kramarenko104.service.CartServiceImpl"/>
-    <bean id="orderService" class="com.gmail.kramarenko104.service.OrderServiceImpl"/>
+    <!--<bean id="userService" class="com.gmail.kramarenko104.service.UserServiceImpl"/>-->
+    <!--<bean id="productService" class="com.gmail.kramarenko104.service.ProductServiceImpl"/>-->
+    <!--<bean id="cartService" class="com.gmail.kramarenko104.service.CartServiceImpl"/>-->
+    <!--<bean id="orderService" class="com.gmail.kramarenko104.service.OrderServiceImpl"/>-->
 
 </beans>

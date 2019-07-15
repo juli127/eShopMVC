@@ -29,7 +29,7 @@ function buy(userId, productId) {
             },
             dataType: 'json',
             success: function (response) {
-                alert("buy: There will be added " + qnt + " of product " + productId + "(id) to your cart");
+                alert("buy: There will be added " + qnt + " units to your cart");
                 parseCartRespose(response);
             },
             error: function (e) {
