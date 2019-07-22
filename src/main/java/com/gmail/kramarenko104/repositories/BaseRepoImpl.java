@@ -1,7 +1,6 @@
 package com.gmail.kramarenko104.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -11,11 +10,11 @@ import java.util.List;
 public class BaseRepoImpl<T> implements BaseRepo<T> {
 
     private Class<T> persistenceClass;
-    private EntityManagerFactory emf;
 
     @Autowired
-    BaseRepoImpl(EntityManagerFactory emf){
-        this.emf = emf;
+    private EntityManagerFactory emf;
+
+    BaseRepoImpl(){
         persistenceClass = (Class<T>) (((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 

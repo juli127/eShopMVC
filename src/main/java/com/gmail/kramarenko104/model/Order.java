@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -41,14 +42,17 @@ public class Order implements Serializable {
     private long orderId;
 
     @Column(nullable = false, updatable = false)
+    @NotEmpty
     private long orderNumber;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, updatable = false)
+    @NotEmpty
     private User user;
 
     @Column(columnDefinition = "varchar(20)")
-    @EqualsAndHashCode.Exclude private String status;
+    @EqualsAndHashCode.Exclude
+    private String status;
 
     @Transient
     private int itemsCount;
@@ -62,6 +66,7 @@ public class Order implements Serializable {
     @Column(name = "quantity")
     @OrderColumn (name = "orderId")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @NotEmpty
     private Map<Product, Integer> products;
 
     public Order() {

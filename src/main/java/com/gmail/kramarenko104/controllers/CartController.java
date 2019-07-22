@@ -3,7 +3,7 @@ package com.gmail.kramarenko104.controllers;
 import com.gmail.kramarenko104.dto.CartDto;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.CartServiceImpl;
+import com.gmail.kramarenko104.services.CartService;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManagerFactory;
 
 @Controller
@@ -22,12 +23,12 @@ public class CartController {
 
     private static Logger logger = LoggerFactory.getLogger(CartController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
-    private CartServiceImpl cartService;
+    private CartService cartService;
     private EntityManagerFactory emf;
 
     @Autowired
     public CartController(EntityManagerFactory emf,
-                          CartServiceImpl cartService){
+                          CartService cartService){
         this.emf = emf;
         this.cartService = cartService;
     }

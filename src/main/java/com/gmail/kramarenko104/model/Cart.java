@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ public class Cart implements Serializable {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, unique = true, updatable = false)
+    @NotEmpty
     private User user;
 
     @Transient
@@ -51,6 +53,7 @@ public class Cart implements Serializable {
     @Column(name = "quantity")
     @OrderColumn (name = "cartId")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @NotEmpty
     private Map<Product, Integer> products;
 
     public Cart() {

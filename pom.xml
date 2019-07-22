@@ -21,11 +21,11 @@
 
     <dependencies>
         <!--SPRING dependencies +++++++++++++++++++++++++++++++++++++++++ -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${springframework.version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-core</artifactId>-->
+            <!--<version>${springframework.version}</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -39,33 +39,15 @@
                 </exclusion>
             </exclusions>
         </dependency>
+
+        <!--AOP -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${springframework.version}</version>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.4</version>
         </dependency>
 
-        <!--<dependency>-->
-        <!--<groupId>aopalliance</groupId>-->
-        <!--<artifactId>aopalliance</artifactId>-->
-        <!--<version>1.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>aspectj</groupId>-->
-        <!--<artifactId>aspectjweaver</artifactId>-->
-        <!--<version>1.5.4</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.springframework</groupId>-->
-        <!--<artifactId>spring-beans</artifactId>-->
-        <!--<version>${springframework.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>org.springframework</groupId>-->
-        <!--<artifactId>spring-expression</artifactId>-->
-        <!--<version>${springframework.version}</version>-->
-        <!--</dependency>-->
-
+        <!--Spring -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -135,7 +117,12 @@
             <version>${hibernate.version}</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/javax.transaction/jta -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+            <version>${hibernate.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>

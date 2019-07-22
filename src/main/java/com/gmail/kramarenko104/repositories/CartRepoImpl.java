@@ -10,16 +10,17 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.*;
 
 @Repository
-public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
+public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo  {
 
     private final static Logger logger = LoggerFactory.getLogger(CartRepoImpl.class);
+
     private EntityManagerFactory emf;
-    private UserRepoImpl userDao;
+    private UserRepoImpl userRepo;
 
     @Autowired
     public CartRepoImpl(EntityManagerFactory emf, UserRepoImpl userDao) {
         this.emf = emf;
-        this.userDao = userDao;
+        this.userRepo = userDao;
     }
 
     @Override
@@ -30,7 +31,7 @@ public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
         try {
             tx.begin();
             // make currentUser managed
-            User currentUser = em.merge(userDao.get(userId));
+            User currentUser = em.merge(userRepo.get(userId));
             cart.setUser(currentUser);
             em.persist(cart);
             tx.commit();

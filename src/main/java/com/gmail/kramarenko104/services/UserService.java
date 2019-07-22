@@ -17,4 +17,6 @@ public interface UserService {
 
     List<User> getAllUsers();
 
+    String hashString(String hash);
+
 }

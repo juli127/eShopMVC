@@ -2,8 +2,8 @@ package com.gmail.kramarenko104.controllers;
 
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.ProductServiceImpl;
-import com.gmail.kramarenko104.services.UserServiceImpl;
+import com.gmail.kramarenko104.services.ProductService;
+import com.gmail.kramarenko104.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManagerFactory;
 import java.util.List;
 
@@ -23,14 +24,14 @@ public class AdminController {
 
     private static final String DB_WARNING = "Check your connection to DB!";
     private static Logger logger = LoggerFactory.getLogger(AdminController.class);
-    private UserServiceImpl userService;
-    private ProductServiceImpl productService;
+    private UserService userService;
+    private ProductService productService;
     private EntityManagerFactory emf;
 
     @Autowired
     public AdminController(EntityManagerFactory emf,
-                           UserServiceImpl userService,
-                           ProductServiceImpl productService) {
+                           UserService userService,
+                           ProductService productService) {
         this.emf = emf;
         this.userService = userService;
         this.productService = productService;
@@ -51,7 +52,7 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/products/add", method = RequestMethod.GET)
-    public ModelAndView addNewProduct() {
+    public ModelAndView prepareToAddNewProduct() {
         return new ModelAndView("adminNewProduct");
     }
 
@@ -98,18 +99,18 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
-    public ModelAndView addNewUser(@RequestParam("login") String login,
+    public ModelAndView addNewUser(@RequestParam("name") String name,
+                                   @RequestParam("login") String login,
                                    @RequestParam("password") String password,
-                                   @RequestParam("name") String name,
                                    @RequestParam("address") String address,
                                    @RequestParam("comment") String comment) {
         ModelAndView modelAndView = new ModelAndView("admin");
         logger.debug("[eshop] AdminController.addNewUser.POST");
         if (emf != null) {
             User newUser = new User();
+            newUser.setName(name);
             newUser.setLogin(login);
             newUser.setPassword(password);
-            newUser.setName(name);
             newUser.setAddress(address);
             newUser.setComment(comment);
             newUser = userService.createUser(newUser);

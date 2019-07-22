@@ -2,8 +2,8 @@ package com.gmail.kramarenko104.controllers;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.CartServiceImpl;
-import com.gmail.kramarenko104.services.UserServiceImpl;
+import com.gmail.kramarenko104.services.CartService;
+import com.gmail.kramarenko104.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManagerFactory;
 
 @Controller
@@ -25,14 +26,14 @@ public class LoginController {
     private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
     private static final String DB_WARNING = "Check your connection to DB!";
     private static final String adminLog = "admin";
-    private UserServiceImpl userService;
-    private CartServiceImpl cartService;
+    private UserService userService;
+    private CartService cartService;
     private EntityManagerFactory emf;
 
     @Autowired
     public LoginController(EntityManagerFactory emf,
-                           UserServiceImpl userService,
-                           CartServiceImpl cartService) {
+                           UserService userService,
+                           CartService cartService) {
         this.emf = emf;
         this.userService = userService;
         this.cartService = cartService;

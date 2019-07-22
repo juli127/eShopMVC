@@ -2,7 +2,7 @@ package com.gmail.kramarenko104.controllers;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.UserServiceImpl;
+import com.gmail.kramarenko104.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,12 +26,12 @@ public class RegistrationController {
 
     private static Logger logger = LoggerFactory.getLogger(RegistrationController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
-    private UserServiceImpl userService;
+    private UserService userService;
     private EntityManagerFactory emf;
 
     @Autowired
     public RegistrationController(EntityManagerFactory emf,
-                                  UserServiceImpl userService) {
+                                  UserService userService) {
         this.emf = emf;
         this.userService = userService;
     }

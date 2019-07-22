@@ -3,8 +3,8 @@ package com.gmail.kramarenko104.controllers;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.CartServiceImpl;
-import com.gmail.kramarenko104.services.ProductServiceImpl;
+import com.gmail.kramarenko104.services.CartService;
+import com.gmail.kramarenko104.services.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +21,14 @@ public class ProductController {
 
     private static Logger logger = LoggerFactory.getLogger(ProductController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
-    private ProductServiceImpl productService;
-    private CartServiceImpl cartService;
+    private ProductService productService;
+    private CartService cartService;
     private EntityManagerFactory emf;
 
     @Autowired
     public ProductController(EntityManagerFactory emf,
-                             ProductServiceImpl productService,
-                             CartServiceImpl cartService) {
+                             ProductService productService,
+                             CartService cartService) {
         this.emf = emf;
         this.productService = productService;
         this.cartService = cartService;

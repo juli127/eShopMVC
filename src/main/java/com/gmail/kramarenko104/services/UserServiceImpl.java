@@ -54,7 +54,8 @@ public class UserServiceImpl implements UserService {
         return userRepo.getAll();
     }
 
-    public static String hashString(String hash) {
+    @Override
+    public String hashString(String hash) {
         MessageDigest md5 = null;
         try {
             md5 = MessageDigest.getInstance("MD5");

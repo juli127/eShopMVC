@@ -4,9 +4,7 @@ import com.gmail.kramarenko104.dto.OrderDto;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.CartServiceImpl;
-import com.gmail.kramarenko104.services.OrderServiceImpl;
-import com.gmail.kramarenko104.services.UserServiceImpl;
+import com.gmail.kramarenko104.services.*;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManagerFactory;
 
 @Controller
@@ -24,16 +23,16 @@ public class OrderController {
 
     private final static Logger logger = LoggerFactory.getLogger(OrderController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
-    private OrderServiceImpl orderService;
-    private CartServiceImpl cartService;
-    private UserServiceImpl userService;
+    private OrderService orderService;
+    private CartService cartService;
+    private UserService userService;
     private EntityManagerFactory emf;
 
     @Autowired
     public OrderController(EntityManagerFactory emf,
-                           UserServiceImpl userService,
-                           CartServiceImpl cartService,
-                           OrderServiceImpl orderService) {
+                           UserService userService,
+                           CartService cartService,
+                           OrderService orderService) {
         this.emf = emf;
         this.userService = userService;
         this.cartService = cartService;
