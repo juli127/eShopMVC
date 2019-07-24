@@ -5,8 +5,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.*;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -21,25 +26,24 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = Exception.class)
     public Order createOrder(Order order) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
         Order newOrder = null;
+        EntityManager em = emf.createEntityManager();
         try {
-            tx.begin();
             order.setUser(em.merge(order.getUser()));
             em.persist(order);
-            tx.commit();
             long orderId = order.getOrderId();
             newOrder = em.find(Order.class, orderId);
 
         } catch (Exception ex) {
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();
         }
-        logger.debug("[eshop] OrderDAO.createOrderForUser:...new Order was created: " + newOrder);
+        logger.debug("[eshop] OrderRepoImpl.createOrderForUser:...new Order was created: " + newOrder);
         return newOrder;
     }
 
@@ -48,22 +52,22 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class).setParameter("userId", userId);
         List<Order> resultList = query.getResultList();
-        logger.debug("[eshop] OrderDAO.getAllOrdersForUser: List of all orders is: " + resultList.toString());
+        logger.debug("[eshop] OrderRepoImpl.getAllOrdersForUser: List of all orders is: " + resultList.toString());
         em.close();
         return resultList;
     }
 
     @Override
     public Order getLastOrderByUserId(long userId) {
-        EntityManager em = emf.createEntityManager();
         Order order = null;
-        logger.debug("[eshop] OrderDAO.getLastOrderByUserId: get order for userId: " + userId);
+        EntityManager em = emf.createEntityManager();
+        logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: get order for userId: " + userId);
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class).setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
         } catch (NoResultException ex) {
         }
-        logger.debug("[eshop] OrderDAO.getLastOrderByUserId: the last orders is: " + order);
+        logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: the last orders is: " + order);
         em.close();
         return order;
     }
@@ -79,10 +83,11 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = Exception.class)
     public void deleteAllOrdersForUser(long userId) {
         EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
-        tx.begin();
         try {
             TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
                     .setParameter("userId", userId);
@@ -90,9 +95,7 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
             for (Order order : ordersToRemove) {
                 em.remove(order);
             }
-            tx.commit();
         } catch (Exception ex) {
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();

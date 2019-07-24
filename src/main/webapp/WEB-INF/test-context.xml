@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--CONTEXT  ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <context:component-scan base-package="com.gmail.kramarenko104"/>
+
+    <!--Testing++++++++++++++++++++++++++++++++++++++++++++-->
+    <bean id="emf-test" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
+                <prop key="javax.persistence.jdbc.driver">org.h2.Driver</prop>
+                <prop key="javax.persistence.jdbc.url">jdbc:h2:file:testdb</prop>
+                <prop key="javax.persistence.jdbc.user">sa</prop>
+                <prop key="javax.persistence.jdbc.password"></prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+            </props>
+        </property>
+    </bean>
+</beans>

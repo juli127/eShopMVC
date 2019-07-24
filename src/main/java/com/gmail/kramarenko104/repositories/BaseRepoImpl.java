@@ -1,9 +1,11 @@
 package com.gmail.kramarenko104.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
@@ -25,16 +27,15 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
         return t;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+                    isolation = Isolation.SERIALIZABLE,
+                    rollbackFor = Exception.class)
     public T update(T newT) {
         EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
         T updT = null;
         try {
-            tx.begin();
             updT = em.merge(newT);
-            tx.commit();
         } catch (Exception ex){
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();
@@ -42,18 +43,17 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
         return updT;
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = Exception.class)
     public void delete(long id) {
         EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
             T t = em.find(persistenceClass, id);
             if (t != null) {
                 em.remove(t);
             }
-            tx.commit();
         } catch (Exception ex){
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();
@@ -61,8 +61,8 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
     }
 
     public List<T> getAll() {
-        String GET_ALL = "from " + persistenceClass.getSimpleName() + " t";
         EntityManager em = emf.createEntityManager();
+        String GET_ALL = "from " + persistenceClass.getSimpleName() + " t";
         List<T> resultList = em.createQuery(GET_ALL).getResultList();
         em.close();
         return resultList;

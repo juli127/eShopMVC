@@ -5,10 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import javax.persistence.TypedQuery;
 import java.util.List;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class ProductRepoImpl extends BaseRepoImpl<Product> implements ProductRepo {
 
     private final static Logger logger = LoggerFactory.getLogger(ProductRepoImpl.class);
-    private EntityManagerFactory emf;
+    EntityManagerFactory emf;
 
     @Autowired
     public ProductRepoImpl(EntityManagerFactory emf) {
@@ -24,17 +25,16 @@ public class ProductRepoImpl extends BaseRepoImpl<Product> implements ProductRep
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = Exception.class)
     public long createProduct(Product product) {
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
         long productId = -1;
+        EntityManager em = emf.createEntityManager();
         try {
-            tx.begin();
             em.persist(product);
-            tx.commit();
             productId = product.getProductId();
         } catch (Exception ex) {
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();

@@ -3,8 +3,13 @@ package com.gmail.kramarenko104.repositories;
 import com.gmail.kramarenko104.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.*;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 @Repository
 public class UserRepoImpl extends BaseRepoImpl<User> implements UserRepo {
@@ -17,15 +22,14 @@ public class UserRepoImpl extends BaseRepoImpl<User> implements UserRepo {
     }
 
     @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW,
+            isolation = Isolation.SERIALIZABLE,
+            rollbackFor = Exception.class)
     public User createUser(User user) {
         EntityManager em = emf.createEntityManager();
-        EntityTransaction tx = em.getTransaction();
         try {
-            tx.begin();
             em.persist(user);
-            tx.commit();
         } catch (Exception ex) {
-            tx.rollback();
             ex.printStackTrace();
         } finally {
             em.close();
@@ -35,8 +39,8 @@ public class UserRepoImpl extends BaseRepoImpl<User> implements UserRepo {
 
     @Override
     public User getUserByLogin(String login) {
-        EntityManager em = emf.createEntityManager();
         User user = null;
+        EntityManager em = emf.createEntityManager();
         try {
             TypedQuery<User> query = em.createNamedQuery("GET_USER_BY_LOGIN", User.class)
                     .setParameter("login", login);
