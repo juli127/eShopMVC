@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class UserRepoImplTest {
 
     @Test
     @Transactional
+    @Rollback
     public void checkThatCorrectUserWasCreated() {
         EntityManager em = emf_test.createEntityManager();
         String LOGIN_TEST = "test@test.com";
