@@ -14,9 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 @SessionAttributes(value = {"user", "showLoginForm", "message", "attempt", "cart", "order", "isAdmin"})
 public class LogoutController {
 
-    public LogoutController() {
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView doGet() {
         ModelAndView modelAndView = new ModelAndView("products");

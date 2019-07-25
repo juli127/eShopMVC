@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Controller
 @RequestMapping("/login")
@@ -28,13 +28,13 @@ public class LoginController {
     private static final String adminLog = "admin";
     private UserService userService;
     private CartService cartService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public LoginController(EntityManagerFactory emf,
-                           UserService userService,
+    public LoginController(UserService userService,
                            CartService cartService) {
-        this.emf = emf;
         this.userService = userService;
         this.cartService = cartService;
     }
@@ -58,7 +58,7 @@ public class LoginController {
         User currentUser = null;
         int attempt;
 
-        if (emf != null) {
+        if (em != null) {
             Object attemptObj = modelAndView.getModel().get("attempt");
             attempt = (attemptObj == null) ? 0 : (int) attemptObj;
             currentUser = (User) modelAndView.getModel().get("user");

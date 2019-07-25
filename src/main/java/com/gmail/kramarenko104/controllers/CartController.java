@@ -13,8 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Controller
 @SessionAttributes(value = {"user", "cart", "warning"})
@@ -24,19 +24,19 @@ public class CartController {
     private static Logger logger = LoggerFactory.getLogger(CartController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
     private CartService cartService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public CartController(EntityManagerFactory emf,
-                          CartService cartService){
-        this.emf = emf;
+    public CartController(CartService cartService){
         this.cartService = cartService;
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView doGet(@ModelAttribute("user") User user) {
         ModelAndView modelAndView = new ModelAndView("cart");
-        if (emf != null) {
+        if (em != null) {
             Cart cart = cartService.getCartByUserId(user.getUserId());
             logger.debug("[eshop] CartController.doGet:  user cart: " + cart);
             modelAndView.addObject("user", user);
@@ -58,7 +58,7 @@ public class CartController {
         String jsonString = null;
         ModelAndView modelAndView = new ModelAndView("cart");
 
-        if (emf != null) {
+        if (em != null) {
             if (user != null && user.getLogin() != null) {
                 long userId = user.getUserId();
                 modelAndView.addObject("user", user);

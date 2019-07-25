@@ -94,9 +94,8 @@
     <!--</bean>-->
 
     <!--Persistence ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <!--<bean id="persistenceExceptionTranslation" class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>-->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <!--<property name="persistenceUnitName" value="eshopMVCpersistence"/>-->
+
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
@@ -114,10 +113,10 @@
         <property name="jpaProperties">
             <props>
                 <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
-                <prop key="javax.persistence.jdbc.driver">${jdbc.driver}</prop>
-                <prop key="javax.persistence.jdbcUrl">${jdbc.url}</prop>
-                <prop key="javax.persistence.jdbc.user">${jdbc.user}</prop>
-                <prop key="javax.persistence.jdbc.password">${jdbc.password}</prop>
+                <prop key="javax.persistence.jdbc.driver">${db.driver}</prop>
+                <prop key="javax.persistence.jdbcUrl">${db.url}</prop>
+                <prop key="javax.persistence.jdbc.user">${db.user}</prop>
+                <prop key="javax.persistence.jdbc.password">${db.password}</prop>
                 <prop key="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">false</prop>
@@ -136,9 +135,9 @@
     </bean>
 
     <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+    <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="emf"/>
 
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
 
 </beans>

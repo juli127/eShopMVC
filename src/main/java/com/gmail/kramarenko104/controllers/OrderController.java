@@ -4,7 +4,9 @@ import com.gmail.kramarenko104.dto.OrderDto;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Order;
 import com.gmail.kramarenko104.model.User;
-import com.gmail.kramarenko104.services.*;
+import com.gmail.kramarenko104.services.CartService;
+import com.gmail.kramarenko104.services.OrderService;
+import com.gmail.kramarenko104.services.UserService;
 import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,8 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @Controller
 @RequestMapping("/order")
@@ -26,14 +28,14 @@ public class OrderController {
     private OrderService orderService;
     private CartService cartService;
     private UserService userService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public OrderController(EntityManagerFactory emf,
-                           UserService userService,
+    public OrderController(UserService userService,
                            CartService cartService,
                            OrderService orderService) {
-        this.emf = emf;
         this.userService = userService;
         this.cartService = cartService;
         this.orderService = orderService;
@@ -57,7 +59,7 @@ public class OrderController {
         ModelAndView modelAndView = new ModelAndView("order");
         logger.debug("[eshop] OrderController.POST: .......enter......CREATE NEW ORDER .............");
 
-        if (emf != null) {
+        if (em != null) {
             User dbUser = userService.getUser(userId);
             if (dbUser != null) {
                 modelAndView.addObject("user", dbUser);

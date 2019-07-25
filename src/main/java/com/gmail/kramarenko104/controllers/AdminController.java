@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Controller
@@ -26,13 +26,13 @@ public class AdminController {
     private static Logger logger = LoggerFactory.getLogger(AdminController.class);
     private UserService userService;
     private ProductService productService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public AdminController(EntityManagerFactory emf,
-                           UserService userService,
+    public AdminController(UserService userService,
                            ProductService productService) {
-        this.emf = emf;
         this.userService = userService;
         this.productService = productService;
     }
@@ -40,7 +40,7 @@ public class AdminController {
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView getAllInfo() {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (emf != null) {
+        if (em != null) {
             List<User> usersList = userService.getAllUsers();
             List<Product> productsList = productService.getAllProducts();
             modelAndView.addObject("productsList", productsList);
@@ -63,7 +63,7 @@ public class AdminController {
                                       @RequestParam("description") String description,
                                       @RequestParam("image") String image) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (emf != null) {
+        if (em != null) {
             Product newProduct = new Product();
             newProduct.setName(name);
             int categoryInt = ("dress".equals(category) ? 1 : ("shoes".equals(category) ? 2 : 3));
@@ -83,7 +83,7 @@ public class AdminController {
     @RequestMapping(value = "/products/delete", method = RequestMethod.POST)
     public ModelAndView deleteProduct(@RequestParam int productId) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (emf != null) {
+        if (em != null) {
             productService.deleteProduct(productId);
             modelAndView.addObject("productsList", productService.getAllProducts());
         } else { // connection to DB is closed
@@ -106,7 +106,7 @@ public class AdminController {
                                    @RequestParam("comment") String comment) {
         ModelAndView modelAndView = new ModelAndView("admin");
         logger.debug("[eshop] AdminController.addNewUser.POST");
-        if (emf != null) {
+        if (em != null) {
             User newUser = new User();
             newUser.setName(name);
             newUser.setLogin(login);
@@ -125,7 +125,7 @@ public class AdminController {
     @RequestMapping(value = "/users/delete", method = RequestMethod.GET)
     public ModelAndView deleteUser(@RequestParam int userId) {
         ModelAndView modelAndView = new ModelAndView("admin");
-        if (emf != null) {
+        if (em != null) {
             userService.deleteUser(userId);
             modelAndView.addObject("usersList", userService.getAllUsers());
         } else { // connection to DB is closed

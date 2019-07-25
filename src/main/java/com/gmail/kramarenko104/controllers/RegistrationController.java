@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -27,12 +27,12 @@ public class RegistrationController {
     private static Logger logger = LoggerFactory.getLogger(RegistrationController.class);
     private static final String DB_WARNING = "Check your connection to DB!";
     private UserService userService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public RegistrationController(EntityManagerFactory emf,
-                                  UserService userService) {
-        this.emf = emf;
+    public RegistrationController(UserService userService) {
         this.userService = userService;
     }
 
@@ -52,7 +52,7 @@ public class RegistrationController {
         String viewToGo = "registration";
         ModelAndView modelAndView = new ModelAndView();
 
-        if (emf != null) {
+        if (em != null) {
             boolean needRegistration = true;
             boolean userExist = false;
             StringBuilder message = new StringBuilder();

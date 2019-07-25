@@ -11,6 +11,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
@@ -24,7 +25,7 @@ public class UserRepoImplTest {
     ApplicationContext ctx;
 
     @Resource
-    EntityManagerFactory emf_test;
+    EntityManagerFactory emf;
 
     @Autowired
     UserRepoImpl userRepo;
@@ -32,10 +33,10 @@ public class UserRepoImplTest {
     private static Logger logger = LoggerFactory.getLogger(UserRepoImplTest.class);
 
     @Test
-    @Transactional
+    @Transactional (isolation = Isolation.READ_COMMITTED)
     @Rollback
     public void checkThatCorrectUserWasCreated() {
-        EntityManager em = emf_test.createEntityManager();
+        EntityManager em = emf.createEntityManager();
         String LOGIN_TEST = "test@test.com";
         User user = new User();
         user.setLogin(LOGIN_TEST);

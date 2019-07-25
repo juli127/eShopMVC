@@ -11,8 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Controller
@@ -23,13 +23,13 @@ public class ProductController {
     private static final String DB_WARNING = "Check your connection to DB!";
     private ProductService productService;
     private CartService cartService;
-    private EntityManagerFactory emf;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Autowired
-    public ProductController(EntityManagerFactory emf,
-                             ProductService productService,
+    public ProductController(ProductService productService,
                              CartService cartService) {
-        this.emf = emf;
         this.productService = productService;
         this.cartService = cartService;
     }
@@ -42,7 +42,7 @@ public class ProductController {
         logger.debug("[eshop] ProductController.doGet:   enter.. currentUser: " + user);
 
         // connection to DB is open
-        if (emf != null) {
+        if (em != null) {
             List<Product> products;
 
             // when form is opened at the first time, selectedCateg == null
