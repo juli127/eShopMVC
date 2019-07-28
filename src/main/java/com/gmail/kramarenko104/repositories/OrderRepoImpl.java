@@ -37,7 +37,8 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
 
     @Override
     public List<Order> getAllOrdersByUserId(long userId) {
-        TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class).setParameter("userId", userId);
+        TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
+                .setParameter("userId", userId);
         List<Order> resultList = query.getResultList();
         logger.debug("[eshop] OrderRepoImpl.getAllOrdersForUser: List of all orders is: " + resultList.toString());
         return resultList;
@@ -48,7 +49,8 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
         Order order = null;
         logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: get order for userId: " + userId);
         try {
-            TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class).setParameter("userId", userId);
+            TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class)
+                    .setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
         } catch (NoResultException ex) {
         }

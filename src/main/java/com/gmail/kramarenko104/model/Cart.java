@@ -53,7 +53,6 @@ public class Cart implements Serializable {
     @Column(name = "quantity")
     @OrderColumn (name = "cartId")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @NotEmpty
     private Map<Product, Integer> products;
 
     public Cart() {
