@@ -30,12 +30,6 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
-    <!--static resources-->
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/static/*</url-pattern>
-    </servlet-mapping>
-
     <!-- Spring MVC filters -->
     <filter>
         <filter-name>CharacterEncodingFilter</filter-name>
