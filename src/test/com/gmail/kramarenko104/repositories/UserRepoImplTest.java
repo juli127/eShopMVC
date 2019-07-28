@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-@ContextConfiguration("file:/src/main/webapp/WEB-INF/spring-configs/test-context.xml")
+@ContextConfiguration("file:src/main/webapp/WEB-INF/spring-configs/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class UserRepoImplTest {
 
