@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java"  pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ page isELIgnored="false" %>
 
 <c:set var="user" value="${user}"/>
@@ -19,7 +20,7 @@
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="static/css/style.css", type="text/css"/>
+    <link rel="stylesheet" href="<spring:url value="static/css/style.css"/>", type="text/css"/>
 </head>
 
 <body>
@@ -35,20 +36,20 @@
                 <td>
                     <div id="menu">
                         <ul>
-                            <li><a href="product">All categories</a></li>
+                            <li><a href="<spring:url value="/product"/>">All categories</a></li>
                             <c:choose>
                                 <c:when test="${user != null && username != null}">
-                                    <li><a href="logout">Logout</a></li>
+                                    <li><a href="<spring:url value="/logout"/>">Logout</a></li>
                                 </c:when>
                                 <c:otherwise>
-                                    <li><a href="login">Login</a></li>
-                                    <li><a href="registration">Registration</a></li>
+                                    <li><a href="<spring:url value="/login"/>">Login</a></li>
+                                    <li><a href="<spring:url value="/registration"/>">Registration</a></li>
                                 </c:otherwise>
                             </c:choose>
-                            <li><a href="cart">Cart</a></li>
-                            <li><a href="order">Order</a></li>
+                            <li><a href="<spring:url value="/cart"/>">Cart</a></li>
+                            <li><a href="<spring:url value="/order"/>">Order</a></li>
                             <c:if test="${isAdmin}">
-                                <li><a href="admin">Admin</a></li>
+                                <li><a href="<spring:url value="/admin"/>">Admin</a></li>
                             </c:if>
                         </ul>
                     </div>
@@ -68,7 +69,7 @@
                 ${username}, your cart has <span id="itemsCountField">${itemsCount==null?0:itemsCount}</span> items
             </c:when>
             <c:otherwise>
-                <font color=red>You should <a href="registration">register</a> or <a href="login">login</a> before shopping or see your cart/order!</font>
+                <font color=red>You should <a href="<spring:url value="/registration"/>">register</a> or <a href="<spring:url value="/login"/>">login</a> before shopping or see your cart/order!</font>
                 </c:otherwise>
             </c:choose>
             </c:otherwise>

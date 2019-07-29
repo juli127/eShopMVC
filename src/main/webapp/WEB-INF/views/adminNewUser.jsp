@@ -6,11 +6,11 @@
     <table id="myTableFormatting">
         <tr>
             <td>Name</td>
-            <td><input type='text' name='name' value='${name}' placeholder="required"/></td>
+            <td><input type='text' name='name' value='${name}' autofocus placeholder="required"/></td>
         </tr>
         <tr>
             <td>Login</td>
-            <td><input type='email' required name='login' value='${login}' autofocus placeholder="enter e-mail as login"/></td>
+            <td><input type='email' required name='login' value='${login}' placeholder="enter e-mail as login"/></td>
         </tr>
         <tr>
             <td>Password</td>

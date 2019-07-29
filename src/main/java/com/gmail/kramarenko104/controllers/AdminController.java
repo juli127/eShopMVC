@@ -62,7 +62,7 @@ public class AdminController {
                                       @RequestParam("price") String price,
                                       @RequestParam("description") String description,
                                       @RequestParam("image") String image) {
-        ModelAndView modelAndView = new ModelAndView("admin");
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
             Product newProduct = new Product();
             newProduct.setName(name);
@@ -80,9 +80,9 @@ public class AdminController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/products/delete", method = RequestMethod.POST)
-    public ModelAndView deleteProduct(@RequestParam int productId) {
-        ModelAndView modelAndView = new ModelAndView("admin");
+    @RequestMapping(value = "/products/delete", method = RequestMethod.GET)
+    public ModelAndView deleteProduct(@RequestParam long productId) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
             productService.deleteProduct(productId);
             modelAndView.addObject("productsList", productService.getAllProducts());
@@ -94,7 +94,7 @@ public class AdminController {
 
     @RequestMapping(value = "/users/add", method = RequestMethod.GET)
     public ModelAndView addNewUser() {
-        logger.debug("[eshop] AdminController.addNewUser.GET");
+        logger.debug("[eshop] AdminController.addNewUser...GET");
         return new ModelAndView("adminNewUser");
     }
 
@@ -104,8 +104,7 @@ public class AdminController {
                                    @RequestParam("password") String password,
                                    @RequestParam("address") String address,
                                    @RequestParam("comment") String comment) {
-        ModelAndView modelAndView = new ModelAndView("admin");
-        logger.debug("[eshop] AdminController.addNewUser.POST");
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
             User newUser = new User();
             newUser.setName(name);
@@ -114,7 +113,7 @@ public class AdminController {
             newUser.setAddress(address);
             newUser.setComment(comment);
             newUser = userService.createUser(newUser);
-            logger.debug("[eshop] adminServlet.addNewUser: got new user from form: " + newUser);
+            logger.debug("[eshop] AdminController.addNewUser...POST: got new user from form: " + newUser);
             modelAndView.addObject("usersList", userService.getAllUsers());
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
@@ -122,9 +121,9 @@ public class AdminController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/users/delete", method = RequestMethod.GET)
-    public ModelAndView deleteUser(@RequestParam int userId) {
-        ModelAndView modelAndView = new ModelAndView("admin");
+    @RequestMapping(value = "users/delete", method = RequestMethod.GET)
+    public ModelAndView deleteUser(@RequestParam long userId) {
+        ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
             userService.deleteUser(userId);
             modelAndView.addObject("usersList", userService.getAllUsers());
@@ -133,4 +132,5 @@ public class AdminController {
         }
         return modelAndView;
     }
+
 }

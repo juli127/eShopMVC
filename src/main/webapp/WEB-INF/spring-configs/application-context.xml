@@ -17,7 +17,7 @@
     <!--CONTEXT  ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
     <context:component-scan base-package="com.gmail.kramarenko104"/>
     <context:property-placeholder location="classpath:application.properties"/>
-    <context:annotation-config/>
+    <!--<context:annotation-config/>-->
 
     <!--AOP-->
     <aop:aspectj-autoproxy proxy-target-class="true"/>

@@ -142,7 +142,7 @@ public class LoginController {
         }
 
         if (!"login".equals(viewToGo)) {
-            viewToGo = "redirect:" + viewToGo;
+            viewToGo = "redirect:/" + viewToGo;
         }
         modelAndView.setViewName(viewToGo);
         logger.debug("[eshop] LoginController.doPost:   exit.......goto " + viewToGo);
