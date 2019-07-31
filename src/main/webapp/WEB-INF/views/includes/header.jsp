@@ -82,13 +82,15 @@
     <div id="sidebar">
         <table>
             <tr>DRESSES<a href="<spring:url value="/product?selectedCategory=1"/>">
-                <img src="${resourcesPath}/images/evening_dresses_small.jpg"
+                <img src="<spring:url value="${resourcesPath}/images/evening_dresses_small.jpg"/>"
                      alt="" width="120" height="120" title="DRESSES"/></a></tr>
+
             <tr>SHOES<a href="<spring:url value="/product?selectedCategory=2"/>">
-                <img src="${resourcesPath}/images/evening_shoes_small.jpg"
+                <img src="<spring:url value="${resourcesPath}/images/evening_shoes_small.jpg"/>"
                       alt="" width="120" height="120" title="SHOES"/></a></tr>
+
             <tr>ACCESSORIES<a href="<spring:url value="/product?selectedCategory=3"/>">
-                <img src="${resourcesPath}/images/aksess1.jpg"
+                <img src="<spring:url value="${resourcesPath}/images/aksess1.jpg"/>"
                 alt="" width="120" height="120" title="ACCESSORIES"/></a></tr>
         </table>
     </div>
