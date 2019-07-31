@@ -15,13 +15,12 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
     @PersistenceContext
     private EntityManager em;
 
-    BaseRepoImpl() {
+    public BaseRepoImpl() {
         persistenceClass = (Class<T>) (((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
     }
 
     public T get(long id) {
         T t = em.find(persistenceClass, id);
-        em.close();
         return t;
     }
 
@@ -47,7 +46,6 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
     public List<T> getAll() {
         String GET_ALL = "from " + persistenceClass.getSimpleName() + " t";
         List<T> resultList = em.createQuery(GET_ALL).getResultList();
-        em.close();
         return resultList;
     }
 }

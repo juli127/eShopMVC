@@ -112,8 +112,8 @@ public class AdminController {
             newUser.setPassword(password);
             newUser.setAddress(address);
             newUser.setComment(comment);
-            newUser = userService.createUser(newUser);
-            logger.debug("[eshop] AdminController.addNewUser...POST: got new user from form: " + newUser);
+            User userDb = userService.createUser(newUser);
+            logger.debug("[eshop] AdminController.addNewUser...POST: creted new user: " + userDb);
             modelAndView.addObject("usersList", userService.getAllUsers());
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);

@@ -2,7 +2,7 @@
 
 <br><h3>Add new user:</h3><br>
 
-<form method="POST" action="/admin/users/add">
+<form method="POST" action="<spring:url value="/admin/users/add"/>"/>
     <table id="myTableFormatting">
         <tr>
             <td>Name</td>

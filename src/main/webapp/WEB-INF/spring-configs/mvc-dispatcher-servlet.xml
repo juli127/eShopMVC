@@ -11,9 +11,10 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
+    <!--Configures the annotation-driven Spring MVC Controller programming model-->
     <mvc:annotation-driven/>
 
-    <!-- Controllers -->
+    <!-- Scans the classpath for annotated components that will be auto-registered as Spring beans -->
     <context:component-scan base-package="com.gmail.kramarenko104.controllers" />
 
     <!-- Views' location -->
@@ -21,7 +22,8 @@
           p:prefix="/WEB-INF/views/"
           p:suffix=".jsp"/>
 
+    <!--Configures a handler for serving static resources such as images, js, and, css files-->
+    <mvc:resources mapping = "/resources/**" location = "/resources/" />
     <mvc:default-servlet-handler/>
-    <mvc:resources mapping = "/static/**" location = "/static/" />
 
 </beans>

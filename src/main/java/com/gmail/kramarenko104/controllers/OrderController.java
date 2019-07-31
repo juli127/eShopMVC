@@ -53,8 +53,9 @@ public class OrderController {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String doPost(@RequestParam("action") String action,
-                                       @RequestParam("userId") long userId) {
+    public @ResponseBody
+    String doPost(@RequestParam("action") String action,
+                  @RequestParam("userId") long userId) {
         String jsondata = null;
         ModelAndView modelAndView = new ModelAndView("order");
         logger.debug("[eshop] OrderController.POST: .......enter......CREATE NEW ORDER .............");

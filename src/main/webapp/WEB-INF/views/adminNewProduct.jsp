@@ -1,7 +1,7 @@
 <%@ include file="includes/header.jsp" %>
 
 <center>
-    <form action='./admin/products/add' method='post'>
+     <form method="POST" action="<spring:url value="/admin/products/add"/>"/>
         <h4><div id="infoGreen"> Enter the new product's characteristics:</div></h4>
         <table id="myTableFormatting" border=0>
             <tr>
@@ -26,7 +26,7 @@
             </tr><br>
             <tr>
                 <td>Image: </td>
-                <td><input type='text' name='image' value='' placeholder="file name from /webapp/static/images"/></td>
+                <td><input type='text' name='image' value='' placeholder="file name from /webapp/resources/images"/></td>
             </tr><br>
 
             <td></td>

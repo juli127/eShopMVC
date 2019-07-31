@@ -11,6 +11,7 @@
 <c:set var="users" value="${usersList}" ></c:set>
 <c:set var="products" value="${products}"></c:set>
 <c:set var="totalSum" value="${cart.totalSum}"/>
+<c:set var="resourcesPath" value="${webappRoot}/resources"/>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -20,7 +21,7 @@
     <meta name="description" content=""/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="<spring:url value="static/css/style.css"/>", type="text/css"/>
+    <link rel="stylesheet" href="<spring:url value="${resourcesPath}/css/style.css"/>", type="text/css"/>
 </head>
 
 <body>
@@ -80,15 +81,15 @@
 <div class="page" id="page">
     <div id="sidebar">
         <table>
-            <tr>DRESSES<a href="product?selectedCategory=1"><img src="static/images/evening_dresses_small.jpg"
-                                                                  alt="" width="120" height="120"
-                                                                  title="DRESSES"/></a></tr>
-            <tr>SHOES<a href="product?selectedCategory=2"><img src="static/images/evening_shoes_small.jpg"
-                                                                alt="" width="120" height="120" title="SHOES"/></a>
-            </tr>
-            <tr>ACCESSORIES<a href="product?selectedCategory=3"><img src="static/images/aksess1.jpg" alt=""
-                                                                      width="120" height="120"
-                                                                      title="ACCESSORIES"/></a></tr>
+            <tr>DRESSES<a href="<spring:url value="/product?selectedCategory=1"/>">
+                <img src="${resourcesPath}/images/evening_dresses_small.jpg"
+                     alt="" width="120" height="120" title="DRESSES"/></a></tr>
+            <tr>SHOES<a href="<spring:url value="/product?selectedCategory=2"/>">
+                <img src="${resourcesPath}/images/evening_shoes_small.jpg"
+                      alt="" width="120" height="120" title="SHOES"/></a></tr>
+            <tr>ACCESSORIES<a href="<spring:url value="/product?selectedCategory=3"/>">
+                <img src="${resourcesPath}/images/aksess1.jpg"
+                alt="" width="120" height="120" title="ACCESSORIES"/></a></tr>
         </table>
     </div>
     <!-- end #header -->

@@ -10,21 +10,17 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 
 
 @Repository
 public class CartRepoImpl extends BaseRepoImpl<Cart> implements CartRepo {
 
     private final static Logger logger = LoggerFactory.getLogger(CartRepoImpl.class);
+    private UserRepoImpl userRepo;
 
     @PersistenceContext
     private EntityManager em;
-
-    private UserRepoImpl userRepo;
 
     @Autowired
     public CartRepoImpl(UserRepoImpl userRepo) {
