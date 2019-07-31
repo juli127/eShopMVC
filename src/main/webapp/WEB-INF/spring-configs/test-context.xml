@@ -16,31 +16,27 @@
     <context:annotation-config/>
     <context:property-placeholder location="classpath:test.properties" />
 
-    <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager"
-          p:entityManagerFactory-ref="emf"/>
-
-    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
-
     <!--Persistence++++++++++++++++++++++++++++++++++++++++++++-->
-    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+    <bean id="emfTest" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
 
         <!--instead of: <property name="persistenceUnitName" value="testPersistence"/>-->
         <property name="packagesToScan">
-            <value>com.gmail.kramarenko104.model</value>
-            <value>com.gmail.kramarenko104.repositories</value>
+            <array>
+                <value>com.gmail.kramarenko104.model</value>
+                <value>com.gmail.kramarenko104.repositories</value>
+            </array>
         </property>
 
         <property name="jpaProperties">
             <props>
                 <prop key="provider">org.hibernate.jpa.HibernatePersistenceProvider</prop>
-                <prop key="javax.persistence.jdbc.driverClassName">${db.driver}</prop>
-                <prop key="javax.persistence.jdbcUrl">${db.url}</prop>
-                <prop key="javax.persistence.jdbc.user">${db.user}</prop>
-                <prop key="javax.persistence.jdbc.password">${db.password}</prop>
+                <prop key="javax.persistence.jdbc.driver">${dbTest.driver}</prop>
+                <prop key="javax.persistence.jdbc.url">${dbTest.url}</prop>
+                <prop key="javax.persistence.jdbc.user">${dbTest.user}</prop>
+                <prop key="javax.persistence.jdbc.password">${dbTest.password}</prop>
                 <prop key="hibernate.dialect">${hibernate.dialect}</prop>
                 <prop key="hibernate.hbm2ddl.auto">update</prop>
                 <prop key="hibernate.show_sql">false</prop>
@@ -56,4 +52,11 @@
             </props>
         </property>
     </bean>
+
+    <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
+    <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+          p:entityManagerFactory-ref="emfTest"/>
+
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
+
 </beans>

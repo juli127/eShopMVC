@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
 @ContextConfiguration("file:src/main/webapp/WEB-INF/spring-configs/test-context.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -24,8 +24,8 @@ public class UserRepoImplTest {
     @Autowired
     ApplicationContext ctx;
 
-    @Resource
-    EntityManagerFactory emf;
+    @PersistenceContext
+    private EntityManager emTest;
 
     @Resource
     UserRepoImpl userRepo;
@@ -36,7 +36,6 @@ public class UserRepoImplTest {
     @Transactional (isolation = Isolation.READ_COMMITTED)
     @Rollback
     public void checkThatCorrectUserWasCreated() {
-        EntityManager em = emf.createEntityManager();
         String LOGIN_TEST = "test@test.com";
         User user = new User();
         user.setLogin(LOGIN_TEST);
@@ -44,16 +43,14 @@ public class UserRepoImplTest {
         user.setPassword("test");
         user.setAddress("test address");
         try {
-            em.persist(user);
-            em.flush();
+            emTest.persist(user);
+            emTest.flush();
             User userTest = userRepo.getUserByLogin(LOGIN_TEST);
             logger.debug("userTest = " + userTest);
             Assert.assertNotNull(userTest);
             Assert.assertTrue(user.equals(userTest));
         } catch (Exception ex) {
             ex.printStackTrace();
-        } finally {
-            em.close();
         }
     }
 }
