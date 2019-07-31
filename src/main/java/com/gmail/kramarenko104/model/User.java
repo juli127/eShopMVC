@@ -38,6 +38,7 @@ public class User implements Serializable {
     private String name;
 
     @Column(columnDefinition = "varchar(50)")
+    @NotEmpty
     private String address;
 
     @Column(columnDefinition = "varchar(100)")

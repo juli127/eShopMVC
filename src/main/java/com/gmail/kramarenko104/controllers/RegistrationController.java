@@ -65,7 +65,7 @@ public class RegistrationController {
 
                 // user with this login/password wasn't registered yet
                 if (!userExist) {
-                    logger.debug("[eshop] RegisrtServlet: user with entered login wasn't registered yet");
+                    logger.debug("[eshop] RegisrtCntrl: user with entered login wasn't registered yet");
                     Map<String, String> regData = new HashMap<>();
                     regData.put("login", login);
                     regData.put("pass", pass);
@@ -80,6 +80,10 @@ public class RegistrationController {
                     }
                     if (repass.length() > 0 && !pass.equals(repass)) {
                         errors.put("", "Password and retyped one don't match!");
+                    }
+
+                    if (pass.length() < 4) {
+                        errors.put("", "Password should has minimum 4 symbols!");
                     }
 
                     String patternString = "([0-9a-zA-Z._-]+@[0-9a-zA-Z_-]+[.]{1}[a-z]+)";
@@ -115,11 +119,9 @@ public class RegistrationController {
                     // some fields on registration form are filled in wrong way
                     else {
                         // prepare errorsMsg to show on registration.jsp
-                        errorsMsg.append("<ul>");
                         for (Map.Entry<String, String> entry : errors.entrySet()) {
-                            errorsMsg.append("<li>").append(entry.getKey()).append(" ").append(entry.getValue()).append("</li>");
+                            errorsMsg.append(entry.getKey()).append(" ").append(entry.getValue()).append("<br>");
                         }
-                        errorsMsg.append("</ul>");
                     }
                 }
                 // user with this login/password was registered already

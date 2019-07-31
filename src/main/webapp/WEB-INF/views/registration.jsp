@@ -2,7 +2,7 @@
 
 <br><h3>${RegMessage}</h3><br>
 
-<form method="POST" action="./registration">
+<form method="POST" action="<spring:url value="/registration"/>"/>
     <table id="myTableFormatting">
         <tr>
             <td>Login</td>
@@ -33,8 +33,9 @@
                 <input type = "submit" value = "Submit"/>
             </td>
         </tr>
-        <tr><td><span id="errorMsgText"><c:if test="${errorsMsg != null}">${errorsMsg}</c:if></span></td></tr>
     </table>
 </form>
+
+<br><span id="errorMsgText"><c:if test="${errorsMsg != null}">${errorsMsg}</c:if></span></br>
 
 <%@ include file="includes/footer.jsp" %>
