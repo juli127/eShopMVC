@@ -9,21 +9,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Controller
-@SessionAttributes(value = {"productsList", "usersList", "warning"})
+@SessionAttributes(value = {"productsList", "usersList", "warning", "userForm"})
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -58,25 +56,26 @@ public class AdminController {
 
     @RequestMapping(value = "/products/add", method = RequestMethod.GET)
     public ModelAndView prepareToAddNewProduct() {
-        return new ModelAndView("adminNewProduct");
+        ModelAndView modelAndView = new ModelAndView("adminNewProduct");
+        Map categoryMap = new LinkedHashMap();
+        categoryMap.put(1, "dress");
+        categoryMap.put(2, "shoes");
+        categoryMap.put(3, "accessories");
+        modelAndView.addObject("categoryMap", categoryMap);
+        modelAndView.addObject("productForm", new Product());
+        return modelAndView;
     }
 
     @RequestMapping(value = "/products/add", method = RequestMethod.POST)
-    public ModelAndView addNewProduct(@RequestParam("name") String name,
-                                      @RequestParam("category") String category,
-                                      @RequestParam("price") String price,
-                                      @RequestParam("description") String description,
-                                      @RequestParam("image") String image) {
+    public ModelAndView addNewProduct(@ModelAttribute("productForm") Product product){
         ModelAndView modelAndView = new ModelAndView("redirect:/admin");
-        logger.debug("[eshop] AdminCntrl.addNewProduct:  POST  enter.....");
         if (em != null) {
             Product newProduct = new Product();
-            newProduct.setName(name);
-            int categoryInt = ("dress".equals(category) ? 1 : ("shoes".equals(category) ? 2 : 3));
-            newProduct.setCategory(categoryInt);
-            newProduct.setPrice(Integer.valueOf(price));
-            newProduct.setDescription(description);
-            newProduct.setImage(image);
+            newProduct.setName(product.getName());
+            newProduct.setCategory(product.getCategory());
+            newProduct.setPrice(product.getPrice());
+            newProduct.setDescription(product.getDescription());
+            newProduct.setImage(product.getImage());
             logger.debug("[eshop] AdminCntrl.addNewProduct: got new product from form: " + newProduct);
             productService.createProduct(newProduct);
             modelAndView.addObject("productsList", productService.getAllProducts());
@@ -100,29 +99,27 @@ public class AdminController {
 
     @RequestMapping(value = "/users/add", method = RequestMethod.GET)
     public ModelAndView addNewUser() {
-        return new ModelAndView("adminNewUser");
+        return new ModelAndView("adminNewUser", "userForm", new User());
     }
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
-    public ModelAndView addNewUser(@RequestParam("name") String name,
-                                   @RequestParam("login") String login,
-                                   @RequestParam("password") String password,
-                                   @RequestParam("repassword") String repassword,
-                                   @RequestParam("address") String address,
-                                   @RequestParam("comment") String comment) {
+    public ModelAndView addNewUser(@ModelAttribute("userForm") User user,
+                                   @RequestParam String repassword) {
         ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         logger.debug("[eshop] AdminCntrl.addNewUser:  POST  enter.....");
         if (em != null) {
             StringBuilder message = new StringBuilder();
             Map<String, String> errors = new HashMap<>();
             StringBuilder errorsMsg = new StringBuilder();
+            String login = user.getLogin();
+            String password = user.getPassword();
 
             Map<String, String> regData = new HashMap<>();
             regData.put("login", login);
             regData.put("pass", password);
             regData.put("repass", repassword);
-            regData.put("name", name);
-            regData.put("address", address);
+            regData.put("name", user.getName());
+            regData.put("address", user.getAddress());
 
             for (Map.Entry<String, String> entry : regData.entrySet()) {
                 if (entry.getValue() == null || entry.getValue().length() < 1) {
@@ -147,11 +144,11 @@ public class AdminController {
             if (errors.size() == 0) {
                 // all fields on registration form are filled correctly
                 User newUser = new User();
-                newUser.setName(name);
+                newUser.setName(user.getName());
                 newUser.setLogin(login);
                 newUser.setPassword(password);
-                newUser.setAddress(address);
-                newUser.setComment(comment);
+                newUser.setAddress(user.getAddress());
+                newUser.setComment(user.getComment());
                 newUser = userService.createUser(newUser);
                 if (newUser != null) {
                     logger.debug("[eshop] AdminCntrl: new user was created: " + newUser);

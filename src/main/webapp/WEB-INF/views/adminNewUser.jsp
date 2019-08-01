@@ -1,16 +1,16 @@
 <%@ include file="includes/header.jsp" %>
 
-<form method="POST" action="<spring:url value="/admin/users/add"/>"/>
-
 <br><div id="info">Add new user:</div><br>
-<table id="myTable">
+<form:form action="${contextPath}/admin/users/add" method="post" modelAttribute="userForm">
+    <table id="myTable">
     <tr>
         <td>Login</td>
-        <td><input type='email' required name='login' value='${login}' autofocus placeholder="enter e-mail as login"/></td>
+        <td><form:input type='email' required="true" path="login" value='${login}' autofocus="true" placeholder="enter e-mail as login"/></td>
+        <form:errors path="login" />
     </tr>
     <tr>
         <td>Password</td>
-        <td><input type='password' name='password' value="" placeholder="minimum 4 symbols"/></td>
+        <td><form:password path="password" required="true" value="" placeholder="minimum 4 symbols"/></td>
     </tr>
     <tr>
         <td>Retype Password</td>
@@ -18,23 +18,23 @@
     </tr>
     <tr>
         <td>Name</td>
-        <td><input type='text' name='name' value='${name}' placeholder="required"/></td>
+        <td><form:input path="name" value='${name}' required="true" placeholder="required"/></td>
     </tr>
     <tr>
         <td>Address</td>
-        <td><input type='text' name='address' value='${address}' placeholder="required"/></td>
+        <td><form:input path="address" value='${address}' required="true" placeholder="required"/></td>
     </tr>
     <tr>
         <td>Comment</td>
-        <td><input type='text' name='comment' value='${comment}'/></td>
+        <td><form:input path="comment" value='${comment}'/></td>
     </tr>
     <tr>
         <td colspan = "2" align="right">
             <input type = "submit" value = "Submit"/>
         </td>
     </tr>
-</table>
-</form>
+    </table>
+</form:form>
 
-<br><span id="errorMsgText"><c:if test="${errorsMsg != null}">${errorsMsg}</c:if></span></br>
+<br><span id="errorMsgText"><c:if test="${errorsMsg != null}">${errorsMsg}</c:if></span>
 <%@ include file="includes/footer.jsp" %>

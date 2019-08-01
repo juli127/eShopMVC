@@ -28,11 +28,9 @@ public class Product implements Serializable {
     private String name;
 
     @Column(nullable = false)
-    @NotEmpty
     private int category;
 
     @Column(nullable = false)
-    @NotEmpty
     private int price;
 
     @Column(columnDefinition = "varchar(300)")
