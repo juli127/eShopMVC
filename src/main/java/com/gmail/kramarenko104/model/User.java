@@ -8,6 +8,7 @@ import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -31,6 +32,7 @@ public class User implements Serializable {
 
     @Column(nullable = false, columnDefinition = "varchar(50)")
     @NotEmpty
+    @Size(min = 4, message = "Password should have minimum 4 symbols!")
     private String password;
 
     @Column(nullable = false, columnDefinition = "varchar(50)")

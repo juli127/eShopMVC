@@ -9,10 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,7 +106,8 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
-    public ModelAndView addNewUser(@ModelAttribute("userForm") User user,
+    public ModelAndView addNewUser(@Valid @ModelAttribute("userForm") User user,
+                                   BindingResult bindingResult,
                                    @RequestParam String repassword) {
         ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         logger.debug("[eshop] AdminCntrl.addNewUser:  POST  enter.....");
@@ -114,24 +118,8 @@ public class AdminController {
             String login = user.getLogin();
             String password = user.getPassword();
 
-            Map<String, String> regData = new HashMap<>();
-            regData.put("login", login);
-            regData.put("pass", password);
-            regData.put("repass", repassword);
-            regData.put("name", user.getName());
-            regData.put("address", user.getAddress());
-
-            for (Map.Entry<String, String> entry : regData.entrySet()) {
-                if (entry.getValue() == null || entry.getValue().length() < 1) {
-                    errors.put(entry.getKey(), "cannot be empty!");
-                }
-            }
             if (repassword.length() > 0 && !password.equals(repassword)) {
                 errors.put("", "Password and retyped one don't match!");
-            }
-
-            if (password.length() < 4) {
-                errors.put("", "Password should has minimum 4 symbols!");
             }
 
             String patternString = "([0-9a-zA-Z._-]+@[0-9a-zA-Z_-]+[.]{1}[a-z]+)";
@@ -141,7 +129,7 @@ public class AdminController {
                 errors.put("", "e-mail should have correct format");
             }
 
-            if (errors.size() == 0) {
+            if (errors.size() == 0 && !bindingResult.hasErrors()) {
                 // all fields on registration form are filled correctly
                 User newUser = new User();
                 newUser.setName(user.getName());

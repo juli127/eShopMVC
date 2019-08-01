@@ -236,3 +236,7 @@ a {
     text-align: center;
     padding: 1%;
 }
+
+#error {
+	color: #ff0000;
+}

@@ -83,7 +83,7 @@ public class RegistrationController {
                     }
 
                     if (pass.length() < 4) {
-                        errors.put("", "Password should has minimum 4 symbols!");
+                        errors.put("", "Password should have minimum 4 symbols!");
                     }
 
                     String patternString = "([0-9a-zA-Z._-]+@[0-9a-zA-Z_-]+[.]{1}[a-z]+)";
