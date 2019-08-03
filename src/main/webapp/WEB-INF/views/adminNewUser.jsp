@@ -2,6 +2,8 @@
 
 <br><div id="info">Add new user:</div><br>
 <form:form action="${contextPath}/admin/users/add" method="post" modelAttribute="userForm">
+    <%--<form:errors path="*" cssClass="errorBlock" element="div"/>--%>
+
     <table id="myTable">
     <tr>
         <td>Login</td>
