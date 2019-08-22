@@ -34,6 +34,8 @@ Were used:
 - Admin can see and update users' info: delete and add the new user (screenshots/AdminAddsNewUser.png);
 - Admin can see and update products' info: delete and add the new product (screenshots/AdminDeleteAddProduct.png);
 - If there isn't connection to DB, warning about lost of connection appears (screenshots/LostDBconnection.png);
+
 - db dump is located in /resources/eshopdb_dump.sql
 - All static resources (css, images, js) are located in webapp/static
+- Project structure is located in screenshots/ProjectStructure.png
   
