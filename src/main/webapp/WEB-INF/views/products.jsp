@@ -1,9 +1,7 @@
 <%@ include file="includes/header.jsp" %>
 
-<c:set var="cartProducts" value="${products}"/>
-
-<c:if test="${cartProducts.size() > 0}">
-    <c:forEach var="product" items="${cartProducts}">
+<c:if test="${products.size() > 0}">
+    <c:forEach var="product" items="${products}">
         <div class="productsTable">
             <table border="1">
                 <td>

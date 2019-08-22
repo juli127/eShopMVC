@@ -136,9 +136,9 @@
     </bean>
 
     <!-- TransactionManager ++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"
+    <bean id="txManager" class="org.springframework.orm.jpa.JpaTransactionManager"
           p:entityManagerFactory-ref="emf"/>
 
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+    <tx:annotation-driven transaction-manager="txManager" proxy-target-class="true"/>
 
 </beans>

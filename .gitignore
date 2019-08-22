@@ -2,5 +2,5 @@
 .idea/*
 /logs
 /target
-.gitignore
 .settings/*
+/classes

@@ -2,9 +2,9 @@
 
 Were used:
 - Spring Framework 5.1.5 
--- Spring transactions
+- Spring transactions
 - Hibernate 5.4.2
--- Hibernate Validator
+- Hibernate Validator
 - JPA 2.2, JPQL
 - AOP: aspectjweaver 1.9.4
 - Servlet API 3.1.0
@@ -16,6 +16,7 @@ Were used:
 - Gson 2.8.5
 - slf4j 1.7.5, log4j 1.2.17
 - Maven
+- JUnit 4.12
 - JDK 1.8
 
 **Functionality description:**
@@ -34,4 +35,5 @@ Were used:
 - Admin can see and update products' info: delete and add the new product (screenshots/AdminDeleteAddProduct.png);
 - If there isn't connection to DB, warning about lost of connection appears (screenshots/LostDBconnection.png);
 - db dump is located in /resources/eshopdb_dump.sql
+- All static resources (css, images, js) are located in webapp/static
   

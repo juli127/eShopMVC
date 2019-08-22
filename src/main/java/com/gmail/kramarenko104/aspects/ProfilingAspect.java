@@ -18,14 +18,14 @@ public class ProfilingAspect {
    private void callAspect(){}
 
    @Around("callAspect()")
-   public void calcTime(ProceedingJoinPoint proceedingJoinPoint){
+   public void calcTime(ProceedingJoinPoint proceedingJoinPoint) {
        long start = System.currentTimeMillis();
        try {
            proceedingJoinPoint.proceed();
+           long duration = System.currentTimeMillis() - start;
+           logger.debug("Run duration = " + duration + " for" + proceedingJoinPoint.getSignature().toString());
        } catch (Throwable throwable) {
            throwable.printStackTrace();
        }
-       long duration = System.currentTimeMillis() - start;
-       logger.debug("Run duration = " + duration + " for" + proceedingJoinPoint.getSignature().toString());
    }
 }

@@ -23,7 +23,7 @@
           p:suffix=".jsp"/>
 
     <!--Configures a handler for serving static resources such as images, js, and, css files-->
-    <mvc:resources mapping = "/resources/**" location = "/resources/" />
+    <mvc:resources mapping = "/static/**" location = "/static/" />
     <mvc:default-servlet-handler/>
 
 </beans>

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -43,8 +44,7 @@ public class ProductController {
 
         // connection to DB is open
         if (em != null) {
-            List<Product> products;
-
+            List<Product> products = new ArrayList<>();
             // when form is opened at the first time, selectedCateg == null
             if (selectedCateg != null) {
                 products = productService.getProductsByCategory(Integer.parseInt(selectedCateg));
@@ -52,7 +52,6 @@ public class ProductController {
                 products = productService.getAllProducts();
             }
             modelAndView.addObject("products", products);
-//            products.forEach(e -> logger.debug(e.toString()));
 
             // be sure that when we enter on the main application page (products.jsp), user's info is full and correct
             if (user == null || (user != null && user.getLogin() == null)) {
