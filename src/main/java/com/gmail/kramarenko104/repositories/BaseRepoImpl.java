@@ -1,16 +1,21 @@
 package com.gmail.kramarenko104.repositories;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.PersistenceContext;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Optional;
 
 public class BaseRepoImpl<T> implements BaseRepo<T> {
 
     private Class<T> persistenceClass;
+    private static Logger logger = LoggerFactory.getLogger(BaseRepoImpl.class);
 
     @PersistenceContext
     private EntityManager em;
@@ -37,9 +42,13 @@ public class BaseRepoImpl<T> implements BaseRepo<T> {
             isolation = Isolation.READ_COMMITTED,
             rollbackFor = Exception.class)
     public void delete(long id) {
-        T t = em.find(persistenceClass, id);
-        if (t != null) {
+        try {
+            T t = Optional.ofNullable(em.find(persistenceClass, id))
+                    .orElseThrow(() -> new EntityNotFoundException("Not found instance of "
+                            + persistenceClass.getSimpleName() + " for id=" + id));
             em.remove(t);
+        } catch (EntityNotFoundException ex) {
+            logger.debug(ex.getMessage());
         }
     }
 

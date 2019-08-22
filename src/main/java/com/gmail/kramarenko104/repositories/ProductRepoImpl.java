@@ -1,8 +1,6 @@
 package com.gmail.kramarenko104.repositories;
 
 import com.gmail.kramarenko104.model.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
@@ -14,8 +12,6 @@ import java.util.List;
 
 @Repository
 public class ProductRepoImpl extends BaseRepoImpl<Product> implements ProductRepo {
-
-    private final static Logger logger = LoggerFactory.getLogger(ProductRepoImpl.class);
 
     @PersistenceContext
     private EntityManager em;

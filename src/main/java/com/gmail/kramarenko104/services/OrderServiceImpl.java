@@ -18,18 +18,18 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     public OrderServiceImpl(UserRepoImpl userRepo,
-                            OrderRepoImpl orderRepo){
+                            OrderRepoImpl orderRepo) {
         this.userRepo = userRepo;
         this.orderRepo = orderRepo;
     }
 
     @Override
-    public void deleteAllOrders(long userId){
+    public void deleteAllOrders(long userId) {
         orderRepo.deleteAllOrdersForUser(userId);
     }
 
     @Override
-    public Order createOrder(long userId, Map<Product, Integer> products){
+    public Order createOrder(long userId, Map<Product, Integer> products) {
         long newOrderNumber = orderRepo.getNewOrderNumber();
         // createProduct the new order on the base of Cart
         Order newOrder = new Order();
@@ -54,9 +54,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getLastOrderByUserId(long userId){
+    public Order getLastOrderByUserId(long userId) {
         Order order = orderRepo.getLastOrderByUserId(userId);
-        if (order != null){
+        if (order != null) {
             order = recalculateOrder(order);
         }
         return order;

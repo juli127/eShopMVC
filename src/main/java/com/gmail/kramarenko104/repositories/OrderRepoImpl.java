@@ -52,9 +52,10 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
             TypedQuery<Order> query = em.createNamedQuery("GET_LAST_ORDER_BY_USERID", Order.class)
                     .setParameter("userId", userId);
             order = query.setMaxResults(1).getSingleResult();
+            logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: the last orders is: " + order);
         } catch (NoResultException ex) {
+            logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: Order was not found in DB for userId=" + userId);
         }
-        logger.debug("[eshop] OrderRepoImpl.getLastOrderByUserId: the last orders is: " + order);
         return order;
     }
 
@@ -62,7 +63,7 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
         // generate order number (orderNumber is not auto-increment in 'orders' table)
         // because of one order can have many products ==> many rows can have the same orderNumber in 'orders' table
         Object result = em.createNamedQuery("GET_LAST_ORDER_NUMBER").getSingleResult();
-        long lastOrderNumber = (result == null ? 0 : (long) result);
+        long lastOrderNumber = (result == null ? 0L : (long) result);
         return ++lastOrderNumber;
     }
 

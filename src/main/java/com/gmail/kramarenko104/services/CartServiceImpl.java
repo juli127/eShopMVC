@@ -1,20 +1,16 @@
 package com.gmail.kramarenko104.services;
 
-import com.gmail.kramarenko104.repositories.CartRepoImpl;
-import com.gmail.kramarenko104.repositories.ProductRepoImpl;
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.gmail.kramarenko104.repositories.CartRepoImpl;
+import com.gmail.kramarenko104.repositories.ProductRepoImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Map;
 
 @Service
 public class CartServiceImpl implements CartService {
 
-    private static Logger logger = LoggerFactory.getLogger(CartService.class);
     private CartRepoImpl cartRepo;
     private ProductRepoImpl productRepo;
 

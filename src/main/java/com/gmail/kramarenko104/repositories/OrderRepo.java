@@ -1,7 +1,6 @@
 package com.gmail.kramarenko104.repositories;
 
 import com.gmail.kramarenko104.model.Order;
-
 import java.util.List;
 
 public interface OrderRepo {
