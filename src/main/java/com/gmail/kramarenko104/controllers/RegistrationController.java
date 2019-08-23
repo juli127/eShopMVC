@@ -73,11 +73,11 @@ public class RegistrationController {
                     regData.put("name", name);
                     regData.put("address", address);
 
-                    for (Map.Entry<String, String> entry : regData.entrySet()) {
-                        if (entry.getValue() == null || entry.getValue().length() < 1) {
-                            errors.put(entry.getKey(), "cannot be empty!");
-                        }
-                    }
+                    regData.entrySet()
+                            .parallelStream()
+                            .filter(e -> e.getValue() == null || e.getValue().length() < 1)
+                            .forEach(e -> errors.put(e.getKey(), "cannot be empty!"));
+
                     if (repass.length() > 0 && !pass.equals(repass)) {
                         errors.put("", "Password and retyped one don't match!");
                     }
@@ -119,9 +119,9 @@ public class RegistrationController {
                     // some fields on registration form are filled in wrong way
                     else {
                         // prepare errorsMsg to show on registration.jsp
-                        for (Map.Entry<String, String> entry : errors.entrySet()) {
-                            errorsMsg.append(entry.getKey()).append(" ").append(entry.getValue()).append("<br>");
-                        }
+                        errors.entrySet()
+                                .parallelStream()
+                                .forEach(e -> errorsMsg.append(e.getKey()).append(" ").append(e.getValue()).append("<br>"));
                     }
                 }
                 // user with this login/password was registered already

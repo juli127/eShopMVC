@@ -104,34 +104,34 @@ public class AdminController {
                                    @RequestParam String repassword) {
         ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
-             if (user != null) {
-                 StringBuilder message = new StringBuilder();
-                 StringBuilder errorsMsg = new StringBuilder();
-                 Map<String, String> errors = userService.verifyUser(user, repassword);
+            if (user != null) {
+                StringBuilder errorsMsg = new StringBuilder();
+                Map<String, String> errors = userService.verifyUser(user, repassword);
 
-                 if (errors.size() == 0 && !bindingResult.hasErrors()) {
-                     // all fields on registration form are filled correctly
-                     User newUser = userService.createUser(user);
-                     if (newUser != null) {
-                         logger.debug("[eshop] AdminCntrl: new user was created: " + newUser);
-                         Cart newCart = new Cart();
-                         newCart.setUser(newUser);
-                     } else {
-                         logger.debug("[eshop] AdminCntrl: new user was NOT created ");
-                     }
-                     // update users' list taking in account the new added user
-                     modelAndView.addObject("usersList", userService.getAllUsers());
-                 }
-                 // some fields on form are filled in wrong way
-                 else {
-                     // prepare errorsMsg to show on jsp
-                     for (Map.Entry<String, String> entry : errors.entrySet()) {
-                         errorsMsg.append(entry.getKey()).append(" ").append(entry.getValue()).append("<br>");
-                     }
-                     modelAndView.addObject("errorsMsg", errorsMsg);
-                     modelAndView.setViewName("adminNewUser");
-                 }
-             }
+                if (errors.size() == 0 && !bindingResult.hasErrors()) {
+                    // all fields on registration form are filled correctly
+                    User newUser = userService.createUser(user);
+                    if (newUser != null) {
+                        logger.debug("[eshop] AdminCntrl: new user was created: " + newUser);
+                        Cart newCart = new Cart();
+                        newCart.setUser(newUser);
+                    } else {
+                        logger.debug("[eshop] AdminCntrl: new user was NOT created ");
+                    }
+                    // update users' list taking in account the new added user
+                    modelAndView.addObject("usersList", userService.getAllUsers());
+                }
+                // some fields on form are filled in wrong way
+                else {
+                    // prepare errorsMsg to show on jsp
+                    errors.entrySet()
+                            .parallelStream()
+                            .forEach(e -> errorsMsg.append(e.getKey()).append(" ").append(e.getValue()).append("<br>"));
+
+                    modelAndView.addObject("errorsMsg", errorsMsg);
+                    modelAndView.setViewName("adminNewUser");
+                }
+            }
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -149,5 +149,4 @@ public class AdminController {
         }
         return modelAndView;
     }
-
 }

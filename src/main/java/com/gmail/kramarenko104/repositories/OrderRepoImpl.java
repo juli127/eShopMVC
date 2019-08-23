@@ -75,8 +75,6 @@ public class OrderRepoImpl extends BaseRepoImpl<Order> implements OrderRepo {
         TypedQuery<Order> query = em.createNamedQuery("GET_ALL_ORDERS_BY_USERID", Order.class)
                 .setParameter("userId", userId);
         List<Order> ordersToRemove = query.getResultList();
-        for (Order order : ordersToRemove) {
-            em.remove(order);
-        }
+        ordersToRemove.stream().forEach(order -> em.remove(order));
     }
 }
