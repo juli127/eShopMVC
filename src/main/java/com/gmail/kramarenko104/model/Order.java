@@ -5,25 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-/*
-entity 'orders':
-  orderId BIGINT AUTO_INCREMENT,
-  orderNumber BIGINT,
-  status VARCHAR(100),
-  userId BIGINT,
-  productId BIGINT,
-  quantity INT,
-  PRIMARY KEY (id),
-  FOREIGN KEY (userId) REFERENCES users(id),
-  FOREIGN KEY (productId) REFERENCES products(id)
- */
 
 @Entity
 @Getter @Setter
@@ -42,12 +29,11 @@ public class Order implements Serializable {
     private long orderId;
 
     @Column(nullable = false, updatable = false)
-    @NotEmpty
     private long orderNumber;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, updatable = false)
-    @NotEmpty
+    @NotNull
     private User user;
 
     @Column(columnDefinition = "varchar(20)")
@@ -66,7 +52,7 @@ public class Order implements Serializable {
     @Column(name = "quantity")
     @OrderColumn (name = "orderId")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    @NotEmpty
+    @NotNull
     private Map<Product, Integer> products;
 
     public Order() {
@@ -84,5 +70,4 @@ public class Order implements Serializable {
                 ", totalSum=" + totalSum +
                 ", products=" + Arrays.asList(products) + "}";
     }
-
 }

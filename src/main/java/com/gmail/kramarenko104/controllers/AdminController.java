@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
@@ -112,6 +111,7 @@ public class AdminController {
                     // all fields on registration form are filled correctly
                     User newUser = userService.createUser(user);
                     if (newUser != null) {
+                        newUser.setRole("ROLE_USER");
                         logger.debug("[eshop] AdminCntrl: new user was created: " + newUser);
                         Cart newCart = new Cart();
                         newCart.setUser(newUser);

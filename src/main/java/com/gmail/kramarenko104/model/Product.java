@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Entity
@@ -24,7 +24,7 @@ public class Product implements Serializable {
     private long productId;
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(100)")
-    @NotEmpty
+    @NotNull
     private String name;
 
     @Column(nullable = false)

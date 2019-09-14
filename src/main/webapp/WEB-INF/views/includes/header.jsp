@@ -12,6 +12,7 @@
 <c:set var="users" value="${usersList}" ></c:set>
 <c:set var="products" value="${products}"></c:set>
 <c:set var="totalSum" value="${cart.totalSum}"/>
+<c:set var="isAdmin" value="${isAdmin}"/>
 <c:set var="resourcesPath" value="${webappRoot}/static"/>
 <c:set var="contextPath" value="${pageContext.request.contextPath}"/>
 <%--<c:out value="resourcesPath=${resourcesPath}"/><br>--%>

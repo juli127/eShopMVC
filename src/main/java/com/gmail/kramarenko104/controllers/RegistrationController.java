@@ -47,7 +47,8 @@ public class RegistrationController {
                             @RequestParam("repassword") String repass,
                             @RequestParam("name") String name,
                             @RequestParam("address") String address,
-                            @RequestParam("comment") String comment) {
+                            @RequestParam("comment") String comment,
+                            @RequestParam("role") String role) {
 
         String viewToGo = "registration";
         ModelAndView modelAndView = new ModelAndView();
@@ -72,6 +73,7 @@ public class RegistrationController {
                     regData.put("repass", repass);
                     regData.put("name", name);
                     regData.put("address", address);
+                    regData.put("role", role);
 
                     regData.entrySet()
                             .parallelStream()
@@ -101,11 +103,14 @@ public class RegistrationController {
                         newUser.setPassword(pass);
                         newUser.setAddress(address);
                         newUser.setComment(comment);
+                        newUser.setRole(role);
                         newUser = userService.createUser(newUser);
+
                         if (newUser != null) {
                             logger.debug("[eshop] RegisrtServlet: new user was created: " + newUser);
                             message.append("<br><font color='green'><center>Hi, " + name + "! <br>You have been registered. You can shopping now!</font>");
                             modelAndView.addObject("user", newUser);
+                            newUser.setRole("ROLE_USER");
                             Cart newCart = new Cart();
                             newCart.setUser(newUser);
                             modelAndView.addObject("cart", newCart);

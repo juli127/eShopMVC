@@ -2,7 +2,7 @@
 
 <c:if test="${showLoginForm}">
     <center>
-        <form action='./login' method='post'>
+        <form action="${contextPath}/login" method='POST'>
             <table id="myTableFormatting" border=0>
                 <tr>
                     <td>Login: </td>

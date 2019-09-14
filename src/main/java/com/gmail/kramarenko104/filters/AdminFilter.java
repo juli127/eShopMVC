@@ -17,8 +17,11 @@ public class AdminFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest hreq = (HttpServletRequest) req;
         HttpSession session = hreq.getSession();
-        if(session.getAttribute("user") == null || !(boolean)session.getAttribute("isAdmin")) {
-            req.getRequestDispatcher("/forbidden").forward(req, resp);
+        if (session != null) {
+            Object isAdminAttr = session.getAttribute("isAdmin");
+            if (isAdminAttr == null || (isAdminAttr != null && !(boolean) isAdminAttr)) {
+                req.getRequestDispatcher("/forbidden").forward(req, resp);
+            }
         }
         chain.doFilter(req, resp);
     }

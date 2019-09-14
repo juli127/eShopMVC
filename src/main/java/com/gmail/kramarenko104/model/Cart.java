@@ -5,23 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-/*
-entity 'carts':
-  cartId BIGINT AUTO_INCREMENT,
-  userId BIGINT,
-  productId BIGINT, // taken from Map<Product, Integer> products
-  quantity INT,  // taken from Map<Product, Integer> products
-  PRIMARY KEY (id),
-  FOREIGN KEY (userId) REFERENCES users(id),
-  FOREIGN KEY (productId) REFERENCES products(id)
- */
 
 @Entity
 @Getter @Setter
@@ -38,7 +27,7 @@ public class Cart implements Serializable {
 
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH})
     @JoinColumn(name = "userId", nullable = false, unique = true, updatable = false)
-    @NotEmpty
+    @NotNull
     private User user;
 
     @Transient

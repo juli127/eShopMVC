@@ -18,14 +18,12 @@ import javax.persistence.PersistenceContext;
 
 @Controller
 @RequestMapping("/login")
-@SessionAttributes(value = {"showLoginForm", "message", "attempt", "user", "login", "startTime", "cart", "isAdmin", "warning"})
+@SessionAttributes(value = {"showLoginForm", "message", "user", "cart", "warning", "isAdmin"})
 public class LoginController {
 
     private static Logger logger = LoggerFactory.getLogger(LoginController.class);
-    private static final int MAX_LOGIN_ATTEMPTS = 3;
-    private static final int WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD = 15;
     private static final String DB_WARNING = "Check your connection to DB!";
-    private static final String adminLog = "admin";
+
     private UserService userService;
     private CartService cartService;
 
@@ -40,103 +38,60 @@ public class LoginController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    protected ModelAndView doGet() {
+    protected ModelAndView doGet(ModelAndView modelAndView) {
+        modelAndView.setViewName("login");
+        modelAndView.addObject("message", null);
+        modelAndView.addObject("showLoginForm", true);
         logger.debug("[eshop] LoginController.doGet:   enter ....goto login.jsp......");
-        return new ModelAndView("login");
+        return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST)
     protected ModelAndView doPost(@RequestParam("login") String login,
-                                  @RequestParam("password") String pass) {
-        logger.debug("[eshop] LoginController.doPost:   enter .........." );
+                                  @RequestParam("password") String pass,
+                                  ModelAndView modelAndView) {
         String viewToGo = "login";
-        ModelAndView modelAndView = new ModelAndView();
         boolean showLoginForm = true;
         boolean accessGranted = false;
         StringBuilder msgText = new StringBuilder();
-        boolean isAdmin = false;
         User currentUser = null;
-        int attempt;
+        boolean isAdmin = false;
 
         if (em != null) {
-            Object attemptObj = modelAndView.getModel().get("attempt");
-            attempt = (attemptObj == null) ? 0 : (int) attemptObj;
-            currentUser = (User) modelAndView.getModel().get("user");
-            logger.debug("[eshop] LoginController.doPost:   currentUser from session = " + currentUser);
+            if ((login != null) && !("".equals(login))) {
+                currentUser = userService.getUserByLogin(login);
 
-            // already logged in
-            if (currentUser != null && currentUser.getLogin() != null) {
-                logger.debug("[eshop] LoginController.doPost:   already logged in.... " );
-                accessGranted = true;
-            } // not logged in yet
-            else {
-                logger.debug("[eshop] LoginController.doPost:   not logged in yet.... " );
-                long waitTime = 0;
-                if ((login != null) && !("".equals(login))) {
-                    modelAndView.addObject("login", login);
-                    currentUser = userService.getUserByLogin(login);
-                    boolean exist = (currentUser != null);
+                if (currentUser != null) {
+                    String passVerif = userService.hashString(pass);
+                    accessGranted = (currentUser.getPassword().equals(passVerif));
+                    logger.debug("[eshop] LoginController.doPost: currentUser: " + currentUser);
 
-                    if (exist) {
-                        String passVerif = userService.hashString(pass);
-                        accessGranted = (currentUser.getPassword().equals(passVerif));
-                        showLoginForm = !accessGranted && attempt < MAX_LOGIN_ATTEMPTS;
-                        logger.debug("[eshop] LoginController.doPost: currentUser: " + currentUser);
-
-                        if (accessGranted) {
-                            attempt = 0;
-                            showLoginForm = false;
-                            modelAndView.addObject("user", currentUser);
-                            modelAndView.addObject("login", null);
-                            logger.debug("[eshop] LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
-                            if (adminLog.equals(login) && userService.getUserByLogin(adminLog).getPassword().equals(passVerif)) {
-                                isAdmin = true;
-                            }
-                        } else {
-                            attempt++;
-                            if (attempt >= MAX_LOGIN_ATTEMPTS) {
-                                if (attempt == MAX_LOGIN_ATTEMPTS) {
-                                    modelAndView.addObject("startTime", System.currentTimeMillis());
-                                }
-                                waitTime = WAIT_SECONDS_BEFORE_LOGIN_FORM_RELOAD - (System.currentTimeMillis() - (Long) modelAndView.getModel().get("startTime")) / 1000;
-                                if (waitTime > 0) {
-                                    msgText.append("<br><font size=3 color='red'><b> Attempts' limit is exceeded. Login form will be available in " + waitTime + " seconds</b></font>");
-                                    showLoginForm = false;
-                                } else {
-                                    attempt = 0;
-                                    showLoginForm = true;
-                                }
-                            } else if (attempt >= 0) {
-                                msgText.append("<b><font size=3 color='red'>Wrong password, try again! You have 3 attempts. (attempt #" + attempt + ")</font>");
-                            }
-                        }
-                    } else {
-                        attempt = 0;
+                    if (accessGranted) {
                         showLoginForm = false;
-                        msgText.append("<br>This user wasn't registered yet. <a href='registration'>Register</a>, please, or <a href='login'>login</a>");
+                        modelAndView.addObject("user", currentUser);
+                        logger.debug("[eshop] LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
+
+                        if ("ROLE_ADMIN".equals(currentUser.getRole())) {
+                            isAdmin = true;
+                        }
+                        // for authorized user get the corresponding shopping Cart
+                        Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
+                        logger.debug("[eshop] LoginController.doPost:  GOT userCart from db == " + userCart);
+
+                        if (userCart == null) {
+                            logger.debug("[eshop] LoginController.doPost: cart is empty, goto product.jsp");
+                            userCart = cartService.createCart(currentUser.getUserId());
+                        }
+                        viewToGo = "product";
+                        modelAndView.addObject("cart", userCart);
+                    } else {
+                        msgText.append("<b><font size=3 color='red'>Wrong password, try again!</font>");
                     }
                 } else {
-                    attempt = 0;
+                    showLoginForm = false;
+                    msgText.append("This user wasn't registered yet. <a href='registration'>Register</a>, please, or <a href='login'>login</a>");
                 }
             }
-
-            // for authorized user get the corresponding shopping Cart
-            if (accessGranted) {
-                showLoginForm = false;
-                Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
-                logger.debug("[eshop] LoginController.doPost:  GOT userCart from db == " + userCart);
-
-                if (userCart == null) {
-                    logger.debug("[eshop] LoginController.doPost: cart is empty, goto product.jsp");
-                    userCart = cartService.createCart(currentUser.getUserId());
-                }
-                viewToGo = "product";
-                modelAndView.addObject("cart", userCart);
-            }
-            modelAndView.addObject("showLoginForm", showLoginForm);
-            modelAndView.addObject("message", msgText.toString());
-            modelAndView.addObject("attempt", attempt);
-            modelAndView.addObject("isAdmin", isAdmin);
         } else { // connection to DB is closed
             modelAndView.addObject("warning", DB_WARNING);
         }
@@ -144,8 +99,14 @@ public class LoginController {
         if (!"login".equals(viewToGo)) {
             viewToGo = "redirect:/" + viewToGo;
         }
+
+        modelAndView.addObject("showLoginForm", showLoginForm);
+        modelAndView.addObject("message", msgText.toString());
+        modelAndView.addObject("isAdmin", isAdmin);
+
         modelAndView.setViewName(viewToGo);
         logger.debug("[eshop] LoginController.doPost:   exit.......goto " + viewToGo);
+
         return modelAndView;
     }
 }

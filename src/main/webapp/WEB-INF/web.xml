@@ -49,12 +49,13 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
+
     <filter-mapping>
         <filter-name>CharacterEncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!--my filters -->
+<!--admin filters -->
     <filter>
         <filter-name>AdminFilter</filter-name>
         <filter-class>com.gmail.kramarenko104.filters.AdminFilter</filter-class>
@@ -63,5 +64,10 @@
         <filter-name>AdminFilter</filter-name>
         <url-pattern>/admin</url-pattern>
     </filter-mapping>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/WEB-INF/views/forbidden.jsp</location>
+    </error-page>
 
 </web-app>

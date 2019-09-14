@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 @RequestMapping("/logout")
-@SessionAttributes(value = {"user", "showLoginForm", "message", "attempt", "cart", "order", "isAdmin"})
+@SessionAttributes(value = {"user", "showLoginForm", "message", "cart", "order", "isAdmin"})
 public class LogoutController {
 
     @RequestMapping(method = RequestMethod.GET)
@@ -19,8 +19,7 @@ public class LogoutController {
         ModelAndView modelAndView = new ModelAndView("products");
         modelAndView.addObject("user", new User());
         modelAndView.addObject("showLoginForm", true);
-        modelAndView.addObject("message", "");
-        modelAndView.addObject("attempt", 0);
+        modelAndView.addObject("message", null);
         modelAndView.addObject("cart", new Cart());
         modelAndView.addObject("order", new Order());
         modelAndView.addObject("isAdmin", false);

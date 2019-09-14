@@ -7,8 +7,8 @@ import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 
@@ -27,21 +27,21 @@ public class User implements Serializable {
     private long userId;
 
     @Column(unique = true, nullable = false, columnDefinition = "varchar(30)")
-    @NotEmpty
+    @NotNull
     @Email
     private String login;
 
     @Column(nullable = false, columnDefinition = "varchar(50)")
-    @NotEmpty
+    @NotNull
     @Length(min = 4, message = "Password should have minimum 4 symbols!")
     private String password;
 
     @Column(nullable = false, columnDefinition = "varchar(50)")
-    @NotEmpty
+    @NotNull
     private String name;
 
     @Column(columnDefinition = "varchar(50)")
-    @NotEmpty
+    @NotNull
     private String address;
 
     @Column(columnDefinition = "varchar(100)")
@@ -55,10 +55,13 @@ public class User implements Serializable {
     @EqualsAndHashCode.Exclude
     private List<Order> userOrders;
 
+    @Column(columnDefinition = "varchar(10)")
+    private String role;
+
     @Override
     public String toString() {
         return "User{" +
                 "userId:" + userId + ", " +
-                "login:'" + login + "', name:'" + name + "'}";
+                "login:'" + login + "', name:'" + name + "', role: '" + role + "'}";
     }
 }

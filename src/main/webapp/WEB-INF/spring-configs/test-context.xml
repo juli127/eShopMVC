@@ -22,7 +22,6 @@
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"/>
         </property>
 
-        <!--instead of: <property name="persistenceUnitName" value="testPersistence"/>-->
         <property name="packagesToScan">
             <array>
                 <value>com.gmail.kramarenko104.model</value>
