@@ -2,6 +2,7 @@ package com.gmail.kramarenko104.controllers;
 
 import com.gmail.kramarenko104.model.Cart;
 import com.gmail.kramarenko104.model.Product;
+import com.gmail.kramarenko104.model.Role;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.services.ProductService;
 import com.gmail.kramarenko104.services.UserService;
@@ -15,9 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @SessionAttributes(value = {"productsList", "usersList", "warning", "userForm"})
@@ -100,7 +99,8 @@ public class AdminController {
     @RequestMapping(value = "/users/add", method = RequestMethod.POST)
     public ModelAndView addNewUser(@Valid @ModelAttribute("userForm") User user,
                                    BindingResult bindingResult,
-                                   @RequestParam String repassword) {
+                                   @RequestParam String repassword,
+                                   @RequestParam String role) {
         ModelAndView modelAndView = new ModelAndView("redirect:/admin");
         if (em != null) {
             if (user != null) {
@@ -111,7 +111,16 @@ public class AdminController {
                     // all fields on registration form are filled correctly
                     User newUser = userService.createUser(user);
                     if (newUser != null) {
-                        newUser.setRole("ROLE_USER");
+                        Set<Role> roles = new HashSet<>();
+                        Role newRole = new Role();
+                        newRole.setName("ROLE_USER");
+                        roles.add(newRole);
+                        if ("ROLE_ADMIN".equals(role)){
+                            newRole = new Role();
+                            newRole.setName("ROLE_ADMIN");
+                            roles.add(newRole);
+                        }
+                        newUser.setRoles(roles);
                         logger.debug("[eshop] AdminCntrl: new user was created: " + newUser);
                         Cart newCart = new Cart();
                         newCart.setUser(newUser);
@@ -150,3 +159,4 @@ public class AdminController {
         return modelAndView;
     }
 }
+

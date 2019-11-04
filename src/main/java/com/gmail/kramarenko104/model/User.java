@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -55,13 +56,15 @@ public class User implements Serializable {
     @EqualsAndHashCode.Exclude
     private List<Order> userOrders;
 
-    @Column(columnDefinition = "varchar(10)")
-    private String role;
+    @OneToMany (fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "userId"),
+            inverseJoinColumns = @JoinColumn(name = "roleId"))
+    private Set<Role> roles;
 
     @Override
     public String toString() {
         return "User{" +
                 "userId:" + userId + ", " +
-                "login:'" + login + "', name:'" + name + "', role: '" + role + "'}";
+                "login:'" + login + "', name:'" + name + "', roles: " + roles + "}";
     }
 }

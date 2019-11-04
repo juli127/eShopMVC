@@ -1,6 +1,7 @@
 package com.gmail.kramarenko104.controllers;
 
 import com.gmail.kramarenko104.model.Cart;
+import com.gmail.kramarenko104.model.Role;
 import com.gmail.kramarenko104.model.User;
 import com.gmail.kramarenko104.services.CartService;
 import com.gmail.kramarenko104.services.UserService;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/login")
@@ -42,13 +44,13 @@ public class LoginController {
         modelAndView.setViewName("login");
         modelAndView.addObject("message", null);
         modelAndView.addObject("showLoginForm", true);
-        logger.debug("[eshop] LoginController.doGet:   enter ....goto login.jsp......");
+        logger.debug("[eshop] LoginController.doGet....goto login.jsp");
         return modelAndView;
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    protected ModelAndView doPost(@RequestParam("login") String login,
-                                  @RequestParam("password") String pass,
+    protected ModelAndView doPost(@RequestParam("f_login") String login,
+                                  @RequestParam("f_password") String pass,
                                   ModelAndView modelAndView) {
         String viewToGo = "login";
         boolean showLoginForm = true;
@@ -70,10 +72,16 @@ public class LoginController {
                         showLoginForm = false;
                         modelAndView.addObject("user", currentUser);
                         logger.debug("[eshop] LoginController.doPost: User " + currentUser.getName() + " was registered and passed autorization");
-
-                        if ("ROLE_ADMIN".equals(currentUser.getRole())) {
+                        logger.debug("[eshop] LoginController.doPost:currentUser.getRoles(): " +
+                                currentUser.getRoles());
+                        if (currentUser.getRoles().stream()
+                                .map(Role::toString)
+                                .collect(Collectors.joining( "," ))
+                                .contains("ROLE_ADMIN")) {
                             isAdmin = true;
                         }
+                        logger.debug("[eshop] LoginController.doPost: isAdmin: " +
+                                isAdmin);
                         // for authorized user get the corresponding shopping Cart
                         Cart userCart = cartService.getCartByUserId(currentUser.getUserId());
                         logger.debug("[eshop] LoginController.doPost:  GOT userCart from db == " + userCart);

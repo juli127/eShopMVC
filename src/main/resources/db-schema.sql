@@ -1,74 +1,81 @@
 CREATE DATABASE IF NOT EXISTS eshopdb CHARACTER SET utf8 COLLATE utf8_general_ci;
 USE eshopdb;
 
-create table if not exists products
+CREATE TABLE IF NOT EXISTS users
 (
-	productId bigint auto_increment
-		primary key,
-	name varchar(100) not null,
-	category int not null,
-	price int not null,
-	description varchar(300) null,
-	image varchar(100) null,
-	constraint UK_o61fmio5yukmmiqgnxf8pnavn
-		unique (name)
-);
+	userId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	login VARCHAR (100) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
+	name VARCHAR(50) NOT NULL,
+	address VARCHAR(50) NOT NULL,
+	comment VARCHAR(100)
+) 
+ENGINE = InnoDB;
 
-create table if not exists users
+CREATE TABLE IF NOT EXISTS roles
 (
-	userId bigint auto_increment
-		primary key,
-	login varchar(100) not null,
-	password varchar(50) not null,
-	name varchar(50) not null,
-	address varchar(50) not null,
-	comment varchar(100) null,
-	role varchar(10) default 'ROLE_USER' not null,
-	constraint UK_ow0gan20590jrb00upg3va2fn
-		unique (login)
-);
+  roleId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) default 'ROLE_USER' NOT NULL
+) 
+ENGINE = InnoDB;
 
-create table if not exists carts
+CREATE TABLE IF NOT EXISTS user_roles
 (
-	cartId bigint auto_increment
-		primary key,
-	userId bigint not null,
-	constraint UK_qv8kq8wwjjtkstm730yvagd3k
-		unique (userId),
-	constraint FK4me2y3nkxk7fj54tt3g5dg9vh
-		foreign key (userId) references users (userId)
-);
+  userId INT NOT NULL,
+  roleId INT NOT NULL,
+  FOREIGN KEY (userId) REFERENCES users (userId),
+  FOREIGN KEY (roleId) REFERENCES roles (roleId),
+  UNIQUE (userId, roleId)
+) 
+ENGINE = InnoDB;
 
-create table if not exists carts_products
+CREATE TABLE IF NOT EXISTS products
 (
-	cartId bigint not null,
-	productId bigint not null,
-	quantity int null,
-	primary key (cartId, productId),
-	constraint FK2n2rk9lxbe0vnin36whtithi2
-		foreign key (productId) references products (productId),
-	constraint FKrjdnan3si1wuhltvjgac5180b
-		foreign key (cartId) references carts (cartId));
+	productId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100) NOT NULL UNIQUE,
+	category int NOT NULL,
+	price int NOT NULL,
+	description VARCHAR(300),
+	image VARCHAR(100)
+) 
+ENGINE = InnoDB;
 
-create table if not exists orders
+CREATE TABLE IF NOT EXISTS carts
 (
-	orderId bigint auto_increment
-		primary key,
-	orderNumber bigint not null,
-	userId bigint not null,
-	status varchar(20) null,
-	constraint FK6co8q7ko456baksb6tdjq2dfv
-		foreign key (userId) references users (userId)
-);
+	cartId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	userId int NOT NULL,
+	FOREIGN KEY (userId) REFERENCES users (userId)
+)
+ENGINE = InnoDB;
 
-create table if not exists orders_products
+CREATE TABLE IF NOT EXISTS carts_products
 (
-	orderId bigint not null,
-	productId bigint not null,
-	quantity int null,
-	primary key (orderId, productId),
-	constraint FK7f6edi536oe83r32wsqd6qagj
-		foreign key (orderId) references orders (orderId),
-	constraint FKexx6ud6v30pcvsvsduojigvhf
-		foreign key (productId) references products (productId)
-);
+	cartId INT NOT NULL,
+	productId INT NOT NULL,
+	quantity INT,
+	PRIMARY KEY (cartId, productId),
+	FOREIGN KEY (productId) REFERENCES products (productId),
+	FOREIGN KEY (cartId) REFERENCES carts (cartId)
+) 
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS orders
+(
+	orderId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+	orderNumber INT NOT NULL,
+	userId INT NOT NULL,
+	status VARCHAR(20),
+	FOREIGN KEY (userId) REFERENCES users (userId)
+) 
+ENGINE = InnoDB;
+
+CREATE TABLE IF NOT EXISTS orders_products
+(
+	orderId INT NOT NULL,
+	productId INT NOT NULL,
+	quantity INT,
+	PRIMARY KEY (orderId, productId),
+	FOREIGN KEY (orderId) REFERENCES orders (orderId),
+	FOREIGN KEY (productId) REFERENCES products (productId)
+) 
+ENGINE = InnoDB;

@@ -50,8 +50,8 @@ public class CartController {
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.OK)
-    public @ResponseBody
-    String doPost(@RequestParam("action") String action,
+    @ResponseBody
+    public String doPost(@RequestParam("action") String action,
                   @RequestParam("productId") int productId,
                   @RequestParam("quantity") int quantity,
                   @ModelAttribute("user") User user) {

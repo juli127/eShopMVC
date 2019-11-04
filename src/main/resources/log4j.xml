@@ -22,12 +22,12 @@
 
     <!-- 	application Loggers -->
     <logger name="log4j.logger.com.gmail.kramarenko104">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
 
     <!-- 3rdparty Loggers -->
     <logger name="log4j.logger.org.hibernate.type.descriptor.sql">
-        <level value="info"/>
+        <level value="debug"/>
     </logger>
 
     <logger name="log4j.logger.org.hibernate">
@@ -52,7 +52,7 @@
 
     <!-- Root Logger -->
     <root>
-        <priority value="info"/>
+        <priority value="debug"/>
         <appender-ref ref="stdout"/>
         <appender-ref ref="file"/>
     </root>

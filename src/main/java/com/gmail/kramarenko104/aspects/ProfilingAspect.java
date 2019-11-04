@@ -8,22 +8,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-//@Aspect
+@Aspect
 @Component
 public class ProfilingAspect {
 
    private Logger logger = LoggerFactory.getLogger(getClass());
 
-   @Pointcut("execution(* com.gmail.kramarenko104.repositories.*.*(..))")
+   @Pointcut("execution(* com.gmail.kramarenko104.repositories.*.create*(..))")
    private void callAspect(){}
 
    @Around("callAspect()")
    public void calcTime(ProceedingJoinPoint proceedingJoinPoint) {
-       long start = System.currentTimeMillis();
+       long start = System.nanoTime();
        try {
            proceedingJoinPoint.proceed();
-           long duration = System.currentTimeMillis() - start;
-           logger.debug("Run duration = " + duration + " for" + proceedingJoinPoint.getSignature().toString());
+           long duration = (System.nanoTime() - start)/1_000_000;
+           logger.debug("Run duration = " + duration + "seconds for " + proceedingJoinPoint.getSignature().toString());
        } catch (Throwable throwable) {
            throwable.printStackTrace();
        }
